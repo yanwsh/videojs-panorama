@@ -3,10 +3,15 @@
  */
 'use strict';
 
+import util from './lib/Util';
+
 // Default options for the plugin.
 const defaults = {
     clickAndDrag: false,
-    showNotice: true
+    showNotice: true,
+    autoHideNotice: 3000,
+    //A float value back to center when mouse out the canvas. The higher, the faster.
+    returnStep: 0.5
 };
 
 /**
@@ -25,10 +30,25 @@ const onPlayerReady = (player, options) => {
     player.addChild('Canvas', options);
     if(options.showNotice){
         player.addChild('Notice', options);
-        setTimeout(function () {
-            player.removeChild('Notice');
-        }, 3000);
+        player.on("play", function(){
+            var notice = player.getChild('Notice');
+            
+            if(options.autoHideNotice > 0){
+                setTimeout(function () {
+                    notice.addClass("vjs-video-notice-fadeOut");
+                    var transitionEvent = util.whichTransitionEvent();
+                    var hide = function () {
+                        notice.hide();
+                        notice.removeClass("vjs-video-notice-fadeOut");
+                        notice.off(transitionEvent, hide);
+                    };
+                    notice.on(transitionEvent, hide);
+                }, options.autoHideNotice);
+            }
+        });
     }
+    
+    
 };
 
 const plugin = function(settings = {}){

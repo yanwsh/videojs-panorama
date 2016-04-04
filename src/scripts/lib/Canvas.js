@@ -12,6 +12,7 @@ var Canvas = function (baseComponent, settings = {}) {
             this.width = player.el().offsetWidth, this.height = player.el().offsetHeight;
             this.lon = 0, this.lat = 0, this.phi = 0, this.theta = 0;
             this.mouseDown = false;
+            this.isUserInteracting = false;
             this.player = player;
             //define scene
             this.scene = new THREE.Scene();
@@ -60,6 +61,8 @@ var Canvas = function (baseComponent, settings = {}) {
             this.on('touchend', this.handleMouseUp.bind(this));
             this.on('mousewheel', this.handleMouseWheel.bind(this));
             this.on('MozMousePixelScroll', this.handleMouseWheel.bind(this));
+            this.on('mouseenter', this.handleMouseEnter.bind(this));
+            this.on('mouseleave', this.handleMouseLease.bind(this));
         },
 
         handleMouseUp: function(){
@@ -103,6 +106,14 @@ var Canvas = function (baseComponent, settings = {}) {
             this.camera.updateProjectionMatrix();
         },
 
+        handleMouseEnter: function (event) {
+            this.isUserInteracting = true;
+        },
+
+        handleMouseLease: function (event) {
+            this.isUserInteracting = false;
+        },
+
         animate: function(){
             this.requestAnimationId = requestAnimationFrame( this.animate.bind(this) );
             if(!this.player.paused()){
@@ -118,6 +129,11 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         render: function(){
+            if(!this.isUserInteracting){
+                var absLat = Math.abs(this.lat);
+                var symbol = (this.lat > 0)?  1 : -1;
+                this.lat = (absLat < this.options_.returnStep)? 0 : (absLat - this.options_.returnStep) * symbol;
+            }
             this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
             this.phi = THREE.Math.degToRad( 90 - this.lat );
             this.theta = THREE.Math.degToRad( this.lon );
