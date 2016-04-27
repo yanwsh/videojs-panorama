@@ -1,0 +1,6 @@
+# Created by .ignore support plugin (hsz.mobi)
+_local
+bower_components
+node_modules
+.yo-rc.json
+.idea
