@@ -1,5 +1,5 @@
 {
-  "name": "@npm/videojs-panorama",
+  "name": "videojs-panorama",
   "version": "0.0.1",
   "description": "a plugin for videojs run a full 360 degree panorama video. ",
   "keywords": [

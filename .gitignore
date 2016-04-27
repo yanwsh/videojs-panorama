@@ -34,3 +34,6 @@ es5/
 test/dist/
 
 _local
+assets
+index_v4.html
+index.html
