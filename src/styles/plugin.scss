@@ -26,6 +26,15 @@
       -moz-border-radius: 0.5em;
       border-radius: 0.5em;
       opacity: 0.8;
+      -webkit-transition: opacity 0.3s linear;
+      -moz-transition: opacity 0.3s linear;
+      -ms-transition: opacity 0.3s linear;
+      -o-transition: opacity 0.3s linear;
+      transition: opacity 0.3s linear;
+
+      &.vjs-video-notice-fadeOut{
+        opacity: 0;
+      }
     }
   }
 }
