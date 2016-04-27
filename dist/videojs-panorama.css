@@ -1,0 +1,23 @@
+/**
+ * Created by yanwsh on 4/3/16.
+ */
+.video-js.vjs-panorama {
+  display: block; }
+  .video-js.vjs-panorama .vjs-video-canvas {
+    cursor: pointer; }
+  .video-js.vjs-panorama .vjs-video-notice-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 1.5em;
+    padding: 0.5em 1em;
+    background: #000;
+    -webkit-border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    border-radius: 0.5em;
+    opacity: 0.8; }
