@@ -10,7 +10,9 @@ var Canvas = function (baseComponent, settings = {}) {
             baseComponent.call(this, player, options);
 
             this.width = player.el().offsetWidth, this.height = player.el().offsetHeight;
-            this.lon = 0, this.lat = 0, this.phi = 0, this.theta = 0;
+            this.lon = options.initLon, this.lat = options.initLat, this.phi = 0, this.theta = 0;
+            this.maxFov = options.maxFov;
+            this.minFov = options.minFov;
             this.mouseDown = false;
             this.isUserInteracting = false;
             this.player = player;
@@ -93,6 +95,8 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         handleMouseWheel: function(event){
+            event.stopPropagation();
+            event.preventDefault();
             // WebKit
             if ( event.wheelDeltaY ) {
                 this.camera.fov -= event.wheelDeltaY * 0.05;
@@ -103,6 +107,8 @@ var Canvas = function (baseComponent, settings = {}) {
             } else if ( event.detail ) {
                 this.camera.fov += event.detail * 1.0;
             }
+            this.camera.fov = Math.min(this.maxFov, this.camera.fov);
+            this.camera.fov = Math.max(this.minFov, this.camera.fov);
             this.camera.updateProjectionMatrix();
         },
 
@@ -130,9 +136,16 @@ var Canvas = function (baseComponent, settings = {}) {
 
         render: function(){
             if(!this.isUserInteracting){
-                var absLat = Math.abs(this.lat);
-                var symbol = (this.lat > 0)?  1 : -1;
-                this.lat = (absLat < this.options_.returnStep)? 0 : (absLat - this.options_.returnStep) * symbol;
+                var symbolLat = (this.lat > this.options_.initLat)?  -1 : 1;
+                var symbolLon = (this.lon > this.options_.initLon)?  -1 : 1;
+                this.lat = (
+                    this.lat > (this.options_.initLat - Math.abs(this.options_.returnStepLat)) &&
+                    this.lat < (this.options_.initLat + Math.abs(this.options_.returnStepLat))
+                )? this.options_.initLat : this.lat + this.options_.returnStepLat * symbolLat;
+                this.lon = (
+                    this.lon > (this.options_.initLon - Math.abs(this.options_.returnStepLon)) &&
+                    this.lon < (this.options_.initLon + Math.abs(this.options_.returnStepLon))
+                )? this.options_.initLon : this.lon + this.options_.returnStepLon * symbolLon;
             }
             this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
             this.phi = THREE.Math.degToRad( 90 - this.lat );

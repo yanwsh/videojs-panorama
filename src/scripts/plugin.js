@@ -5,13 +5,20 @@
 
 import util from './lib/Util';
 
+const runOnMobile = (util.mobileAndTabletcheck());
+
 // Default options for the plugin.
 const defaults = {
-    clickAndDrag: false,
+    clickAndDrag: runOnMobile,
     showNotice: true,
     autoHideNotice: 3000,
     //A float value back to center when mouse out the canvas. The higher, the faster.
-    returnStep: 0.5
+    returnStepLat: 0.5,
+    returnStepLon: 2,
+    maxFov: 105,
+    minFov: 51,
+    initLat: 0,
+    initLon: -180
 };
 
 /**
@@ -28,6 +35,13 @@ const defaults = {
 const onPlayerReady = (player, options) => {
     player.addClass('vjs-panorama');
     player.addChild('Canvas', options);
+    if(runOnMobile){
+        var canvas = player.getChild('Canvas');
+        canvas.hide();
+        player.on("play", function(){
+            canvas.show();
+        });
+    }
     if(options.showNotice){
         player.addChild('Notice', options);
         player.on("play", function(){
