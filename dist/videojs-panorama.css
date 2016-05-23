@@ -1,9 +1,24 @@
 /**
  * Created by yanwsh on 4/3/16.
  */
+.video-js .vjs-control-bar {
+  z-index: 5; }
+
 .video-js.vjs-panorama {
   display: block; }
   .video-js.vjs-panorama .vjs-video-canvas {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateZ(0);
+    -moz-transform: translateX(-50%) translateZ(0);
+    -o-transform: translateX(-50%) translateZ(0);
+    transform: translateX(-50%) translateZ(0);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    background: #000;
     cursor: pointer; }
   .video-js.vjs-panorama .vjs-video-notice-label {
     position: absolute;
@@ -14,10 +29,19 @@
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    font-size: 1.5em;
+    font-size: 1.3em;
+    font-size: 1vw;
     padding: 0.5em 1em;
     background: #000;
+    color: #FFF;
     -webkit-border-radius: 0.5em;
     -moz-border-radius: 0.5em;
     border-radius: 0.5em;
-    opacity: 0.8; }
+    opacity: 0.8;
+    -webkit-transition: opacity 0.3s linear;
+    -moz-transition: opacity 0.3s linear;
+    -ms-transition: opacity 0.3s linear;
+    -o-transition: opacity 0.3s linear;
+    transition: opacity 0.3s linear; }
+    .video-js.vjs-panorama .vjs-video-notice-label.vjs-video-notice-fadeOut {
+      opacity: 0; }
