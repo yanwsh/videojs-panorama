@@ -1,38 +1,34 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>videojs-panorama Demo</title>
-  <link href="/bower_components/videojs_5/dist/video-js.css" rel="stylesheet">
-  <link href="/dist/videojs-panorama.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>videojs-panorama Demo</title>
+    <link href="/bower_components/videojs_5/dist/video-js.css" rel="stylesheet">
+    <link href="/dist/videojs-panorama.css" rel="stylesheet">
 </head>
 <body>
-  <video id="videojs-panorama-player" class="video-js vjs-default-skin" src=""  crossorigin="anonymous" controls>
+<video id="videojs-panorama-player" class="video-js vjs-default-skin" src=""  crossorigin="anonymous" controls>
     <source src="assets/shark.mp4" type='video/mp4'>
-  </video>
-  <ul>
+</video>
+<ul>
     <li><a href="/test/">Run unit tests in browser.</a></li>
     <li><a href="/docs/api/">Read generated docs.</a></li>
-  </ul>
-  <script src="/bower_components/videojs_5/dist/video.js"></script>
-  <script src="bower_components/three.js/three.js"></script>
-  <script src="/dist/videojs-panorama.v5.js"></script>
-  <script>
+</ul>
+<script src="/bower_components/videojs_5/dist/video.js"></script>
+<script src="bower_components/three.js/three.js"></script>
+<script src="/dist/videojs-panorama.v5.js"></script>
+<script>
     (function(window, videojs) {
-      var player = window.player = videojs('videojs-panorama-player', {}, function () {
-
-      });
-      player.width(960), player.height(400);
-
-      player.panorama({
-        clickAndDrag: false,
-        callback: function () {
-          player.play();
-        }
-      });
-
-
+        var player = window.player = videojs('videojs-panorama-player', {}, function () {
+        });
+        player.width(960), player.height(400);
+        player.panorama({
+            clickAndDrag: false,
+            callback: function () {
+                player.play();
+            }
+        });
     }(window, window.videojs));
-  </script>
+</script>
 </body>
 </html>
