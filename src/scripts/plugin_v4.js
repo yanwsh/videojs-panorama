@@ -2,6 +2,7 @@
 
 import Canvas  from './lib/Canvas';
 import Notice  from './lib/Notice';
+import HelperCanvas from './lib/HelperCanvas';
 import panorama from './plugin';
 
 var component = videojs.Component;
@@ -19,6 +20,10 @@ videojs.Canvas = component.extend(canvas);
 var notice = Notice(component);
 notice.init = compatiableInitialFunction;
 videojs.Notice = component.extend(notice);
+
+var helperCanvas = HelperCanvas(component);
+helperCanvas.init = compatiableInitialFunction;
+videojs.HelperCanvas = component.extend(helperCanvas);
 
 // Register the plugin with video.js.
 videojs.plugin('panorama', panorama({
