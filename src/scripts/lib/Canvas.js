@@ -11,8 +11,6 @@ var Canvas = function (baseComponent, settings = {}) {
 
             this.width = player.el().offsetWidth, this.height = player.el().offsetHeight;
             this.lon = options.initLon, this.lat = options.initLat, this.phi = 0, this.theta = 0;
-            this.maxFov = options.maxFov;
-            this.minFov = options.minFov;
             this.mouseDown = false;
             this.isUserInteracting = false;
             this.player = player;
@@ -30,7 +28,19 @@ var Canvas = function (baseComponent, settings = {}) {
 
             //define texture
             var video = settings.getTech(player);
-            this.texture = new THREE.Texture(video);
+            this.supportVideoTexture = Detector.supportVideoTexture();
+            if(!this.supportVideoTexture){
+                this.helperCanvas = player.addChild("HelperCanvas", {
+                    video: video,
+                    width: this.width,
+                    height: this.height
+                });
+                var context = this.helperCanvas.el();
+                this.texture = new THREE.Texture(context);
+            }else{
+                this.texture = new THREE.Texture(video);
+            }
+
             video.style.display = "none";
 
             this.texture.generateMipmaps = false;
@@ -61,8 +71,10 @@ var Canvas = function (baseComponent, settings = {}) {
             this.on('touchstart',this.handleMouseDown.bind(this));
             this.on('mouseup', this.handleMouseUp.bind(this));
             this.on('touchend', this.handleMouseUp.bind(this));
-            this.on('mousewheel', this.handleMouseWheel.bind(this));
-            this.on('MozMousePixelScroll', this.handleMouseWheel.bind(this));
+            if(this.options_.scrollable){
+                this.on('mousewheel', this.handleMouseWheel.bind(this));
+                this.on('MozMousePixelScroll', this.handleMouseWheel.bind(this));
+            }
             this.on('mouseenter', this.handleMouseEnter.bind(this));
             this.on('mouseleave', this.handleMouseLease.bind(this));
         },
@@ -107,8 +119,8 @@ var Canvas = function (baseComponent, settings = {}) {
             } else if ( event.detail ) {
                 this.camera.fov += event.detail * 1.0;
             }
-            this.camera.fov = Math.min(this.maxFov, this.camera.fov);
-            this.camera.fov = Math.max(this.minFov, this.camera.fov);
+            this.camera.fov = Math.min(this.options_.maxFov, this.camera.fov);
+            this.camera.fov = Math.max(this.options_.minFov, this.camera.fov);
             this.camera.updateProjectionMatrix();
         },
 
@@ -138,14 +150,18 @@ var Canvas = function (baseComponent, settings = {}) {
             if(!this.isUserInteracting){
                 var symbolLat = (this.lat > this.options_.initLat)?  -1 : 1;
                 var symbolLon = (this.lon > this.options_.initLon)?  -1 : 1;
-                this.lat = (
-                    this.lat > (this.options_.initLat - Math.abs(this.options_.returnStepLat)) &&
-                    this.lat < (this.options_.initLat + Math.abs(this.options_.returnStepLat))
-                )? this.options_.initLat : this.lat + this.options_.returnStepLat * symbolLat;
-                this.lon = (
-                    this.lon > (this.options_.initLon - Math.abs(this.options_.returnStepLon)) &&
-                    this.lon < (this.options_.initLon + Math.abs(this.options_.returnStepLon))
-                )? this.options_.initLon : this.lon + this.options_.returnStepLon * symbolLon;
+                if(this.options_.backToVerticalCenter){
+                    this.lat = (
+                        this.lat > (this.options_.initLat - Math.abs(this.options_.returnStepLat)) &&
+                        this.lat < (this.options_.initLat + Math.abs(this.options_.returnStepLat))
+                    )? this.options_.initLat : this.lat + this.options_.returnStepLat * symbolLat;
+                }
+                if(this.options_.backToHorizonCenter){
+                    this.lon = (
+                        this.lon > (this.options_.initLon - Math.abs(this.options_.returnStepLon)) &&
+                        this.lon < (this.options_.initLon + Math.abs(this.options_.returnStepLon))
+                    )? this.options_.initLon : this.lon + this.options_.returnStepLon * symbolLon;
+                }
             }
             this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
             this.phi = THREE.Math.degToRad( 90 - this.lat );
@@ -155,6 +171,9 @@ var Canvas = function (baseComponent, settings = {}) {
             this.camera.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
             this.camera.lookAt( this.camera.target );
 
+            if(!this.supportVideoTexture){
+                this.helperCanvas.update();
+            }
             this.renderer.clear();
             this.renderer.render( this.scene, this.camera );
         },

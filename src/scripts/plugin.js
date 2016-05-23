@@ -11,14 +11,18 @@ const runOnMobile = (util.mobileAndTabletcheck());
 const defaults = {
     clickAndDrag: runOnMobile,
     showNotice: true,
+    NoticeMessage: "Please use your mouse drag and drop the video.",
     autoHideNotice: 3000,
     //A float value back to center when mouse out the canvas. The higher, the faster.
     returnStepLat: 0.5,
     returnStepLon: 2,
+    scrollable: true,
     maxFov: 105,
     minFov: 51,
     initLat: 0,
-    initLon: -180
+    initLon: -180,
+    backToVerticalCenter: true,
+    backToHorizonCenter: true,
 };
 
 /**
