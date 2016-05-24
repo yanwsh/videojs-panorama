@@ -5,14 +5,16 @@ import Notice  from './lib/Notice';
 import HelperCanvas from './lib/HelperCanvas';
 import panorama from './plugin';
 
+function getTech(player) {
+    return player.tech.el();
+}
+
 var component = videojs.Component;
 var compatiableInitialFunction = function (player, options) {
     this.constructor(player, options);
 };
 var canvas = Canvas(component, {
-    getTech: function (player) {
-        return player.tech.el();
-    }
+    getTech: getTech
 });
 canvas.init = compatiableInitialFunction;
 videojs.Canvas = component.extend(canvas);
@@ -29,5 +31,6 @@ videojs.HelperCanvas = component.extend(helperCanvas);
 videojs.plugin('panorama', panorama({
     mergeOption: function (defaults, options) {
         return videojs.util.mergeOptions(defaults, options);
-    }
+    },
+    getTech: getTech
 }));
