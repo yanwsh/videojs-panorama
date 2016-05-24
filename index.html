@@ -3,13 +3,37 @@
 <head>
     <meta charset="utf-8">
     <title>videojs-panorama Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/bower_components/videojs_5/dist/video-js.css" rel="stylesheet">
     <link href="/dist/videojs-panorama.css" rel="stylesheet">
+    <style>
+        .player_wrapper{
+            position: relative;
+            max-width: 960px;
+            width: 100%;
+        }
+        .player_container{
+            padding-top: 56.25%;
+        }
+
+        #videojs-panorama-player{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+    </style>
 </head>
 <body>
-<video id="videojs-panorama-player" class="video-js vjs-default-skin" src=""  crossorigin="anonymous" controls>
-    <source src="assets/shark.mp4" type='video/mp4'>
-</video>
+<div class="player_wrapper">
+    <div class="player_container">
+        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster.jpg"  crossorigin="anonymous" controls>
+            <source src="assets/shark.mp4" type='video/mp4'>
+        </video>
+    </div>
+</div>
+
 <ul>
     <li><a href="/test/">Run unit tests in browser.</a></li>
     <li><a href="/docs/api/">Read generated docs.</a></li>
@@ -21,9 +45,11 @@
     (function(window, videojs) {
         var player = window.player = videojs('videojs-panorama-player', {}, function () {
         });
-        player.width(960), player.height(400);
+        var videoElement = document.getElementById("videojs-panorama-player");
+        var width = videoElement.offsetWidth;
+        var height = videoElement.offsetHeight;
+        player.width(width), player.height(height);
         player.panorama({
-            clickAndDrag: false,
             callback: function () {
                 player.play();
             }

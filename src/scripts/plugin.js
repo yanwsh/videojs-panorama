@@ -4,6 +4,7 @@
 'use strict';
 
 import util from './lib/Util';
+import makeVideoPlayableInline from 'iphone-inline-video';
 
 const runOnMobile = (util.mobileAndTabletcheck());
 
@@ -21,8 +22,8 @@ const defaults = {
     minFov: 51,
     initLat: 0,
     initLon: -180,
-    backToVerticalCenter: true,
-    backToHorizonCenter: true,
+    backToVerticalCenter: !runOnMobile,
+    backToHorizonCenter: !runOnMobile
 };
 
 /**
@@ -36,7 +37,7 @@ const defaults = {
  * @param    {Player} player
  * @param    {Object} [options={}]
  */
-const onPlayerReady = (player, options) => {
+const onPlayerReady = (player, options, settings) => {
     player.addClass('vjs-panorama');
     player.addChild('Canvas', options);
     if(runOnMobile){
@@ -45,11 +46,13 @@ const onPlayerReady = (player, options) => {
         player.on("play", function(){
             canvas.show();
         });
+        var videoElement = settings.getTech(player);
+        makeVideoPlayableInline(videoElement);
+        options.NoticeMessage = "Please drag and drop the video.";
     }
     if(options.showNotice){
-        player.addChild('Notice', options);
         player.on("play", function(){
-            var notice = player.getChild('Notice');
+            var notice = player.addChild('Notice', options);
             
             if(options.autoHideNotice > 0){
                 setTimeout(function () {
@@ -85,7 +88,7 @@ const plugin = function(settings = {}){
     const panorama = function(options) {
         if(settings.mergeOption) options = settings.mergeOption(defaults, options);
         this.ready(() => {
-            onPlayerReady(this, options);
+            onPlayerReady(this, options, settings);
         });
     };
 

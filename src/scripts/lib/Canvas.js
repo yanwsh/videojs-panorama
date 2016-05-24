@@ -85,18 +85,22 @@ var Canvas = function (baseComponent, settings = {}) {
 
         handleMouseDown: function(event){
             event.preventDefault();
+            var clientX = event.clientX || event.touches[0].clientX;
+            var clientY = event.clientY || event.touches[0].clientY;
             this.mouseDown = true;
-            this.onPointerDownPointerX = event.clientX;
-            this.onPointerDownPointerY = event.clientY;
+            this.onPointerDownPointerX = clientX;
+            this.onPointerDownPointerY = clientY;
             this.onPointerDownLon = this.lon;
             this.onPointerDownLat = this.lat;
         },
 
         handleMouseMove: function(event){
+            var clientX = event.clientX || event.touches[0].clientX;
+            var clientY = event.clientY || event.touches[0].clientY;
             if(this.options_.clickAndDrag){
                 if(this.mouseDown){
-                    this.lon = ( this.onPointerDownPointerX - event.clientX ) * 0.2 + this.onPointerDownLon;
-                    this.lat = ( event.clientY - this.onPointerDownPointerY ) * 0.2 + this.onPointerDownLat;
+                    this.lon = ( this.onPointerDownPointerX - clientX ) * 0.2 + this.onPointerDownLon;
+                    this.lat = ( clientY - this.onPointerDownPointerY ) * 0.2 + this.onPointerDownLat;
                 }
             }else{
                 var x = event.pageX - this.el_.offsetLeft;
