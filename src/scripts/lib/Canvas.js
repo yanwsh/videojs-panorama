@@ -79,8 +79,15 @@ var Canvas = function (baseComponent, settings = {}) {
             this.on('mouseleave', this.handleMouseLease.bind(this));
         },
 
-        handleMouseUp: function(){
+        handleMouseUp: function(event){
             this.mouseDown = false;
+            var clientX = event.clientX || event.touches[0].clientX;
+            var clientY = event.clientY || event.touches[0].clientY;
+            var diffX = Math.abs(clientX - this.onPointerDownPointerX);
+            var diffY = Math.abs(clientY - this.onPointerDownPointerY);
+            if(diffX < 0.1 && diffY < 0.1){
+                this.player.paused() ? player.play() : player.pause();
+            }
         },
 
         handleMouseDown: function(event){
