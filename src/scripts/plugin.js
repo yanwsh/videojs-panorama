@@ -57,7 +57,7 @@ const onPlayerReady = (player, options, settings) => {
         makeVideoPlayableInline(videoElement);
     }
     if(options.showNotice){
-        player.on("play", function(){
+        player.on("playing", function(){
             var notice = player.addChild('Notice', options);
             
             if(options.autoHideNotice > 0){
