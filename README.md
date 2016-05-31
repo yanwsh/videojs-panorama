@@ -16,7 +16,7 @@ npm install --save videojs-panorama
 
 or
 
-#### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases/download/0.0.3/videojs-panorama-0.0.3.zip)
+#### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases/download/0.0.5/videojs-panorama-0.0.5.zip)
 
 ## Integration with video.js 4 and 5
 
@@ -75,6 +75,43 @@ callback function fired when panorama video is ready.
 
 ### showNotice
 A notice label show on the beginning of the video to notice user to drag the player to see whole video. If showNotice set to false, notice label will not be shown. `Defaults to true`
+
+### NoticeMessage
+Customize your own notice message. 
+
+### autoHideNotice
+How long the notice message should be shown. `Defaults to 3000`, indicate it will hide after 3000ms.
+
+### initLat
+initial lat for camera angle, `Defaults value is 0`, range between -90 to 90.
+
+### initLon
+initial lot for camera angle, `Defaults value is -180`, don't have range. 
+
+### backToVerticalCenter
+automatically back to vertical center when user inactive the video frame. `Defaults value depends on running platform, true on desktop, false on mobile`.
+
+### returnStepLat
+If backToVerticalCenter is set to true, you can customize the return back speed. `Defaults value is 0.5`. The larger the faster.
+
+### backToHorizonCenter
+automatically back to horizontal center when user inactive the video frame. Default value the same as `backToVerticalCenter`.
+
+### returnStepLon
+If backToHorizonCenter is set to true, you can customize the return back speed. `Defaults value is 2`.
+
+### clickToToggle
+click to toggle the video. If video is playing, it will be paused. If video is paused, it will be played. `Defaults to true`.
+
+It's possible to customize the viewable zoom
+### minLat
+minimum Lat value for camera angle. `Defaults value is -90`.
+
+### maxLat
+max Lat value for camera angle. `Defaults value is 90`.
+
+## browser support
+IE 11, Edge 12, 13, chrome, firefox, safari, iphone ios 9, ipad ios 9, android 4.4 and above.
 
 ## License
 

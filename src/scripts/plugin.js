@@ -14,16 +14,23 @@ const defaults = {
     showNotice: true,
     NoticeMessage: "Please use your mouse drag and drop the video.",
     autoHideNotice: 3000,
-    //A float value back to center when mouse out the canvas. The higher, the faster.
-    returnStepLat: 0.5,
-    returnStepLon: 2,
+    //limit the video size when user scroll.
     scrollable: true,
     maxFov: 105,
     minFov: 51,
+    //initial position for the video
     initLat: 0,
     initLon: -180,
+    //A float value back to center when mouse out the canvas. The higher, the faster.
+    returnStepLat: 0.5,
+    returnStepLon: 2,
     backToVerticalCenter: !runOnMobile,
-    backToHorizonCenter: !runOnMobile
+    backToHorizonCenter: !runOnMobile,
+    clickToToggle: false,
+    
+    //limit viewable zoom
+    minLat: -90,
+    maxLat: 90
 };
 
 /**
@@ -48,7 +55,6 @@ const onPlayerReady = (player, options, settings) => {
         });
         var videoElement = settings.getTech(player);
         makeVideoPlayableInline(videoElement);
-        options.NoticeMessage = "Please drag and drop the video.";
     }
     if(options.showNotice){
         player.on("play", function(){

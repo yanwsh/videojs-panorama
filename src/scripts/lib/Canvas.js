@@ -11,6 +11,7 @@ var Canvas = function (baseComponent, settings = {}) {
 
             this.width = player.el().offsetWidth, this.height = player.el().offsetHeight;
             this.lon = options.initLon, this.lat = options.initLat, this.phi = 0, this.theta = 0;
+            this.clickToToggle = options.clickToToggle;
             this.mouseDown = false;
             this.isUserInteracting = false;
             this.player = player;
@@ -81,12 +82,13 @@ var Canvas = function (baseComponent, settings = {}) {
 
         handleMouseUp: function(event){
             this.mouseDown = false;
-            var clientX = event.clientX || event.changedTouches[0].clientX;
-            var clientY = event.clientY || event.changedTouches[0].clientY;
-            var diffX = Math.abs(clientX - this.onPointerDownPointerX);
-            var diffY = Math.abs(clientY - this.onPointerDownPointerY);
-            if(diffX < 0.1 && diffY < 0.1){
-                this.player.paused() ? this.player.play() : this.player.pause();
+            if(this.clickToToggle){
+                var clientX = event.clientX || event.changedTouches[0].clientX;
+                var clientY = event.clientY || event.changedTouches[0].clientY;
+                var diffX = Math.abs(clientX - this.onPointerDownPointerX);
+                var diffY = Math.abs(clientY - this.onPointerDownPointerY);
+                if(diffX < 0.1 && diffY < 0.1)
+                    this.player.paused() ? this.player.play() : this.player.pause();
             }
         },
 
@@ -115,6 +117,8 @@ var Canvas = function (baseComponent, settings = {}) {
                 this.lon = (x / this.width) * 430 - 225;
                 this.lat = (y / this.height) * -180 + 90;
             }
+            this.lat = Math.min(this.options_.maxLat, this.lat);
+            this.lat = Math.max(this.options_.minLat, this.lat);
         },
 
         handleMouseWheel: function(event){
