@@ -101,7 +101,7 @@ automatically back to horizontal center when user inactive the video frame. Defa
 If backToHorizonCenter is set to true, you can customize the return back speed. `Defaults value is 2`.
 
 ### clickToToggle
-click to toggle the video. If video is playing, it will be paused. If video is paused, it will be played. `Defaults to true`.
+click to toggle the video. If video is playing, it will be paused. If video is paused, it will be played. `Defaults to false`.
 
 It's possible to customize the viewable zoom
 ### minLat
