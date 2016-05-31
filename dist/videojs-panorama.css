@@ -1,8 +1,17 @@
 /**
  * Created by yanwsh on 4/3/16.
  */
+.IIV::-webkit-media-controls-play-button,
+.IIV::-webkit-media-controls-start-playback-button {
+  opacity: 0;
+  pointer-events: none;
+  width: 5px; }
+
 .video-js .vjs-control-bar {
   z-index: 5; }
+
+.video-js.vjs-using-native-controls .vjs-poster, .video-js.vjs-using-native-controls .vjs-big-play-button {
+  display: block; }
 
 .video-js.vjs-panorama {
   display: block; }

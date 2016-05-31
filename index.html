@@ -16,13 +16,30 @@
     <link href="dist/videojs-panorama.min.css" rel="stylesheet">
     <!-- Video.js 5 -->
     <script src="dist/videojs-panorama.v5.js"></script>
+    <style>
+      .player_wrapper{
+        position: relative;
+        max-width: 960px;
+        width: 100%;
+      }
+      .player_container{
+        padding-top: 56.25%;
+      }
+      #videojs-panorama-player{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+    </style>
   </head>
   <body>
     <section class="page-header">
       <h1 class="project-name">Videojs-panorama</h1>
       <h2 class="project-tagline">a plugin for videojs run a full 360 degree panorama video. </h2>
       <a href="https://github.com/yanwsh/videojs-panorama" class="btn">View on GitHub</a>
-      <a href="https://github.com/yanwsh/videojs-panorama/releases/download/0.0.3/videojs-panorama-0.0.3.zip" class="btn">Download</a>
+      <a href="https://github.com/yanwsh/videojs-panorama/releases/download/0.0.5/videojs-panorama-0.0.5.zip" class="btn">Download</a>
       <a href="https://github.com/yanwsh/videojs-panorama/tarball/master" class="btn">Download Source Code</a>
     </section>
 
@@ -30,11 +47,15 @@
       <h3>
 <a id="videojs-panorama" class="anchor" href="#videojs-panorama" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>videojs-panorama</h3>
 
-<p>You can download <a href="https://github.com/yanwsh/videojs-panorama/releases/download/0.0.3/videojs-panorama-0.0.3.zip">here</a>. </p>
+<p>You can download <a href="https://github.com/yanwsh/videojs-panorama/releases/download/0.0.5/videojs-panorama-0.0.5.zip">here</a>. </p>
 
-      <video id="videojs-panorama-player" class="video-js vjs-default-skin" src=""  crossorigin="anonymous" controls width="960" height="540">
-        <source src="assets/shark.mp4" type='video/mp4'>
-      </video>
+      <div class="player_wrapper">
+        <div class="player_container">
+          <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster.jpg" crossorigin="anonymous" controls >
+            <source src="assets/shark.mp4" type='video/mp4'>
+          </video>
+        </div>
+      </div>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/yanwsh/videojs-panorama">Videojs-panorama</a> is maintained by <a href="https://github.com/yanwsh">Wensheng Yan</a>.</span>
