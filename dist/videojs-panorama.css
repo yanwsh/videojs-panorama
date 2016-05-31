@@ -54,3 +54,5 @@
     transition: opacity 0.3s linear; }
     .video-js.vjs-panorama .vjs-video-notice-label.vjs-video-notice-fadeOut {
       opacity: 0; }
+  .video-js.vjs-panorama .vjs-loading-spinner {
+    z-index: 10; }
