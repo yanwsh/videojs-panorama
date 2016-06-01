@@ -30,7 +30,8 @@ const defaults = {
     
     //limit viewable zoom
     minLat: -90,
-    maxLat: 90
+    maxLat: 90,
+    videoType: "equirectangular"
 };
 
 /**
@@ -91,8 +92,10 @@ const plugin = function(settings = {}){
      * @param    {Object} [options={}]
      *           An object of options left to the plugin author to define.
      */
+    const videoTypes = ["equirectangular", "fisheye"];
     const panorama = function(options) {
         if(settings.mergeOption) options = settings.mergeOption(defaults, options);
+        if(videoTypes.indexOf(options.videoType) == -1) defaults.videoType;
         this.ready(() => {
             onPlayerReady(this, options, settings);
         });

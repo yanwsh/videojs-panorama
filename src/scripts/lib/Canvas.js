@@ -11,6 +11,7 @@ var Canvas = function (baseComponent, settings = {}) {
 
             this.width = player.el().offsetWidth, this.height = player.el().offsetHeight;
             this.lon = options.initLon, this.lat = options.initLat, this.phi = 0, this.theta = 0;
+            this.videoType = options.videoType;
             this.clickToToggle = options.clickToToggle;
             this.mouseDown = false;
             this.isUserInteracting = false;
@@ -48,11 +49,31 @@ var Canvas = function (baseComponent, settings = {}) {
             this.texture.minFilter = THREE.LinearFilter;
             this.texture.maxFilter = THREE.LinearFilter;
             this.texture.format = THREE.RGBFormat;
+            //define geometry
+            var geometry = (this.videoType === "equirectangular")? new THREE.SphereGeometry(500, 60, 40): new THREE.SphereBufferGeometry( 500, 60, 40 ).toNonIndexed();
+            if(this.videoType === "fisheye"){
+                var normals = geometry.attributes.normal.array;
+                var uvs = geometry.attributes.uv.array;
+                for ( var i = 0, l = normals.length / 3; i < l; i ++ ) {
+                    var x = normals[ i * 3 + 0 ];
+                    var y = normals[ i * 3 + 1 ];
+                    var z = normals[ i * 3 + 2 ];
+
+                    var r = Math.asin(Math.sqrt(x * x + z * z) / Math.sqrt(x * x  + y * y + z * z)) / Math.PI;
+                    if(y < 0) r = 1 - r;
+                    var theta = (x == 0 && z == 0)? 0 : Math.acos(x / Math.sqrt(x * x + z * z));
+                    if(z < 0) theta = theta * -1;
+                    uvs[ i * 2 + 0 ] = 0.5 * r * Math.cos(theta) + 0.5;
+                    uvs[ i * 2 + 1 ] = 0.5 * r * Math.sin(theta) + 0.5;
+                }
+                geometry.rotateX( - Math.PI);
+            }
+            geometry.scale( - 1, 1, 1 );
             //define mesh
-            this.mesh = new THREE.Mesh(new THREE.SphereGeometry(500, 60, 40),
+            this.mesh = new THREE.Mesh(geometry,
                 new THREE.MeshBasicMaterial({ map: this.texture})
             );
-            this.mesh.scale.x = -1;
+            //this.mesh.scale.x = -1;
             this.scene.add(this.mesh);
             this.el_ = this.renderer.domElement;
             this.el_.classList.add('vjs-video-canvas');
