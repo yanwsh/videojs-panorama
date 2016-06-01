@@ -63,10 +63,12 @@ var Canvas = function (baseComponent, settings = {}) {
                     if(y < 0) r = 1 - r;
                     var theta = (x == 0 && z == 0)? 0 : Math.acos(x / Math.sqrt(x * x + z * z));
                     if(z < 0) theta = theta * -1;
-                    uvs[ i * 2 + 0 ] = 0.5 * r * Math.cos(theta) + 0.5;
-                    uvs[ i * 2 + 1 ] = 0.5 * r * Math.sin(theta) + 0.5;
+                    uvs[ i * 2 + 0 ] = -0.8 * r * Math.cos(theta) + 0.5;
+                    uvs[ i * 2 + 1 ] = 0.8 * r * Math.sin(theta) + 0.5;
                 }
-                geometry.rotateX( - Math.PI);
+                geometry.rotateX( options.rotateX);
+                geometry.rotateY( options.rotateY);
+                geometry.rotateZ( options.rotateZ);
             }
             geometry.scale( - 1, 1, 1 );
             //define mesh
