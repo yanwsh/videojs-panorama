@@ -31,7 +31,11 @@ const defaults = {
     //limit viewable zoom
     minLat: -90,
     maxLat: 90,
-    videoType: "equirectangular"
+    videoType: "equirectangular",
+    
+    rotateX: 0,
+    rotateY: 0,
+    rotateZ: 0
 };
 
 /**
