@@ -103,6 +103,13 @@ var Canvas = function (baseComponent, settings = {}) {
             this.on('mouseleave', this.handleMouseLease.bind(this));
         },
 
+        handleResize: function () {
+            this.width = this.player.el().offsetWidth, this.height = this.player.el().offsetHeight;
+            this.camera.aspect = this.width / this.height;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize( this.width, this.height );
+        },
+
         handleMouseUp: function(event){
             this.mouseDown = false;
             if(this.clickToToggle){
