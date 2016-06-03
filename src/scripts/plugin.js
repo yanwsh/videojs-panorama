@@ -54,7 +54,9 @@ const onPlayerReady = (player, options, settings) => {
             canvas.show();
         });
         var videoElement = settings.getTech(player);
-        makeVideoPlayableInline(videoElement);
+        makeVideoPlayableInline(videoElement, true);
+        player.addClass("vjs-panorama-moible-inline-video");
+        canvas.playOnMobile();
     }
     if(options.showNotice){
         player.on("playing", function(){

@@ -150,7 +150,7 @@ var Canvas = function (baseComponent, settings = {}) {
         animate: function(){
             this.requestAnimationId = requestAnimationFrame( this.animate.bind(this) );
             if(!this.player.paused()){
-                if(typeof(this.texture) !== "undefined" && this.player.readyState() === HAVE_ENOUGH_DATA) {
+                if(typeof(this.texture) !== "undefined" && (!this.isPlayOnMobile && this.player.readyState() === HAVE_ENOUGH_DATA || this.isPlayOnMobile && this.player.hasClass("vjs-playing"))) {
                     var ct = new Date().getTime();
                     if (ct - this.time >= 30) {
                         this.texture.needsUpdate = true;
@@ -191,6 +191,10 @@ var Canvas = function (baseComponent, settings = {}) {
             }
             this.renderer.clear();
             this.renderer.render( this.scene, this.camera );
+        },
+        
+        playOnMobile: function () {
+          this.isPlayOnMobile = true;
         },
 
         el: function(){

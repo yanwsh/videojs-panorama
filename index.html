@@ -34,10 +34,6 @@
     </div>
 </div>
 
-<ul>
-    <li><a href="/test/">Run unit tests in browser.</a></li>
-    <li><a href="/docs/api/">Read generated docs.</a></li>
-</ul>
 <script src="/bower_components/videojs_5/dist/video.js"></script>
 <script src="bower_components/three.js/three.js"></script>
 <script src="/dist/videojs-panorama.v5.js"></script>
@@ -58,7 +54,7 @@
             clickToToggle: true,
             NoticeMessage: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video",
             callback: function () {
-                player.play();
+                if(!isMobile()) player.play();
             }
         });
     }(window, window.videojs));
