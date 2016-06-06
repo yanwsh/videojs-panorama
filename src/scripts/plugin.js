@@ -52,12 +52,8 @@ const defaults = {
 const onPlayerReady = (player, options, settings) => {
     player.addClass('vjs-panorama');
     player.addChild('Canvas', options);
+    var canvas = player.getChild('Canvas');
     if(runOnMobile){
-        var canvas = player.getChild('Canvas');
-        canvas.hide();
-        player.on("play", function(){
-            canvas.show();
-        });
         var videoElement = settings.getTech(player);
         makeVideoPlayableInline(videoElement, true);
         player.addClass("vjs-panorama-moible-inline-video");
@@ -81,8 +77,10 @@ const onPlayerReady = (player, options, settings) => {
             }
         });
     }
-    
-    
+    canvas.hide();
+    player.on("play", function () {
+        canvas.show();
+    });
 };
 
 const plugin = function(settings = {}){
