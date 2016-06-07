@@ -29,8 +29,8 @@ const defaults = {
     clickToToggle: false,
     
     //limit viewable zoom
-    minLat: -90,
-    maxLat: 90,
+    minLat: -85,
+    maxLat: 85,
     videoType: "equirectangular",
     
     rotateX: 0,

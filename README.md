@@ -146,10 +146,10 @@ click to toggle the video. If video is playing, it will be paused. If video is p
 
 It's possible to customize the viewable zoom
 ### minLat
-minimum Lat value for camera angle. `Defaults value is -90`.
+minimum Lat value for camera angle. `Defaults value is -85`.
 
 ### maxLat
-max Lat value for camera angle. `Defaults value is 90`.
+max Lat value for camera angle. `Defaults value is 85`.
 
 ### videoType
 This plugin can play two types of video, equirectangular and fisheye. `Defaults value is equirectangular`. 
