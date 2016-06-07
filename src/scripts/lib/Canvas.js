@@ -2,6 +2,8 @@
  * Created by yanwsh on 4/3/16.
  */
 import Detector from '../lib/Detector';
+import MobileBuffering from '../lib/MobileBuffering';
+
 const HAVE_ENOUGH_DATA = 4;
 
 var Canvas = function (baseComponent, settings = {}) {
@@ -151,6 +153,16 @@ var Canvas = function (baseComponent, settings = {}) {
             this.lat = Math.max(this.options_.minLat, this.lat);
         },
 
+        handleMobileOrientation: function (event) {
+            var x = event.beta;
+            var y = event.gamma;
+
+            this.lon = y * -1 - 180;
+            this.lat = (x > 0)? x - 90 : 90 + x;
+            this.lat = Math.min(this.options_.maxLat, this.lat);
+            this.lat = Math.max(this.options_.minLat, this.lat);
+        },
+
         handleMouseWheel: function(event){
             event.stopPropagation();
             event.preventDefault();
@@ -185,6 +197,18 @@ var Canvas = function (baseComponent, settings = {}) {
                     if (ct - this.time >= 30) {
                         this.texture.needsUpdate = true;
                         this.time = ct;
+                    }
+                    if(this.isPlayOnMobile){
+                        var currentTime = this.player.currentTime();
+                        if(MobileBuffering.isBuffering(currentTime)){
+                            if(!this.player.hasClass("vjs-panorama-moible-inline-video-buffering")){
+                                this.player.addClass("vjs-panorama-moible-inline-video-buffering");
+                            }
+                        }else{
+                            if(this.player.hasClass("vjs-panorama-moible-inline-video-buffering")){
+                                this.player.removeClass("vjs-panorama-moible-inline-video-buffering");
+                            }
+                        }
                     }
                 }
             }
@@ -224,7 +248,9 @@ var Canvas = function (baseComponent, settings = {}) {
         },
         
         playOnMobile: function () {
-          this.isPlayOnMobile = true;
+            this.isPlayOnMobile = true;
+            if(this.options_.autoMobileOrientation)
+                window.addEventListener('deviceorientation', this.handleMobileOrientation.bind(this));
         },
 
         el: function(){

@@ -35,7 +35,9 @@ const defaults = {
     
     rotateX: 0,
     rotateY: 0,
-    rotateZ: 0
+    rotateZ: 0,
+    
+    autoMobileOrientation: false
 };
 
 /**
