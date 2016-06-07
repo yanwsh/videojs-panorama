@@ -149,16 +149,14 @@ var Canvas = function (baseComponent, settings = {}) {
                 this.lon = (x / this.width) * 430 - 225;
                 this.lat = (y / this.height) * -180 + 90;
             }
-            this.lat = Math.min(this.options_.maxLat, this.lat);
-            this.lat = Math.max(this.options_.minLat, this.lat);
         },
 
         handleMobileOrientation: function (event) {
-            var x = event.beta;
-            var y = event.gamma;
+            var x = event.alpha;
+            var y = event.beta;
 
-            this.lon = y * -1 - 180;
-            this.lat = (x > 0)? x - 90 : 90 + x;
+            this.lon = x;
+            this.lat = (y > 0)? y - 90 : 90 + y;
             this.lat = Math.min(this.options_.maxLat, this.lat);
             this.lat = Math.max(this.options_.minLat, this.lat);
         },
@@ -232,7 +230,7 @@ var Canvas = function (baseComponent, settings = {}) {
                     )? this.options_.initLon : this.lon + this.options_.returnStepLon * symbolLon;
                 }
             }
-            this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
+            this.lat = Math.max( this.options_.minLat, Math.min( this.options_.maxLat, this.lat ) );
             this.phi = THREE.Math.degToRad( 90 - this.lat );
             this.theta = THREE.Math.degToRad( this.lon );
             this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
