@@ -151,6 +151,9 @@ minimum Lat value for camera angle. `Defaults value is -85`.
 ### maxLat
 max Lat value for camera angle. `Defaults value is 85`.
 
+### autoMobileOrientation
+This feature only works on mobile device. Auto moving 360 video when user move their phone. `Defaults value is false`.
+
 ### videoType
 This plugin can play two types of video, equirectangular and fisheye. `Defaults value is equirectangular`. 
 
