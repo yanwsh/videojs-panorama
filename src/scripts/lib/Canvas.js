@@ -152,13 +152,16 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         handleMobileOrientation: function (event) {
-            var x = event.alpha;
-            var y = event.beta;
+            var x = event.rotationRate.alpha;
+            var y = event.rotationRate.beta;
 
-            this.lon = x;
-            this.lat = (y > 0)? y - 90 : 90 + y;
-            this.lat = Math.min(this.options_.maxLat, this.lat);
-            this.lat = Math.max(this.options_.minLat, this.lat);
+            if (window.matchMedia("(orientation: portrait)").matches) {
+                this.lon = this.lon - y * 0.03;
+                this.lat = this.lat + x * 0.03;
+            }else if(window.matchMedia("(orientation: landscape)").matches){
+                this.lon = this.lon + x * 0.03;
+                this.lat = this.lat + y * 0.03;
+            }
         },
 
         handleMouseWheel: function(event){
@@ -248,7 +251,7 @@ var Canvas = function (baseComponent, settings = {}) {
         playOnMobile: function () {
             this.isPlayOnMobile = true;
             if(this.options_.autoMobileOrientation)
-                window.addEventListener('deviceorientation', this.handleMobileOrientation.bind(this));
+                window.addEventListener('devicemotion', this.handleMobileOrientation.bind(this));
         },
 
         el: function(){
