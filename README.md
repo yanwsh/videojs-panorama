@@ -65,6 +65,19 @@ player.panorama({
 });
 ```
 
+## Resize problem
+
+Sometimes, video need to be resized, like fullscreen the video. For performance, this plugin doesn't handle resize automatically. But it's easy to handle on your side. Here's the example.
+```js
+var player = window.player = videojs('videojs-panorama-player', {}, function () {
+    window.addEventListener("resize", function () {
+        var canvas = player.getChild('Canvas');
+        canvas.handleResize();
+    });
+});
+```
+
+
 ## Fisheye video support
 
 In some cases, you get the video like below. 
@@ -141,7 +154,7 @@ max Lat value for camera angle. `Defaults value is 90`.
 ### videoType
 This plugin can play two types of video, equirectangular and fisheye. `Defaults value is equirectangular`. 
 
-## The property below only support fisheye video.
+## The properties below only support fisheye video.
 
 ### rotateX
 rotate video view by x axis. `Defaults value is 0`. Value should be radian.
