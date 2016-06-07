@@ -65,6 +65,34 @@ player.panorama({
 });
 ```
 
+## Fisheye video support
+
+In some cases, you get the video like below. 
+
+![Image of fisheye poster](assets/poster-2.jpg)
+
+You don't have to use tools to convert video to equirectangular video, you can use this plugin to play directly.
+
+There are two cases for fisheye video.
+One case is the camera took from top to bottom. You may need to restrict user only view the bottom half of the sphere
+```js
+player.panorama({
+    maxLat: -10,
+    initLat: -10,
+    rotateX: -Math.PI,
+});
+```
+
+Another case is the camera took from bottom to top.
+```js
+player.panorama({
+    minLat: 10,
+    initLat: 10,
+    rotateX: 0,
+});
+    
+```
+
 ## Options
 
 ### clickAndDrag
@@ -109,6 +137,21 @@ minimum Lat value for camera angle. `Defaults value is -90`.
 
 ### maxLat
 max Lat value for camera angle. `Defaults value is 90`.
+
+### videoType
+This plugin can play two types of video, equirectangular and fisheye. `Defaults value is equirectangular`. 
+
+## The property below only support fisheye video.
+
+### rotateX
+rotate video view by x axis. `Defaults value is 0`. Value should be radian.
+
+### rotateY
+rotate video view by y axis. `Defaults value is 0`. Value should be radian.
+
+### rotateZ
+rotate video view by z axis. `Defaults value is 0`. Value should be radian.
+
 
 ## browser support
 IE 11, Edge 12, 13, chrome, firefox, safari, iphone ios 9, ipad ios 9, android 4.4 and above.
