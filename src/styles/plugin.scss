@@ -65,6 +65,29 @@
       }
     }
 
+    #webgl-error-message{
+      position: relative;
+      font-family: monospace;
+      font-size: 13px;
+      font-weight: normal;
+      text-align: center;
+      color: rgb(0, 0, 0);
+      padding: 1.5em;
+      width: 400px;
+      margin: 5em auto 0px;
+      background: rgb(255, 255, 255);
+
+      -webkit-transition: opacity 0.3s linear;
+      -moz-transition: opacity 0.3s linear;
+      -ms-transition: opacity 0.3s linear;
+      -o-transition: opacity 0.3s linear;
+      transition: opacity 0.3s linear;
+
+      &.vjs-video-notice-fadeOut{
+        opacity: 0;
+      }
+    }
+
     .vjs-loading-spinner{
       z-index: 10;
     }

@@ -4,6 +4,7 @@
 'use strict';
 
 import util from './lib/Util';
+import Detector from './lib/Detector';
 import makeVideoPlayableInline from 'iphone-inline-video';
 
 const runOnMobile = (util.mobileAndTabletcheck());
@@ -53,36 +54,56 @@ const defaults = {
  */
 const onPlayerReady = (player, options, settings) => {
     player.addClass('vjs-panorama');
+    if(!Detector.webgl){
+        PopupNotification(player, {
+            NoticeMessage: Detector.getWebGLErrorMessage(),
+            autoHideNotice: options.autoHideNotice
+        });
+        if(options.callback){
+            options.callback();
+        }
+        return;
+    }
     player.addChild('Canvas', options);
     var canvas = player.getChild('Canvas');
     if(runOnMobile){
         var videoElement = settings.getTech(player);
-        makeVideoPlayableInline(videoElement, true);
+        util.autoPlayCheck(function (result) {
+            if(!result){
+                makeVideoPlayableInline(videoElement, true);
+            }
+        });
         player.addClass("vjs-panorama-moible-inline-video");
         canvas.playOnMobile();
     }
     if(options.showNotice){
         player.on("playing", function(){
-            var notice = player.addChild('Notice', options);
-            
-            if(options.autoHideNotice > 0){
-                setTimeout(function () {
-                    notice.addClass("vjs-video-notice-fadeOut");
-                    var transitionEvent = util.whichTransitionEvent();
-                    var hide = function () {
-                        notice.hide();
-                        notice.removeClass("vjs-video-notice-fadeOut");
-                        notice.off(transitionEvent, hide);
-                    };
-                    notice.on(transitionEvent, hide);
-                }, options.autoHideNotice);
-            }
+            PopupNotification(player, options);
         });
     }
     canvas.hide();
     player.on("play", function () {
         canvas.show();
     });
+};
+
+const PopupNotification = (player, options = {
+    NoticeMessage: ""
+}) => {
+    var notice = player.addChild('Notice', options);
+
+    if(options.autoHideNotice > 0){
+        setTimeout(function () {
+            notice.addClass("vjs-video-notice-fadeOut");
+            var transitionEvent = util.whichTransitionEvent();
+            var hide = function () {
+                notice.hide();
+                notice.removeClass("vjs-video-notice-fadeOut");
+                notice.off(transitionEvent, hide);
+            };
+            notice.on(transitionEvent, hide);
+        }, options.autoHideNotice);
+    }
 };
 
 const plugin = function(settings = {}){
