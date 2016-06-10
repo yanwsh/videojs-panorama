@@ -157,21 +157,16 @@ var Canvas = function (baseComponent, settings = {}) {
             var y = event.rotationRate.beta;
 
             if (window.matchMedia("(orientation: portrait)").matches) {
-                this.lon = this.lon - y * 0.03;
-                this.lat = this.lat + x * 0.03;
+                this.lon = this.lon - y * this.options_.mobileVibrationValue;
+                this.lat = this.lat + x * this.options_.mobileVibrationValue;
             }else if(window.matchMedia("(orientation: landscape)").matches){
                 var orientationDegree = -90;
                 if(typeof window.orientation != "undefined"){
                     orientationDegree = window.orientation;
                 }
 
-                if(orientationDegree == -90){
-                    this.lon = this.lon + x * 0.03;
-                    this.lat = this.lat + y * 0.03;
-                }else{
-                    this.lon = this.lon - x * 0.03;
-                    this.lat = this.lat - y * 0.03;
-                }
+                this.lon = (orientationDegree == -90)? this.lon + x * this.options_.mobileVibrationValue : this.lon - x * this.options_.mobileVibrationValue;
+                this.lat = (orientationDegree == -90)? this.lat + y * this.options_.mobileVibrationValue : this.lat - y * this.options_.mobileVibrationValue;
             }
         },
 

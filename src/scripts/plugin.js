@@ -38,7 +38,8 @@ const defaults = {
     rotateY: 0,
     rotateZ: 0,
     
-    autoMobileOrientation: false
+    autoMobileOrientation: false,
+    mobileVibrationValue: util.isIos()? 0.022 : 1
 };
 
 /**
@@ -68,11 +69,9 @@ const onPlayerReady = (player, options, settings) => {
     var canvas = player.getChild('Canvas');
     if(runOnMobile){
         var videoElement = settings.getTech(player);
-        util.autoPlayCheck(function (result) {
-            if(!result){
-                makeVideoPlayableInline(videoElement, true);
-            }
-        });
+        if(util.isRealIphone()){
+            makeVideoPlayableInline(videoElement, true);
+        }
         player.addClass("vjs-panorama-moible-inline-video");
         canvas.playOnMobile();
     }
