@@ -41,12 +41,11 @@
     font-size: 1.3em;
     font-size: 1vw;
     padding: 0.5em 1em;
-    background: #000;
+    background: rgba(0, 0, 0, 0.8);
     color: #FFF;
     -webkit-border-radius: 0.5em;
     -moz-border-radius: 0.5em;
     border-radius: 0.5em;
-    opacity: 0.8;
     -webkit-transition: opacity 0.3s linear;
     -moz-transition: opacity 0.3s linear;
     -ms-transition: opacity 0.3s linear;
@@ -54,3 +53,23 @@
     transition: opacity 0.3s linear; }
     .video-js.vjs-panorama .vjs-video-notice-label.vjs-video-notice-fadeOut {
       opacity: 0; }
+  .video-js.vjs-panorama .vjs-loading-spinner {
+    z-index: 10; }
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video.vjs-seeking .vjs-loading-spinner {
+    display: none; }
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video.vjs-waiting .vjs-loading-spinner {
+    display: block !important; }
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video-buffering .vjs-loading-spinner {
+    display: block !important; }
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video-buffering .vjs-loading-spinner:before,
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video-buffering .vjs-loading-spinner:after {
+    -webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
+    animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite; }
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video-buffering .vjs-loading-spinner:before,
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video-buffering .vjs-loading-spinner:before {
+    border-top-color: white; }
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video-buffering .vjs-loading-spinner:after,
+  .video-js.vjs-panorama.vjs-panorama-moible-inline-video-buffering .vjs-loading-spinner:after {
+    border-top-color: white;
+    -webkit-animation-delay: 0.44s;
+    animation-delay: 0.44s; }

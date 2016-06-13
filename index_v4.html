@@ -9,13 +9,13 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <!-- Video.js 5 -->
-    <link href="http://vjs.zencdn.net/5.8/video-js.css" rel="stylesheet">
-    <script src="http://vjs.zencdn.net/5.8/video.js"></script>
+    <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+    <script src="videojs4/videojs.v4.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r76/three.js"></script>
     <!-- Common -->
     <link href="dist/videojs-panorama.min.css" rel="stylesheet">
     <!-- Video.js 5 -->
-    <script src="dist/videojs-panorama.v5.js"></script>
+    <script src="dist/videojs-panorama.v4.js"></script>
     <style>
       .player_wrapper{
         position: relative;
@@ -48,7 +48,7 @@
 <a id="videojs-panorama" class="anchor" href="#videojs-panorama" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>videojs-panorama</h3>
 
 <p>You can download <a href="https://github.com/yanwsh/videojs-panorama/releases/download/0.0.5/videojs-panorama-0.0.5.zip">here</a>. </p>
-<p>Click to view <a href="index_v4.html">videojs 4 demo</a></p>
+      <p>Click to view <a href="index.html">videojs 5 demo</a></p>
 
       <div class="player_wrapper">
         <div class="player_container">
@@ -66,7 +66,13 @@
 
     <script>
       (function(window, videojs) {
-        var player = videojs('videojs-panorama-player');
+        var player = videojs('videojs-panorama-player', {}, function(){
+            var player = this;
+            var videoElement = document.querySelector(".player_wrapper");
+            var width = videoElement.offsetWidth;
+            var height = videoElement.offsetHeight;
+            player.width(width), player.height(height);
+        });
 
         player.panorama({
           autoMobileOrientation: true,
