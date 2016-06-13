@@ -22,10 +22,12 @@ or
 
 ###1. If you don't have videoJs, add it's scripts and stylesheet to your page
 
+Videojs 4 need to download unminifed version, you can minifed this file later. The latest version you can find [here](https://github.com/videojs/video.js/releases/download/v4.12.15/video-js-4.12.15.zip)
+
 ```html
 <!-- Video.js 4 -->
 <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
-<script src="http://vjs.zencdn.net/4.12/video.js"></script>
+<script src="/path/to/video.dev.js"></script>
 ```
 or
 
