@@ -24,7 +24,7 @@ var Canvas = function (baseComponent, settings = {}) {
             this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 2000);
             this.camera.target = new THREE.Vector3( 0, 0, 0 );
             //define render
-            this.renderer = Detector.webgl? new THREE.WebGLRenderer() : new THREE.CanvasRenderer();
+            this.renderer = new THREE.WebGLRenderer();
             this.renderer.setPixelRatio(window.devicePixelRatio);
             this.renderer.setSize(this.width, this.height);
             this.renderer.autoClear = false;
@@ -152,15 +152,21 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         handleMobileOrientation: function (event) {
+            if(typeof event.rotationRate === "undefined") return;
             var x = event.rotationRate.alpha;
             var y = event.rotationRate.beta;
 
             if (window.matchMedia("(orientation: portrait)").matches) {
-                this.lon = this.lon - y * 0.03;
-                this.lat = this.lat + x * 0.03;
+                this.lon = this.lon - y * this.options_.mobileVibrationValue;
+                this.lat = this.lat + x * this.options_.mobileVibrationValue;
             }else if(window.matchMedia("(orientation: landscape)").matches){
-                this.lon = this.lon + x * 0.03;
-                this.lat = this.lat + y * 0.03;
+                var orientationDegree = -90;
+                if(typeof window.orientation != "undefined"){
+                    orientationDegree = window.orientation;
+                }
+
+                this.lon = (orientationDegree == -90)? this.lon + x * this.options_.mobileVibrationValue : this.lon - x * this.options_.mobileVibrationValue;
+                this.lat = (orientationDegree == -90)? this.lat + y * this.options_.mobileVibrationValue : this.lat - y * this.options_.mobileVibrationValue;
             }
         },
 
