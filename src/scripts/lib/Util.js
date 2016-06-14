@@ -24,7 +24,17 @@ function mobileAndTabletcheck() {
     return check;
 }
 
+function isIos() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function isRealIphone() {
+    return /iPhone|iPod/i.test(navigator.platform);
+}
+
 module.exports = {
     whichTransitionEvent: whichTransitionEvent,
-    mobileAndTabletcheck: mobileAndTabletcheck
+    mobileAndTabletcheck: mobileAndTabletcheck,
+    isIos: isIos,
+    isRealIphone: isRealIphone
 };

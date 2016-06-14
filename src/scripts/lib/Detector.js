@@ -60,15 +60,6 @@ var Detector = {
 
         var element = document.createElement( 'div' );
         element.id = 'webgl-error-message';
-        element.style.fontFamily = 'monospace';
-        element.style.fontSize = '13px';
-        element.style.fontWeight = 'normal';
-        element.style.textAlign = 'center';
-        element.style.background = '#fff';
-        element.style.color = '#000';
-        element.style.padding = '1.5em';
-        element.style.width = '400px';
-        element.style.margin = '5em auto 0';
 
         if ( ! this.webgl ) {
 
