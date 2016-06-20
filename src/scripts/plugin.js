@@ -39,7 +39,9 @@ const defaults = {
     rotateZ: 0,
     
     autoMobileOrientation: false,
-    mobileVibrationValue: util.isIos()? 0.022 : 1
+    mobileVibrationValue: util.isIos()? 0.022 : 1,
+
+    vrEnable: false
 };
 
 /**
@@ -122,6 +124,20 @@ const plugin = function(settings = {}){
     const panorama = function(options) {
         if(settings.mergeOption) options = settings.mergeOption(defaults, options);
         if(videoTypes.indexOf(options.videoType) == -1) defaults.videoType;
+        //check vr support
+        if(typeof vr !== "undefined"){
+            options.vrEnable = true;
+            if(!vr.isInstalled()){
+                options.vrEnable = false;
+                console.error('NPVR plugin not installed!');
+            }
+            vr.load(function(error){
+                if(error){
+                    options.vrEnable = false;
+                    console.error('Plugin load failed: ' + error.toString());
+                }
+            });
+        }
         this.ready(() => {
             onPlayerReady(this, options, settings);
         });

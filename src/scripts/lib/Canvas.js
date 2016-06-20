@@ -79,6 +79,13 @@ var Canvas = function (baseComponent, settings = {}) {
             );
             //this.mesh.scale.x = -1;
             this.scene.add(this.mesh);
+            if(options.vrEnable){
+                this.vrControls = new THREE.OculusRiftControls(this.camera);
+                this.scene.add(vrControls.getObject());
+                this.vrEffect = new THREE.OculusRiftEffect(this.renderer);
+                this.vrstate = new vr.State();
+                this.vrtime = new Date().getTime();
+            }
             this.el_ = this.renderer.domElement;
             this.el_.classList.add('vjs-video-canvas');
 
@@ -219,7 +226,16 @@ var Canvas = function (baseComponent, settings = {}) {
                     }
                 }
             }
-            this.render();
+
+            if(this.options_.vrEnable){
+                var polled = vr.pollState(this.vrstate);
+                var ct = new Date().getTime();
+                this.vrControls.update( ct - this.vrtime, polled ? this.vrstate : null );
+                this.vrtime = ct;
+                this.vrEffect.render( this.scene, this.camera, polled ? this.vrstate : null );
+            }else{
+                this.render();
+            }
         },
 
         render: function(){
