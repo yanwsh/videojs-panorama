@@ -67,6 +67,21 @@ player.panorama({
 });
 ```
 
+## Cross domian issue
+In order to avoid cross domain issue, please keep the code and video with in same domain. videojs-panorama use canvas and put video as resources, so it should be at same domain. Detail, please see: [https://forums.developer.apple.com/thread/36725](https://forums.developer.apple.com/thread/36725)
+
+If you really want to use with in different domain, here are two solutions. If you have more good solutions, please let me know.
+
+### Put it inside an iframe and use iframe in different domain. (best solution)
+### experimental, only work on chrome and firefox, it will be broken on safari
+please make sure to add `crossorigin="anonymous"` attribute in video tag. Like
+```js
+        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster.jpg"  crossorigin="anonymous" controls>
+            <source src="assets/shark.mp4" type='video/mp4'>
+        </video>
+```
+On server side, you have to set cross origin header, like `Access-Control-Allow-Origin: *`.
+
 ## Resize problem
 
 Sometimes, video need to be resized, like fullscreen the video. For performance, this plugin doesn't handle resize automatically. But it's easy to handle on your side. Here's the example.
