@@ -6,7 +6,8 @@ import HelperCanvas from './lib/HelperCanvas';
 import panorama from './plugin';
 
 function getTech(player) {
-    return player.tech.el();
+    return player.tech? player.tech.el():
+        player.L;
 }
 
 var component = videojs.Component;
