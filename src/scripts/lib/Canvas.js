@@ -9,15 +9,13 @@ const HAVE_ENOUGH_DATA = 4;
 var Canvas = function (baseComponent, settings = {}) {
     return {
         constructor: function init(player, options){
-            baseComponent.call(this, player, options);
-
+            this.settings = options;
             this.width = player.el().offsetWidth, this.height = player.el().offsetHeight;
             this.lon = options.initLon, this.lat = options.initLat, this.phi = 0, this.theta = 0;
             this.videoType = options.videoType;
             this.clickToToggle = options.clickToToggle;
             this.mouseDown = false;
             this.isUserInteracting = false;
-            this.player = player;
             //define scene
             this.scene = new THREE.Scene();
             //define camera
@@ -82,11 +80,15 @@ var Canvas = function (baseComponent, settings = {}) {
             this.el_ = this.renderer.domElement;
             this.el_.classList.add('vjs-video-canvas');
 
+            options.el = this.el_;
+            baseComponent.call(this, player, options);
+
             this.attachControlEvents();
-            this.player.on("play", function () {
+            this.player().on("play", function () {
                 this.time = new Date().getTime();
                 this.animate();
             }.bind(this));
+
             if(options.callback) options.callback();
         },
 
@@ -97,7 +99,7 @@ var Canvas = function (baseComponent, settings = {}) {
             this.on('touchstart',this.handleMouseDown.bind(this));
             this.on('mouseup', this.handleMouseUp.bind(this));
             this.on('touchend', this.handleMouseUp.bind(this));
-            if(this.options_.scrollable){
+            if(this.settings.scrollable){
                 this.on('mousewheel', this.handleMouseWheel.bind(this));
                 this.on('MozMousePixelScroll', this.handleMouseWheel.bind(this));
             }
@@ -106,7 +108,7 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         handleResize: function () {
-            this.width = this.player.el().offsetWidth, this.height = this.player.el().offsetHeight;
+            this.width = this.player().el().offsetWidth, this.height = this.player().el().offsetHeight;
             this.camera.aspect = this.width / this.height;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize( this.width, this.height );
@@ -120,7 +122,7 @@ var Canvas = function (baseComponent, settings = {}) {
                 var diffX = Math.abs(clientX - this.onPointerDownPointerX);
                 var diffY = Math.abs(clientY - this.onPointerDownPointerY);
                 if(diffX < 0.1 && diffY < 0.1)
-                    this.player.paused() ? this.player.play() : this.player.pause();
+                    this.player().paused() ? this.player().play() : this.player().pause();
             }
         },
 
@@ -138,7 +140,7 @@ var Canvas = function (baseComponent, settings = {}) {
         handleMouseMove: function(event){
             var clientX = event.clientX || event.touches[0].clientX;
             var clientY = event.clientY || event.touches[0].clientY;
-            if(this.options_.clickAndDrag){
+            if(this.settings.clickAndDrag){
                 if(this.mouseDown){
                     this.lon = ( this.onPointerDownPointerX - clientX ) * 0.2 + this.onPointerDownLon;
                     this.lat = ( clientY - this.onPointerDownPointerY ) * 0.2 + this.onPointerDownLat;
@@ -157,16 +159,16 @@ var Canvas = function (baseComponent, settings = {}) {
             var y = event.rotationRate.beta;
 
             if (window.matchMedia("(orientation: portrait)").matches) {
-                this.lon = this.lon - y * this.options_.mobileVibrationValue;
-                this.lat = this.lat + x * this.options_.mobileVibrationValue;
+                this.lon = this.lon - y * this.settings.mobileVibrationValue;
+                this.lat = this.lat + x * this.settings.mobileVibrationValue;
             }else if(window.matchMedia("(orientation: landscape)").matches){
                 var orientationDegree = -90;
                 if(typeof window.orientation != "undefined"){
                     orientationDegree = window.orientation;
                 }
 
-                this.lon = (orientationDegree == -90)? this.lon + x * this.options_.mobileVibrationValue : this.lon - x * this.options_.mobileVibrationValue;
-                this.lat = (orientationDegree == -90)? this.lat + y * this.options_.mobileVibrationValue : this.lat - y * this.options_.mobileVibrationValue;
+                this.lon = (orientationDegree == -90)? this.lon + x * this.settings.mobileVibrationValue : this.lon - x * this.settings.mobileVibrationValue;
+                this.lat = (orientationDegree == -90)? this.lat + y * this.settings.mobileVibrationValue : this.lat - y * this.settings.mobileVibrationValue;
             }
         },
 
@@ -183,8 +185,8 @@ var Canvas = function (baseComponent, settings = {}) {
             } else if ( event.detail ) {
                 this.camera.fov += event.detail * 1.0;
             }
-            this.camera.fov = Math.min(this.options_.maxFov, this.camera.fov);
-            this.camera.fov = Math.max(this.options_.minFov, this.camera.fov);
+            this.camera.fov = Math.min(this.settings.maxFov, this.camera.fov);
+            this.camera.fov = Math.max(this.settings.minFov, this.camera.fov);
             this.camera.updateProjectionMatrix();
         },
 
@@ -198,22 +200,22 @@ var Canvas = function (baseComponent, settings = {}) {
 
         animate: function(){
             this.requestAnimationId = requestAnimationFrame( this.animate.bind(this) );
-            if(!this.player.paused()){
-                if(typeof(this.texture) !== "undefined" && (!this.isPlayOnMobile && this.player.readyState() === HAVE_ENOUGH_DATA || this.isPlayOnMobile && this.player.hasClass("vjs-playing"))) {
+            if(!this.player().paused()){
+                if(typeof(this.texture) !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() === HAVE_ENOUGH_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
                     var ct = new Date().getTime();
                     if (ct - this.time >= 30) {
                         this.texture.needsUpdate = true;
                         this.time = ct;
                     }
                     if(this.isPlayOnMobile){
-                        var currentTime = this.player.currentTime();
+                        var currentTime = this.player().currentTime();
                         if(MobileBuffering.isBuffering(currentTime)){
-                            if(!this.player.hasClass("vjs-panorama-moible-inline-video-buffering")){
-                                this.player.addClass("vjs-panorama-moible-inline-video-buffering");
+                            if(!this.player().hasClass("vjs-panorama-moible-inline-video-buffering")){
+                                this.player().addClass("vjs-panorama-moible-inline-video-buffering");
                             }
                         }else{
-                            if(this.player.hasClass("vjs-panorama-moible-inline-video-buffering")){
-                                this.player.removeClass("vjs-panorama-moible-inline-video-buffering");
+                            if(this.player().hasClass("vjs-panorama-moible-inline-video-buffering")){
+                                this.player().removeClass("vjs-panorama-moible-inline-video-buffering");
                             }
                         }
                     }
@@ -224,22 +226,22 @@ var Canvas = function (baseComponent, settings = {}) {
 
         render: function(){
             if(!this.isUserInteracting){
-                var symbolLat = (this.lat > this.options_.initLat)?  -1 : 1;
-                var symbolLon = (this.lon > this.options_.initLon)?  -1 : 1;
-                if(this.options_.backToVerticalCenter){
+                var symbolLat = (this.lat > this.settings.initLat)?  -1 : 1;
+                var symbolLon = (this.lon > this.settings.initLon)?  -1 : 1;
+                if(this.settings.backToVerticalCenter){
                     this.lat = (
-                        this.lat > (this.options_.initLat - Math.abs(this.options_.returnStepLat)) &&
-                        this.lat < (this.options_.initLat + Math.abs(this.options_.returnStepLat))
-                    )? this.options_.initLat : this.lat + this.options_.returnStepLat * symbolLat;
+                        this.lat > (this.settings.initLat - Math.abs(this.settings.returnStepLat)) &&
+                        this.lat < (this.settings.initLat + Math.abs(this.settings.returnStepLat))
+                    )? this.settings.initLat : this.lat + this.settings.returnStepLat * symbolLat;
                 }
-                if(this.options_.backToHorizonCenter){
+                if(this.settings.backToHorizonCenter){
                     this.lon = (
-                        this.lon > (this.options_.initLon - Math.abs(this.options_.returnStepLon)) &&
-                        this.lon < (this.options_.initLon + Math.abs(this.options_.returnStepLon))
-                    )? this.options_.initLon : this.lon + this.options_.returnStepLon * symbolLon;
+                        this.lon > (this.settings.initLon - Math.abs(this.settings.returnStepLon)) &&
+                        this.lon < (this.settings.initLon + Math.abs(this.settings.returnStepLon))
+                    )? this.settings.initLon : this.lon + this.settings.returnStepLon * symbolLon;
                 }
             }
-            this.lat = Math.max( this.options_.minLat, Math.min( this.options_.maxLat, this.lat ) );
+            this.lat = Math.max( this.settings.minLat, Math.min( this.settings.maxLat, this.lat ) );
             this.phi = THREE.Math.degToRad( 90 - this.lat );
             this.theta = THREE.Math.degToRad( this.lon );
             this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
@@ -256,7 +258,7 @@ var Canvas = function (baseComponent, settings = {}) {
         
         playOnMobile: function () {
             this.isPlayOnMobile = true;
-            if(this.options_.autoMobileOrientation)
+            if(this.settings.autoMobileOrientation)
                 window.addEventListener('devicemotion', this.handleMobileOrientation.bind(this));
         },
 
