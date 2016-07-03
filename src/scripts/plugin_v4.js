@@ -7,7 +7,7 @@ import panorama from './plugin';
 
 function getTech(player) {
     return player.tech? player.tech.el():
-        player.L;
+        player.h.el();
 }
 
 var component = videojs.Component;
