@@ -210,12 +210,12 @@ var Canvas = function (baseComponent, settings = {}) {
                     if(this.isPlayOnMobile){
                         var currentTime = this.player().currentTime();
                         if(MobileBuffering.isBuffering(currentTime)){
-                            if(!this.player().hasClass("vjs-panorama-moible-inline-video-buffering")){
-                                this.player().addClass("vjs-panorama-moible-inline-video-buffering");
+                            if(!this.player().hasClass("vjs-panorama-mobile-inline-video-buffering")){
+                                this.player().addClass("vjs-panorama-mobile-inline-video-buffering");
                             }
                         }else{
-                            if(this.player().hasClass("vjs-panorama-moible-inline-video-buffering")){
-                                this.player().removeClass("vjs-panorama-moible-inline-video-buffering");
+                            if(this.player().hasClass("vjs-panorama-mobile-inline-video-buffering")){
+                                this.player().removeClass("vjs-panorama-mobile-inline-video-buffering");
                             }
                         }
                     }

@@ -72,7 +72,7 @@ const onPlayerReady = (player, options, settings) => {
         if(util.isRealIphone()){
             makeVideoPlayableInline(videoElement, true);
         }
-        player.addClass("vjs-panorama-moible-inline-video");
+        player.addClass("vjs-panorama-mobile-inline-video");
         canvas.playOnMobile();
     }
     if(options.showNotice){

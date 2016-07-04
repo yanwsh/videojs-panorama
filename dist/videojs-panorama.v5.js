@@ -510,12 +510,12 @@ var Canvas = function Canvas(baseComponent) {
                     if (this.isPlayOnMobile) {
                         var currentTime = this.player().currentTime();
                         if (_MobileBuffering2.default.isBuffering(currentTime)) {
-                            if (!this.player().hasClass("vjs-panorama-moible-inline-video-buffering")) {
-                                this.player().addClass("vjs-panorama-moible-inline-video-buffering");
+                            if (!this.player().hasClass("vjs-panorama-mobile-inline-video-buffering")) {
+                                this.player().addClass("vjs-panorama-mobile-inline-video-buffering");
                             }
                         } else {
-                            if (this.player().hasClass("vjs-panorama-moible-inline-video-buffering")) {
-                                this.player().removeClass("vjs-panorama-moible-inline-video-buffering");
+                            if (this.player().hasClass("vjs-panorama-mobile-inline-video-buffering")) {
+                                this.player().removeClass("vjs-panorama-mobile-inline-video-buffering");
                             }
                         }
                     }
@@ -894,7 +894,7 @@ var onPlayerReady = function onPlayerReady(player, options, settings) {
         if (_Util2.default.isRealIphone()) {
             (0, _iphoneInlineVideo2.default)(videoElement, true);
         }
-        player.addClass("vjs-panorama-moible-inline-video");
+        player.addClass("vjs-panorama-mobile-inline-video");
         canvas.playOnMobile();
     }
     if (options.showNotice) {
