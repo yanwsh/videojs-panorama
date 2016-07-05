@@ -57,6 +57,7 @@
         player.panorama({
             clickToToggle: true,
             autoMobileOrientation: true,
+            initFov: 100,
             NoticeMessage: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video",
             callback: function () {
                 if(!isMobile()) player.play();

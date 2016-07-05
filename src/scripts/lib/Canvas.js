@@ -19,7 +19,7 @@ var Canvas = function (baseComponent, settings = {}) {
             //define scene
             this.scene = new THREE.Scene();
             //define camera
-            this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 2000);
+            this.camera = new THREE.PerspectiveCamera(options.initFov, this.width / this.height, 1, 2000);
             this.camera.target = new THREE.Vector3( 0, 0, 0 );
             //define render
             this.renderer = new THREE.WebGLRenderer();
