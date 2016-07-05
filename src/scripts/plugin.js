@@ -17,6 +17,7 @@ const defaults = {
     autoHideNotice: 3000,
     //limit the video size when user scroll.
     scrollable: true,
+    initFov: 75,
     maxFov: 105,
     minFov: 51,
     //initial position for the video
