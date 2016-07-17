@@ -16,6 +16,7 @@
     <link href="dist/videojs-panorama.min.css" rel="stylesheet">
     <!-- Video.js 5 -->
     <script src="dist/videojs-panorama.v4.js"></script>
+    <script src="http://jsconsole.com/js/remote.js?9ea5e472-2216-47e4-8d95-bf85caf3a317"></script>
     <style>
       .player_wrapper{
         position: relative;
@@ -34,6 +35,9 @@
         height: 100%;
         top: 0;
         left: 0;
+      }
+      .vjs-full-window #videojs-panorama-player{
+        position: fixed;
       }
     </style>
   </head>
@@ -80,12 +84,18 @@
             var width = videoElement.offsetWidth;
             var height = videoElement.offsetHeight;
             player.width(width), player.height(height);
+            window.addEventListener("resize", function () {
+              var canvas = player.getChild('Canvas');
+              if(canvas) canvas.handleResize();
+            });
         });
 
         player.panorama({
           autoMobileOrientation: true,
           clickAndDrag: true,
           clickToToggle: (!isMobile()),
+          initFov: 100,
+          NoticeMessage: (isMobile())? "please move your phone" : "please use your mouse drag and drop the video",
           callback: function () {
             if(!isMobile()) player.play();
           }
