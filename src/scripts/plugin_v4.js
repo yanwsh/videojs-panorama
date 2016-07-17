@@ -10,7 +10,7 @@ function getTech(player) {
         player.h.el();
 }
 
-function getFullscreenToggleClickFn() {
+function getFullscreenToggleClickFn(player) {
     return player.controlBar.fullscreenToggle.onClick || player.controlBar.fullscreenToggle.u;
 }
 

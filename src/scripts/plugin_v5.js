@@ -9,7 +9,7 @@ function getTech(player) {
     return player.tech({ IWillNotUseThisInPlugins: true }).el();
 }
 
-function getFullscreenToggleClickFn() {
+function getFullscreenToggleClickFn(player) {
     return player.controlBar.fullscreenToggle.handleClick
 }
 
