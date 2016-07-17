@@ -8,9 +8,9 @@
   width: 5px; }
 
 .vjs-full-window .video-js {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
   z-index: 1000000; }
 
 .video-js .vjs-control-bar {

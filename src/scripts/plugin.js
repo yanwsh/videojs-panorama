@@ -103,7 +103,7 @@ const onPlayerReady = (player, options, settings) => {
         var videoElement = settings.getTech(player);
         if(util.isRealIphone()){
             makeVideoPlayableInline(videoElement, true);
-            fullscreenOnIOS(player, settings.getFullscreenToggleClickFn());
+            fullscreenOnIOS(player, settings.getFullscreenToggleClickFn(player));
         }
         player.addClass("vjs-panorama-mobile-inline-video");
         player.removeClass("vjs-using-native-controls");
