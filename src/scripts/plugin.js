@@ -43,6 +43,37 @@ const defaults = {
     mobileVibrationValue: util.isIos()? 0.022 : 1
 };
 
+function playerResize(player){
+    var canvas = player.getChild('Canvas');
+    return function () {
+        player.el().style.width = window.innerWidth + "px";
+        player.el().style.height = window.innerHeight + "px";
+        canvas.handleResize();
+    };
+}
+
+function fullscreenOnIOS(player, clickFn) {
+    var resizeFn = playerResize(player);
+    player.controlBar.fullscreenToggle.off("tap", clickFn);
+    player.controlBar.fullscreenToggle.on("tap", function fullscreen() {
+        var canvas = player.getChild('Canvas');
+        if(!player.isFullscreen()){
+            //set to fullscreen
+            player.isFullscreen(true);
+            player.enterFullWindow();
+            resizeFn();
+            window.addEventListener("devicemotion", resizeFn);
+        }else{
+            player.isFullscreen(false);
+            player.exitFullWindow();
+            player.el().style.width = "";
+            player.el().style.height = "";
+            canvas.handleResize();
+            window.removeEventListener("devicemotion", resizeFn);
+        }
+    });
+}
+
 /**
  * Function to invoke when the player is ready.
  *
@@ -72,8 +103,10 @@ const onPlayerReady = (player, options, settings) => {
         var videoElement = settings.getTech(player);
         if(util.isRealIphone()){
             makeVideoPlayableInline(videoElement, true);
+            fullscreenOnIOS(player, settings.getFullscreenToggleClickFn());
         }
         player.addClass("vjs-panorama-mobile-inline-video");
+        player.removeClass("vjs-using-native-controls");
         canvas.playOnMobile();
     }
     if(options.showNotice){
@@ -84,6 +117,9 @@ const onPlayerReady = (player, options, settings) => {
     canvas.hide();
     player.on("play", function () {
         canvas.show();
+    });
+    player.on("fullscreenchange", function () {
+        canvas.handleResize();
     });
 };
 

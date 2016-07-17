@@ -7,6 +7,12 @@
   pointer-events: none;
   width: 5px; }
 
+.vjs-full-window .video-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000000; }
+
 .video-js .vjs-control-bar {
   z-index: 5; }
 

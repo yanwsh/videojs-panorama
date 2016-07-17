@@ -10,6 +10,10 @@ function getTech(player) {
         player.h.el();
 }
 
+function getFullscreenToggleClickFn() {
+    return player.controlBar.fullscreenToggle.onClick || player.controlBar.fullscreenToggle.u;
+}
+
 var component = videojs.Component;
 var compatiableInitialFunction = function (player, options) {
     this.constructor(player, options);
@@ -33,5 +37,6 @@ videojs.plugin('panorama', panorama({
     mergeOption: function (defaults, options) {
         return videojs.util.mergeOptions(defaults, options);
     },
-    getTech: getTech
+    getTech: getTech,
+    getFullscreenToggleClickFn: getFullscreenToggleClickFn
 }));
