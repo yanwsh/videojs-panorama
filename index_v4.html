@@ -7,15 +7,20 @@
     <link href="/bower_components/videojs_4/dist/video-js/video-js.css" rel="stylesheet">
     <link href="/dist/videojs-panorama.css" rel="stylesheet">
     <style>
+        body{
+            margin: 0;
+        }
         .player_wrapper{
             position: relative;
             max-width: 960px;
             width: 100%;
         }
+        body.vjs-full-window .player_wrapper{
+            position: static;
+        }
         .player_container{
             padding-top: 56.25%;
         }
-
         #videojs-panorama-player{
             position: absolute;
             width: 100%;
@@ -56,6 +61,7 @@
         });
 
         player.panorama({
+            clickToToggle: (!isMobile()),
             autoMobileOrientation: true,
             callback: function () {
                 if(!isMobile()) player.play();
