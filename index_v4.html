@@ -82,6 +82,9 @@
             player.width(width), player.height(height);
             window.addEventListener("resize", function () {
               var canvas = player.getChild('Canvas');
+              var width = videoElement.offsetWidth;
+              var height = videoElement.offsetHeight;
+              player.width(width), player.height(height);
               if(canvas) canvas.handleResize();
             });
         });
