@@ -242,6 +242,7 @@ var Canvas = function (baseComponent, settings = {}) {
                 }
             }
             this.lat = Math.max( this.settings.minLat, Math.min( this.settings.maxLat, this.lat ) );
+            this.lon = Math.max( this.settings.minLon, Math.min( this.settings.maxLon, this.lon ) );
             this.phi = THREE.Math.degToRad( 90 - this.lat );
             this.theta = THREE.Math.degToRad( this.lon );
             this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
