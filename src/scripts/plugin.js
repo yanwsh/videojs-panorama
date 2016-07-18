@@ -33,6 +33,10 @@ const defaults = {
     //limit viewable zoom
     minLat: -85,
     maxLat: 85,
+
+    minLon: -Infinity,
+    maxLon: Infinity,
+
     videoType: "equirectangular",
     
     rotateX: 0,
