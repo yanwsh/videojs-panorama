@@ -84,8 +84,10 @@ var Canvas = function (baseComponent, settings = {}) {
             baseComponent.call(this, player, options);
 
             this.attachControlEvents();
+
             this.player().on("play", function () {
                 this.time = new Date().getTime();
+                this.settingTimeline();
                 this.animate();
             }.bind(this));
 
@@ -105,6 +107,51 @@ var Canvas = function (baseComponent, settings = {}) {
             }
             this.on('mouseenter', this.handleMouseEnter.bind(this));
             this.on('mouseleave', this.handleMouseLease.bind(this));
+        },
+
+        disableControlEvents: function () {
+            this.off('mousemove');
+            this.off('touchmove');
+            this.off('mousedown');
+            this.off('touchstart');
+            this.off('mouseup');
+            this.off('touchend');
+            if(this.settings.scrollable){
+                this.off('mousewheel');
+                this.off('MozMousePixelScroll');
+            }
+            this.off('mouseenter');
+            this.off('mouseleave');
+        },
+
+        settingTimeline: function () {
+            if(this.settings.autoMoving && this.settings.autoMovingTimeline.length > 0){
+                //deep copy all key & value
+                this.animation_timeline = this.settings.autoMovingTimeline.slice(0);
+                this.current_animation = this.next_timeline();
+            }
+        },
+
+        next_timeline: function () {
+            var animation = this.animation_timeline.shift();
+            if(animation) animation = this.initialTimeline(animation);
+            return animation;
+        },
+
+        initialTimeline: function (animation) {
+            animation.finish = animation.start + animation.duration;
+            animation.startValue = {};
+            animation.byValue = {};
+            animation.endValue = {};
+
+            for (var key in animation.changeValue){
+                if (animation.changeValue.hasOwnProperty(key)) {
+                    animation.startValue[key] = this[key];
+                    animation.endValue[key] = animation.changeValue[key];
+                    animation.byValue[key] = animation.changeValue[key] - this[key];
+                }
+            }
+            return animation;
         },
 
         handleResize: function () {
@@ -225,20 +272,50 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         render: function(){
-            if(!this.isUserInteracting){
-                var symbolLat = (this.lat > this.settings.initLat)?  -1 : 1;
-                var symbolLon = (this.lon > this.settings.initLon)?  -1 : 1;
-                if(this.settings.backToVerticalCenter){
-                    this.lat = (
-                        this.lat > (this.settings.initLat - Math.abs(this.settings.returnStepLat)) &&
-                        this.lat < (this.settings.initLat + Math.abs(this.settings.returnStepLat))
-                    )? this.settings.initLat : this.lat + this.settings.returnStepLat * symbolLat;
+            if(this.settings.autoMoving){
+                if(this.current_animation){
+                    var currentTime = this.player().currentTime() * 1000;
+                    //animation not begin, but it already finished. In case user seek the video.
+                    while(this.current_animation && !this.current_animation.begin && this.current_animation.finish < currentTime){
+                        this.current_animation = this.next_timeline();
+                    }
+                    //animation start
+                    if(this.current_animation.start <= currentTime){
+                        if(!this.current_animation.begin) this.disableControlEvents();
+                        this.current_animation.begin = true;
+                        var animationTime = (currentTime > this.current_animation.finish)? this.current_animation.duration: currentTime - this.current_animation.start;
+                        var animation = this.current_animation;
+                        for (var key in animation.changeValue){
+                            if (animation.changeValue.hasOwnProperty(key)) {
+                                this[key] = animation.ease(animationTime, animation.startValue[key], animation.byValue[key], animation.duration);
+                            }
+                        }
+                        //animation was done.
+                        if(this.current_animation.finish < currentTime){
+                            if(this.current_animation.complete){
+                                this.attachControlEvents();
+                                this.current_animation.complete();
+                            }
+                            this.current_animation = this.next_timeline();
+                        }
+                    }
                 }
-                if(this.settings.backToHorizonCenter){
-                    this.lon = (
-                        this.lon > (this.settings.initLon - Math.abs(this.settings.returnStepLon)) &&
-                        this.lon < (this.settings.initLon + Math.abs(this.settings.returnStepLon))
-                    )? this.settings.initLon : this.lon + this.settings.returnStepLon * symbolLon;
+            }else{
+                if(!this.isUserInteracting){
+                    var symbolLat = (this.lat > this.settings.initLat)?  -1 : 1;
+                    var symbolLon = (this.lon > this.settings.initLon)?  -1 : 1;
+                    if(this.settings.backToVerticalCenter){
+                        this.lat = (
+                            this.lat > (this.settings.initLat - Math.abs(this.settings.returnStepLat)) &&
+                            this.lat < (this.settings.initLat + Math.abs(this.settings.returnStepLat))
+                        )? this.settings.initLat : this.lat + this.settings.returnStepLat * symbolLat;
+                    }
+                    if(this.settings.backToHorizonCenter){
+                        this.lon = (
+                            this.lon > (this.settings.initLon - Math.abs(this.settings.returnStepLon)) &&
+                            this.lon < (this.settings.initLon + Math.abs(this.settings.returnStepLon))
+                        )? this.settings.initLon : this.lon + this.settings.returnStepLon * symbolLon;
+                    }
                 }
             }
             this.lat = Math.max( this.settings.minLat, Math.min( this.settings.maxLat, this.lat ) );

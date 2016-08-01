@@ -44,7 +44,10 @@ const defaults = {
     rotateZ: 0,
     
     autoMobileOrientation: false,
-    mobileVibrationValue: util.isIos()? 0.022 : 1
+    mobileVibrationValue: util.isIos()? 0.022 : 1,
+
+    autoMoving: false,
+    autoMovingTimeline: []
 };
 
 function playerResize(player){
