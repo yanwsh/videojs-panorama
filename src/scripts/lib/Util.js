@@ -32,9 +32,51 @@ function isRealIphone() {
     return /iPhone|iPod/i.test(navigator.platform);
 }
 
+function cloneObject(obj) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    var temp = obj.constructor(); // give temp the original obj's constructor
+    for (var key in obj) {
+        temp[key] = cloneObject(obj[key]);
+    }
+
+    return temp;
+}
+
+//adopt from http://gizma.com/easing/
+function linear(t, b, c, d) {
+    return c*t/d + b;
+}
+
+function easeInQuad(t, b, c, d) {
+    t /= d;
+    return c*t*t + b;
+}
+
+function easeOutQuad(t, b, c, d) {
+    t /= d;
+    return -c * t*(t-2) + b;
+}
+
+function easeInOutQuad(t, b, c, d) {
+    t /= d/2;
+    if (t < 1) return c/2*t*t + b;
+    t--;
+    return -c/2 * (t*(t-2) - 1) + b;
+}
+
 module.exports = {
     whichTransitionEvent: whichTransitionEvent,
     mobileAndTabletcheck: mobileAndTabletcheck,
     isIos: isIos,
-    isRealIphone: isRealIphone
+    isRealIphone: isRealIphone,
+    easeFunction: {
+        linear: linear,
+        easeInQuad: easeInQuad,
+        easeOutQuad: easeOutQuad,
+        easeInOutQuad: easeInOutQuad
+    },
+    cloneObject: cloneObject
 };

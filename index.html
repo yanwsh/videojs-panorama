@@ -79,39 +79,39 @@
             autoMoving: true,
             autoMovingTimeline: [
                 {
-                    start: 1000,
+                    keypoint: 1000,
                     changeValue:{
                         lon: -180 + -360,
                         lat: 0
                     },
                     duration: 5000,
-                    ease: EasingFunctions.linear,
+                    ease: "linear",
                     complete: function () {
 
                     }
                 },
-                {
-                    start: 11000,
-                    changeValue:{
-                        lat: 20
-                    },
-                    duration: 1000,
-                    ease: EasingFunctions.linear,
-                    complete: function () {
-
-                    }
-                },
-                {
-                    start: 13000,
-                    changeValue:{
-                        lat: -20
-                    },
-                    duration: 2000,
-                    ease: EasingFunctions.linear,
-                    complete: function () {
-
-                    }
-                }
+//                {
+//                    keypoint: 11000,
+//                    changeValue:{
+//                        lat: 20
+//                    },
+//                    duration: 1000,
+//                    ease: EasingFunctions.linear,
+//                    complete: function () {
+//
+//                    }
+//                },
+//                {
+//                    keypoint: 13000,
+//                    changeValue:{
+//                        lat: -20
+//                    },
+//                    duration: 2000,
+//                    ease: EasingFunctions.linear,
+//                    complete: function () {
+//
+//                    }
+//                }
             ]
         });
     }(window, window.videojs));

@@ -3,6 +3,7 @@
  */
 import Detector from '../lib/Detector';
 import MobileBuffering from '../lib/MobileBuffering';
+import Util from '../lib/Util';
 
 const HAVE_ENOUGH_DATA = 4;
 
@@ -134,15 +135,20 @@ var Canvas = function (baseComponent, settings = {}) {
 
         next_timeline: function () {
             var animation = this.animation_timeline.shift();
-            if(animation) animation = this.initialTimeline(animation);
+            if(animation) animation = this.initialTimeline(Util.cloneObject(animation));
             return animation;
         },
 
         initialTimeline: function (animation) {
-            animation.finish = animation.start + animation.duration;
             animation.startValue = {};
             animation.byValue = {};
             animation.endValue = {};
+            if(typeof animation.ease === "string"){
+                animation.ease = Util.easeFunction[animation.ease];
+            }
+            if(typeof animation.ease === "undefined"){
+                animation.ease = Util.easeFunction.linear;
+            }
 
             for (var key in animation.changeValue){
                 if (animation.changeValue.hasOwnProperty(key)) {
@@ -276,14 +282,20 @@ var Canvas = function (baseComponent, settings = {}) {
                 if(this.current_animation){
                     var currentTime = this.player().currentTime() * 1000;
                     //animation not begin, but it already finished. In case user seek the video.
-                    while(this.current_animation && !this.current_animation.begin && this.current_animation.finish < currentTime){
+                    var endTime = this.current_animation.keypoint + this.current_animation.duration;
+                    while(this.current_animation && !this.current_animation.begin && endTime < currentTime){
                         this.current_animation = this.next_timeline();
                     }
                     //animation start
-                    if(this.current_animation.start <= currentTime){
+                    if(this.current_animation && this.current_animation.keypoint <= currentTime){
                         if(!this.current_animation.begin) this.disableControlEvents();
+                        if(!this.current_animation.start) {
+                            this.current_animation.start = +new Date();
+                            this.current_animation.finish = this.current_animation.start + this.current_animation.duration;
+                        }
                         this.current_animation.begin = true;
-                        var animationTime = (currentTime > this.current_animation.finish)? this.current_animation.duration: currentTime - this.current_animation.start;
+                        var time = +new Date();
+                        var animationTime = (time > this.current_animation.finish)? this.current_animation.duration: time - this.current_animation.start;
                         var animation = this.current_animation;
                         for (var key in animation.changeValue){
                             if (animation.changeValue.hasOwnProperty(key)) {
@@ -291,9 +303,9 @@ var Canvas = function (baseComponent, settings = {}) {
                             }
                         }
                         //animation was done.
-                        if(this.current_animation.finish < currentTime){
+                        if(this.current_animation.finish < time){
+                            this.attachControlEvents();
                             if(this.current_animation.complete){
-                                this.attachControlEvents();
                                 this.current_animation.complete();
                             }
                             this.current_animation = this.next_timeline();
