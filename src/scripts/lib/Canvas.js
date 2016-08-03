@@ -84,18 +84,32 @@ var Canvas = function (baseComponent, settings = {}) {
             options.el = this.el_;
             baseComponent.call(this, player, options);
 
-            this.attachControlEvents();
-
+            var videoPlaying = false;
+            this.controlable = false;
             this.player().on("play", function () {
                 this.time = new Date().getTime();
                 this.settingTimeline();
                 this.animate();
+                if(!this.controlable){
+                    this.attachControlEvents();
+                }
+                if(!videoPlaying){
+                    //play at the beginning...
+                    videoPlaying = true;
+                    this.initLon = options.initLon;
+                    this.initLat = options.initLat;
+                }
+            }.bind(this));
+
+            this.player().on("ended", function () {
+                videoPlaying = false;
             }.bind(this));
 
             if(options.callback) options.callback();
         },
 
         attachControlEvents: function(){
+            this.controlable = true;
             this.on('mousemove', this.handleMouseMove.bind(this));
             this.on('touchmove', this.handleMouseMove.bind(this));
             this.on('mousedown', this.handleMouseDown.bind(this));
@@ -111,6 +125,7 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         disableControlEvents: function () {
+            this.controlable = false;
             this.off('mousemove');
             this.off('touchmove');
             this.off('mousedown');
@@ -133,6 +148,11 @@ var Canvas = function (baseComponent, settings = {}) {
             }
         },
 
+        add_timeline: function (animation) {
+            this.animation_timeline.unshift(animation);
+            this.current_animation = this.next_timeline();
+        },
+
         next_timeline: function () {
             var animation = this.animation_timeline.shift();
             if(animation) animation = this.initialTimeline(Util.cloneObject(animation));
@@ -150,11 +170,12 @@ var Canvas = function (baseComponent, settings = {}) {
                 animation.ease = Util.easeFunction.linear;
             }
 
-            for (var key in animation.changeValue){
-                if (animation.changeValue.hasOwnProperty(key)) {
-                    animation.startValue[key] = this[key];
-                    animation.endValue[key] = animation.changeValue[key];
-                    animation.byValue[key] = animation.changeValue[key] - this[key];
+            for (var key in animation.to){
+                if (animation.to.hasOwnProperty(key)) {
+                    var from = animation.from? animation.from[key] || this[key]: this[key];
+                    animation.startValue[key] = from;
+                    animation.endValue[key] = animation.to[key];
+                    animation.byValue[key] = animation.to[key] - from;
                 }
             }
             return animation;
@@ -191,8 +212,8 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         handleMouseMove: function(event){
-            var clientX = event.clientX || event.touches[0].clientX;
-            var clientY = event.clientY || event.touches[0].clientY;
+            var clientX = event.clientX || event.touches && event.touches[0].clientX;
+            var clientY = event.clientY || event.touches && event.touches[0].clientY;
             if(this.settings.clickAndDrag){
                 if(this.mouseDown){
                     this.lon = ( this.onPointerDownPointerX - clientX ) * 0.2 + this.onPointerDownLon;
@@ -278,6 +299,11 @@ var Canvas = function (baseComponent, settings = {}) {
         },
 
         render: function(){
+            //todo:
+            // 1. add from ... to ....
+            // 2. change initLat and initLon
+            // 3. keypoint is -1 means run immediately.
+
             if(this.settings.autoMoving){
                 if(this.current_animation){
                     var currentTime = this.player().currentTime() * 1000;
@@ -290,15 +316,15 @@ var Canvas = function (baseComponent, settings = {}) {
                     if(this.current_animation && this.current_animation.keypoint <= currentTime){
                         if(!this.current_animation.begin) this.disableControlEvents();
                         if(!this.current_animation.start) {
-                            this.current_animation.start = +new Date();
+                            this.current_animation.start = +new Date() - (currentTime - this.current_animation.keypoint);
                             this.current_animation.finish = this.current_animation.start + this.current_animation.duration;
                         }
                         this.current_animation.begin = true;
                         var time = +new Date();
                         var animationTime = (time > this.current_animation.finish)? this.current_animation.duration: time - this.current_animation.start;
                         var animation = this.current_animation;
-                        for (var key in animation.changeValue){
-                            if (animation.changeValue.hasOwnProperty(key)) {
+                        for (var key in animation.to){
+                            if (animation.to.hasOwnProperty(key)) {
                                 this[key] = animation.ease(animationTime, animation.startValue[key], animation.byValue[key], animation.duration);
                             }
                         }
