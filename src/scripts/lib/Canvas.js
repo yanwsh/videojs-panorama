@@ -157,14 +157,17 @@ var Canvas = function (baseComponent, settings = {}) {
             if(typeof event.rotationRate === "undefined") return;
             var x = event.rotationRate.alpha;
             var y = event.rotationRate.beta;
+            var portrait = (typeof event.portrait !== "undefined")? event.portrait : window.matchMedia("(orientation: portrait)").matches;
+            var landscape = (typeof event.landscape !== "undefined")? event.landscape : window.matchMedia("(orientation: landscape)").matches;
+            var orientation = event.orientation || window.orientation;
 
-            if (window.matchMedia("(orientation: portrait)").matches) {
+            if (portrait) {
                 this.lon = this.lon - y * this.settings.mobileVibrationValue;
                 this.lat = this.lat + x * this.settings.mobileVibrationValue;
-            }else if(window.matchMedia("(orientation: landscape)").matches){
+            }else if(landscape){
                 var orientationDegree = -90;
-                if(typeof window.orientation != "undefined"){
-                    orientationDegree = window.orientation;
+                if(typeof orientation != "undefined"){
+                    orientationDegree = orientation;
                 }
 
                 this.lon = (orientationDegree == -90)? this.lon + x * this.settings.mobileVibrationValue : this.lon - x * this.settings.mobileVibrationValue;
