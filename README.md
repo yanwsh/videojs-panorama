@@ -70,6 +70,9 @@ In order to avoid cross domain issue, please keep the code and video with in sam
 
 If you really want to use with in different domain, here are two solutions. If you have more good solutions, please let me know.
 
+## video player in iframe
+In order to avoid cross domain issue, we need to put video player inside iframe. However, mobile acceleration and fullscreen will not working on iframe. You need to set it up manually. Please check `iframe.html` and `iframe-video.html` for detail, it's a example let mobile acceleration and fullscreen functionality work on iframe. 
+
 ### Put it inside an iframe and use iframe in different domain. (best solution)
 ### experimental, only work on chrome and firefox, it will be broken on safari
 please make sure to add `crossorigin="anonymous"` attribute in video tag. Like
