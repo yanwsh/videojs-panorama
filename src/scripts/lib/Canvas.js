@@ -3,6 +3,7 @@
  */
 import Detector from '../lib/Detector';
 import MobileBuffering from '../lib/MobileBuffering';
+import Util from './Util';
 
 const HAVE_ENOUGH_DATA = 4;
 
@@ -16,6 +17,7 @@ var Canvas = function (baseComponent, settings = {}) {
             this.clickToToggle = options.clickToToggle;
             this.mouseDown = false;
             this.isUserInteracting = false;
+            this.VRMode = false;
             //define scene
             this.scene = new THREE.Scene();
             //define camera
@@ -92,6 +94,26 @@ var Canvas = function (baseComponent, settings = {}) {
             if(options.callback) options.callback();
         },
 
+        enableVR: function () {
+            this.VRMode = true;
+            if(typeof vrHMD !== 'undefined'){
+                var eyeParamsL = vrHMD.getEyeParameters( 'left' );
+                var eyeParamsR = vrHMD.getEyeParameters( 'right' );
+
+                this.eyeFOVL = eyeParamsL.recommendedFieldOfView;
+                this.eyeFOVR = eyeParamsR.recommendedFieldOfView;
+            }
+
+            this.cameraL = new THREE.PerspectiveCamera(this.camera.fov, this.width /2 / this.height, 1, 2000);
+            this.cameraR = new THREE.PerspectiveCamera(this.camera.fov, this.width /2 / this.height, 1, 2000);
+        },
+
+        disableVR: function () {
+            this.VRMode = false;
+            this.renderer.setViewport( 0, 0, this.width, this.height );
+            this.renderer.setScissor( 0, 0, this.width, this.height );
+        },
+
         attachControlEvents: function(){
             this.on('mousemove', this.handleMouseMove.bind(this));
             this.on('touchmove', this.handleMouseMove.bind(this));
@@ -111,6 +133,12 @@ var Canvas = function (baseComponent, settings = {}) {
             this.width = this.player().el().offsetWidth, this.height = this.player().el().offsetHeight;
             this.camera.aspect = this.width / this.height;
             this.camera.updateProjectionMatrix();
+            if(this.VRMode){
+                this.cameraL.aspect = this.camera.aspect / 2;
+                this.cameraR.aspect = this.camera.aspect / 2;
+                this.cameraL.updateProjectionMatrix();
+                this.cameraR.updateProjectionMatrix();
+            }
             this.renderer.setSize( this.width, this.height );
         },
 
@@ -191,6 +219,12 @@ var Canvas = function (baseComponent, settings = {}) {
             this.camera.fov = Math.min(this.settings.maxFov, this.camera.fov);
             this.camera.fov = Math.max(this.settings.minFov, this.camera.fov);
             this.camera.updateProjectionMatrix();
+            if(this.VRMode){
+                this.cameraL.fov = this.camera.fov;
+                this.cameraR.fov = this.camera.fov;
+                this.cameraL.updateProjectionMatrix();
+                this.cameraR.updateProjectionMatrix();
+            }
         },
 
         handleMouseEnter: function (event) {
@@ -257,7 +291,41 @@ var Canvas = function (baseComponent, settings = {}) {
                 this.helperCanvas.update();
             }
             this.renderer.clear();
-            this.renderer.render( this.scene, this.camera );
+            if(!this.VRMode){
+                this.renderer.render( this.scene, this.camera );
+            }
+            else{
+                var viewPortWidth = this.width / 2, viewPortHeight = this.height;
+                if(typeof vrHMD !== 'undefined'){
+                    this.cameraL.projectionMatrix = Util.fovToProjection( this.eyeFOVL, true, this.camera.near, this.camera.far );
+                    this.cameraR.projectionMatrix = Util.fovToProjection( this.eyeFOVR, true, this.camera.near, this.camera.far );
+                }else{
+                    var lonL = this.lon + this.settings.VRGapDegree;
+                    var lonR = this.lon - this.settings.VRGapDegree;
+
+                    var thetaL = THREE.Math.degToRad( lonL );
+                    var thetaR = THREE.Math.degToRad( lonR );
+
+                    var targetL = Util.extend(this.camera.target);
+                    targetL.x = 500 * Math.sin( this.phi ) * Math.cos( thetaL );
+                    targetL.z = 500 * Math.sin( this.phi ) * Math.sin( thetaL );
+                    this.cameraL.lookAt(targetL);
+
+                    var targetR = Util.extend(this.camera.target);
+                    targetR.x = 500 * Math.sin( this.phi ) * Math.cos( thetaR );
+                    targetR.z = 500 * Math.sin( this.phi ) * Math.sin( thetaR );
+                    this.cameraR.lookAt(targetR);
+                }
+                // render left eye
+                this.renderer.setViewport( 0, 0, viewPortWidth, viewPortHeight );
+                this.renderer.setScissor( 0, 0, viewPortWidth, viewPortHeight );
+                this.renderer.render( this.scene, this.cameraL );
+
+                // render right eye
+                this.renderer.setViewport( viewPortWidth, 0, viewPortWidth, viewPortHeight );
+                this.renderer.setScissor( viewPortWidth, 0, viewPortWidth, viewPortHeight );
+                this.renderer.render( this.scene, this.cameraR );
+            }
         },
         
         playOnMobile: function () {

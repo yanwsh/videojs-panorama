@@ -3,6 +3,7 @@
 import Canvas  from './lib/Canvas';
 import Notice  from './lib/Notice';
 import HelperCanvas from './lib/HelperCanvas';
+import VRButton from './lib/VRButton';
 import panorama from './plugin';
 
 function getTech(player) {
@@ -24,6 +25,10 @@ videojs.registerComponent('Notice', videojs.extend(component, notice));
 
 var helperCanvas = HelperCanvas(component);
 videojs.registerComponent('HelperCanvas', videojs.extend(component, helperCanvas));
+
+var button = videojs.getComponent("Button");
+var vrBtn = VRButton(button);
+videojs.registerComponent('VRButton', videojs.extend(button, vrBtn));
 
 // Register the plugin with video.js.
 
