@@ -44,7 +44,10 @@ const defaults = {
     rotateZ: 0,
     
     autoMobileOrientation: false,
-    mobileVibrationValue: util.isIos()? 0.022 : 1
+    mobileVibrationValue: util.isIos()? 0.022 : 1,
+
+    VREnable: true,
+    VRGapDegree: 2.5
 };
 
 function playerResize(player){
@@ -101,7 +104,7 @@ const onPlayerReady = (player, options, settings) => {
         }
         return;
     }
-    player.addChild('Canvas', options);
+    player.addChild('Canvas', util.extend(options));
     var canvas = player.getChild('Canvas');
     if(runOnMobile){
         var videoElement = settings.getTech(player);
@@ -117,8 +120,11 @@ const onPlayerReady = (player, options, settings) => {
     }
     if(options.showNotice){
         player.on("playing", function(){
-            PopupNotification(player, options);
+            PopupNotification(player, util.extend(options));
         });
+    }
+    if(options.VREnable){
+        player.controlBar.addChild('VRButton', {}, player.controlBar.children().length - 1);
     }
     canvas.hide();
     player.on("play", function () {

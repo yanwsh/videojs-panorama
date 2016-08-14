@@ -15,6 +15,35 @@
 
 .video-js .vjs-control-bar {
   z-index: 5; }
+  .video-js .vjs-control-bar .vjs-VR-control {
+    cursor: pointer; }
+    .video-js .vjs-control-bar .vjs-VR-control::before {
+      content: " ";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-245.6 384.3 76.7 50.1'%3E%3Cpath fill='#FFFFFF' d='M-170.3 385.7c-2.1-2.1-72.5-1.6-74.1 0-1.7 1.7-1.7 46 0 47.7.6.6 12.2.9 26 1l3.1-8.5s2-8 7.9-8c6.3 0 9 9.7 9 9.7l2.6 6.8c13.6-.1 25-.5 25.5-1 1.5-1.5 2-45.7 0-47.7zm-57.1 33.3c-6.1 0-11-4.9-11-11s4.9-11 11-11 11 4.9 11 11-5 11-11 11zm39.7 0c-6.1 0-11-4.9-11-11s4.9-11 11-11 11 4.9 11 11-4.9 11-11 11z'/%3E%3C/svg%3E") no-repeat;
+      background-size: contain;
+      width: 1em;
+      height: 0.68em; }
+    .video-js .vjs-control-bar .vjs-VR-control.enable::before {
+      background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26.676 26.676'%3E%3Cpath fill='#FFFFFF' d='M26.105 21.89c-.23 0-.44-.13-.53-.345-.065-.156-1.715-3.857-7.884-4.59-1.28-.156-2.82-.236-4.69-.25v4.613c0 .213-.113.406-.302.508-.188.098-.413.084-.588-.033L.253 13.815C.093 13.708 0 13.528 0 13.34c0-.192.094-.366.254-.478l11.857-7.98c.18-.12.4-.128.59-.028.19.102.306.295.306.502V9.65c2.578.335 13.674 2.33 13.674 11.673 0 .27-.19.508-.46.562-.037.006-.076.006-.11.006z'/%3E%3C/svg%3E") no-repeat;
+      height: 1em;
+      opacity: 0.7; }
+    .video-js .vjs-control-bar .vjs-VR-control:hover::before {
+      -webkit-box-shadow: 0em 0em 1em white;
+      -moz-box-shadow: 0em 0em 1em white;
+      box-shadow: 0em 0em 1em white; }
+    .video-js .vjs-control-bar .vjs-VR-control.enable:hover::before {
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      opacity: 1; }
 
 .video-js.vjs-using-native-controls .vjs-poster, .video-js.vjs-using-native-controls .vjs-big-play-button {
   display: block; }
