@@ -16,6 +16,7 @@ var VRButton = function(ButtonComponent){
             var canvas = this.player().getChild("Canvas");
             (!canvas.VRMode)? canvas.enableVR() : canvas.disableVR();
             (canvas.VRMode)? this.addClass("enable") : this.removeClass("enable");
+            (canvas.VRMode)?  this.player().trigger('VRModeOn'):  this.player().trigger('VRModeOff');
         },
 
         controlText_: "VR"

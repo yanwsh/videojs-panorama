@@ -63,10 +63,15 @@
             clickToToggle: (!isMobile()),
             autoMobileOrientation: true,
             initFov: 100,
+            VREnable: isMobile(),
             NoticeMessage: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video",
             callback: function () {
                 if(!isMobile()) player.play();
             }
+        });
+
+        player.on("VRModeOn", function(){
+            player.controlBar.fullscreenToggle.trigger("tap");
         });
     }(window, window.videojs));
 </script>

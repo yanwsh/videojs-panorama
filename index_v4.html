@@ -63,9 +63,14 @@
         player.panorama({
             clickToToggle: (!isMobile()),
             autoMobileOrientation: true,
+            VREnable: isMobile(),
             callback: function () {
                 if(!isMobile()) player.play();
             }
+        });
+
+        player.on("VRModeOn", function(){
+            player.controlBar.fullscreenToggle.trigger("tap");
         });
     }(window, window.videojs));
 </script>
