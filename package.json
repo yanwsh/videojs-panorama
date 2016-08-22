@@ -1,6 +1,6 @@
 {
   "name": "videojs-panorama",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "a plugin for videojs run a full 360 degree panorama video. ",
   "keywords": [
     "videojs",

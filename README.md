@@ -1,6 +1,6 @@
 # videojs-panorama
 
-a plugin for videojs run a full 360 degree panorama video.
+a plugin for videojs run a full 360 degree panorama video. VR is supported right now!
 
 #### [DEMO HERE](http://yanwsh.github.io/videojs-panorama/)
 
@@ -16,7 +16,7 @@ npm install --save videojs-panorama
 
 or
 
-#### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases/download/0.0.5/videojs-panorama-0.0.5.zip)
+#### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases)
 
 ## Integration with video.js 4 and 5
 
@@ -185,6 +185,9 @@ rotate video view by y axis. `Defaults value is 0`. Value should be radian.
 
 ### rotateZ
 rotate video view by z axis. `Defaults value is 0`. Value should be radian.
+
+## VREnable
+whether VR button shows on control panel.  `Defaults value is true`.
 
 
 ## browser support
