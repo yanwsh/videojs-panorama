@@ -31,11 +31,14 @@ var vrBtn = VRButton(button);
 videojs.registerComponent('VRButton', videojs.extend(button, vrBtn));
 
 // Register the plugin with video.js.
-
-videojs.plugin('panorama', panorama({
+var init = panorama({
     mergeOption: function (defaults, options) {
         return videojs.mergeOptions(defaults, options);
     },
     getTech: getTech,
     getFullscreenToggleClickFn: getFullscreenToggleClickFn
-}));
+});
+
+videojs.plugin('panorama', init);
+
+export default init;
