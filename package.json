@@ -19,7 +19,8 @@
       "url": "https://github.com/yanwsh/videojs-panorama/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "./dist/videojs-panorama.es6.js",
+  "main": "./dist/videojs-panorama.common.js",
+  "jsnext:main": "dist/videojs-panorama.es6.js",
   "author": "yanwsh@gmail.com",
   "license": "Apache-2.0",
   "dependencies": {
