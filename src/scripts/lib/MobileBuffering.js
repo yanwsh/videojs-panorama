@@ -18,4 +18,4 @@ var MobileBuffering = {
     }
 };
 
-module.exports = MobileBuffering;
+export default MobileBuffering;
