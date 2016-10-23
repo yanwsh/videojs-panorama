@@ -93,27 +93,32 @@ gulp.task('build-script-es6', function(done){
         name: 'videojs-panorama',
         dest: destPath,
         entry: entryFile,
-        format: ['es6'],
-        postfix: {es6: '.es6'},
+        format: ['es6', 'cjs'],
+        externals: ['video.js', 'three'],
+        postfix: {es6: '.es6', cjs: '.common'},
         babel: {}
     });
 
     promise.then(function(){
         setTimeout(function () {
-            var outputFile = path.join(destPath, 'videojs-panorama.es6.js');
-            var buffer = fs.readFileSync(outputFile);
-            var bufferStream = new stream.PassThrough();
-            var wstream = fs.createWriteStream(outputFile);
+            var outputFiles = ['videojs-panorama.es6.js', 'videojs-panorama.common.js'];
+            outputFiles.forEach(function (file) {
+                var outputFile = path.join(destPath, file);
+                var buffer = fs.readFileSync(outputFile);
+                var bufferStream = new stream.PassThrough();
+                var wstream = fs.createWriteStream(outputFile);
 
-            bufferStream.end(buffer);
+                bufferStream.end(buffer);
 
-            bufferStream.pipe(
-                versionify(outputFile,{
-                    placeholder: '__VERSION__'
-                })
-            ).pipe(
-                wstream
-            );
+                bufferStream.pipe(
+                    versionify(outputFile,{
+                        placeholder: '__VERSION__'
+                    })
+                ).pipe(
+                    wstream
+                );
+            });
+
             done();
         }, 500);
     }).catch(function(error){

@@ -1,8 +1,7 @@
 'use strict';
 
-var videojs = require('video.js');
-var THREE = require('three');
-
+import videojs from 'video.js';
+import THREE from 'three';
 import Canvas  from './lib/Canvas';
 import Notice  from './lib/Notice';
 import HelperCanvas from './lib/HelperCanvas';
@@ -42,7 +41,7 @@ videojs.plugin('panorama', panorama({
     getFullscreenToggleClickFn: getFullscreenToggleClickFn
 }));
 
-module.exports = function(player, options){
+export default function(player, options){
     return player.panorama(options);
 };
 

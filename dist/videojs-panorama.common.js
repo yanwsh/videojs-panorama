@@ -1,5 +1,9 @@
-import videojs from 'video.js';
-import THREE$1 from 'three';
+'use strict';
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var videojs = _interopDefault(require('video.js'));
+var THREE$1 = _interopDefault(require('three'));
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -1222,4 +1226,4 @@ var plugin_es6 = function (player, options) {
     return player.panorama(options);
 };
 
-export default plugin_es6;
+module.exports = plugin_es6;
