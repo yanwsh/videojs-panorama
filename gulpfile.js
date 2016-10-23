@@ -3,6 +3,8 @@
  */
 'use strict';
 
+var fs          = require('fs');
+var stream      = require('stream');
 var babelify    = require('babelify');
 var browserify  = require('browserify');
 var versionify = require('browserify-versionify');
@@ -19,6 +21,7 @@ var buffer      = require('vinyl-buffer');
 var source      = require('vinyl-source-stream');
 var lazypipe = require('lazypipe');
 var browserSync = require('browser-sync').create();
+var rollupBabelLibBundler = require('rollup-babel-lib-bundler');
 
 var config = {
     distPath: './dist',
@@ -29,6 +32,7 @@ gulp.task('build', function (done) {
     runSequence(
         'clean',
         'build-script',
+        'build-script-es6',
         'build-styles',
         function (error) {
             if(error){
@@ -78,6 +82,44 @@ gulp.task('build-script', function () {
     });
 
     return mergeStream.apply(this, buildProcesses);
+});
+
+gulp.task('build-script-es6', function(done){
+    var fileName = 'plugin_es6.js';
+    var entryFile = path.join('src/scripts', fileName);
+    var destPath = config.distPath;
+
+    var promise = rollupBabelLibBundler({
+        name: 'videojs-panorama',
+        dest: destPath,
+        entry: entryFile,
+        format: ['es6'],
+        postfix: {es6: '.es6'},
+        babel: {}
+    });
+
+    promise.then(function(){
+        setTimeout(function () {
+            var outputFile = path.join(destPath, 'videojs-panorama.es6.js');
+            var buffer = fs.readFileSync(outputFile);
+            var bufferStream = new stream.PassThrough();
+            var wstream = fs.createWriteStream(outputFile);
+
+            bufferStream.end(buffer);
+
+            bufferStream.pipe(
+                versionify(outputFile,{
+                    placeholder: '__VERSION__'
+                })
+            ).pipe(
+                wstream
+            );
+            done();
+        }, 500);
+    }).catch(function(error){
+        console.log(error);
+        done();
+    });
 });
 
 function buildProdCss(destPath) {

@@ -23,4 +23,4 @@ var VRButton = function(ButtonComponent){
     }
 };
 
-module.exports = VRButton;
+export default VRButton;

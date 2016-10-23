@@ -19,7 +19,7 @@ var component = videojs.Component;
 var compatiableInitialFunction = function (player, options) {
     this.constructor(player, options);
 };
-var canvas = Canvas(component, {
+var canvas = Canvas(component, window.THREE, {
     getTech: getTech
 });
 canvas.init = compatiableInitialFunction;
@@ -44,14 +44,10 @@ vrBtn.T = function () {
 videojs.VRButton = button.extend(vrBtn);
 
 // Register the plugin with video.js.
-var init = panorama({
+videojs.plugin('panorama', panorama({
     mergeOption: function (defaults, options) {
         return videojs.util.mergeOptions(defaults, options);
     },
     getTech: getTech,
     getFullscreenToggleClickFn: getFullscreenToggleClickFn
-});
-
-videojs.plugin('panorama', init);
-
-export default init;
+}));
