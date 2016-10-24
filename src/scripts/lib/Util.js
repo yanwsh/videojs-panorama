@@ -118,7 +118,7 @@ function extend(from, to)
     return to;
 }
 
-module.exports = {
+export default {
     whichTransitionEvent: whichTransitionEvent,
     mobileAndTabletcheck: mobileAndTabletcheck,
     isIos: isIos,

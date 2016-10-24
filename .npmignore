@@ -4,3 +4,5 @@
 assets
 scripts
 test
+.idea
+bower_components

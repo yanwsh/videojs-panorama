@@ -8,7 +8,7 @@ Make sure you have NodeJS 0.10 or higher and npm installed.
 
 1. Fork this repository and clone your fork
 1. Install dependencies: `npm install`
-1. Run a development server: `npm start`
+1. Run a development server: `gulp watch`
 
 ### Making Changes
 
@@ -22,7 +22,7 @@ Testing is a crucial part of any software project. For all but the most trivial 
 
 - In all available and supported browsers: `npm test`
 - In a specific browser: `npm run test:chrome`, `npm run test:firefox`, etc.
-- While development server is running (`npm start`), navigate to [`http://localhost:9999/test/`][local]
+- While development server is running (`npm start`), navigate to [`http://localhost:8000/test/`][local]
 
 
 [karma]: http://karma-runner.github.io/

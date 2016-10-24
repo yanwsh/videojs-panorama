@@ -180,6 +180,6 @@ const plugin = function(settings = {}){
     panorama.VERSION = '__VERSION__';
 
     return panorama;
-}
+};
 
 export default plugin;

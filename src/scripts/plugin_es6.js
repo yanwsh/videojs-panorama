@@ -1,5 +1,7 @@
 'use strict';
 
+import videojs from 'video.js';
+import THREE from 'three';
 import Canvas  from './lib/Canvas';
 import Notice  from './lib/Notice';
 import HelperCanvas from './lib/HelperCanvas';
@@ -15,7 +17,7 @@ function getFullscreenToggleClickFn(player) {
 }
 
 var component = videojs.getComponent('Component');
-var canvas = Canvas(component, window.THREE, {
+var canvas = Canvas(component, THREE, {
     getTech: getTech
 });
 videojs.registerComponent('Canvas', videojs.extend(component, canvas));
@@ -38,3 +40,10 @@ videojs.plugin('panorama', panorama({
     getTech: getTech,
     getFullscreenToggleClickFn: getFullscreenToggleClickFn
 }));
+
+export default function(player, options){
+    return player.panorama(options);
+};
+
+
+

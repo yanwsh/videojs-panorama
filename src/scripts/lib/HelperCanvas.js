@@ -36,4 +36,4 @@ var HelperCanvas = function(baseComponent){
     }
 };
 
-module.exports = HelperCanvas;
+export default HelperCanvas;

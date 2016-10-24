@@ -1,6 +1,6 @@
 {
   "name": "videojs-panorama",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "a plugin for videojs run a full 360 degree panorama video. ",
   "keywords": [
     "videojs",
@@ -19,15 +19,17 @@
       "url": "https://github.com/yanwsh/videojs-panorama/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "./dist/videojs-panorama.v5.js",
+  "main": "./dist/videojs-panorama.common.js",
+  "jsnext:main": "dist/videojs-panorama.es6.js",
   "author": "yanwsh@gmail.com",
   "license": "Apache-2.0",
   "dependencies": {
     "iphone-inline-video": "^1.9.3",
+    "three": "^0.81.2",
     "video.js": "^5.10.8"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.13.2",
+    "babel-preset-es2015": "^6.16.0",
     "babelify": "^7.3.0",
     "bannerize": "^1.0.2",
     "bower": "^1.7.9",
@@ -43,6 +45,7 @@
     "gulp-uglify": "^2.0.0",
     "lazypipe": "^1.0.1",
     "merge-stream": "^1.0.0",
+    "rollup-babel-lib-bundler": "^3.1.0",
     "run-sequence": "^1.2.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
