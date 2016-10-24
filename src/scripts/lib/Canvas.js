@@ -7,7 +7,7 @@ import Util from './Util';
 
 const HAVE_ENOUGH_DATA = 4;
 
-var Canvas = function (baseComponent, settings = {}) {
+var Canvas = function (baseComponent, THREE, settings = {}) {
     return {
         constructor: function init(player, options){
             this.settings = options;
@@ -340,4 +340,4 @@ var Canvas = function (baseComponent, settings = {}) {
     }
 };
 
-module.exports = Canvas;
+export default Canvas;

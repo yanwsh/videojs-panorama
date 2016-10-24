@@ -25,4 +25,4 @@ var Notice = function(baseComponent){
     }
 };
 
-module.exports = Notice;
+export default Notice;
