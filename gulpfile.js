@@ -112,7 +112,8 @@ gulp.task('build-script-es6', function(done){
 
                 bufferStream.pipe(
                     versionify(outputFile,{
-                        placeholder: '__VERSION__'
+                        placeholder: '__VERSION__',
+                        version: require('./package.json').version
                     })
                 ).pipe(
                     wstream

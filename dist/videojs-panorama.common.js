@@ -1184,7 +1184,7 @@ const plugin$1 = function (settings = {}) {
     };
 
     // Include the version number.
-    panorama.VERSION = '0.8.0';
+    panorama.VERSION = '0.0.9';
 
     return panorama;
 };
