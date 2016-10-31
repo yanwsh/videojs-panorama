@@ -86,6 +86,7 @@
       -ms-transition: opacity 0.3s linear;
       -o-transition: opacity 0.3s linear;
       transition: opacity 0.3s linear;
+      pointer-events: none;
 
       &.vjs-video-notice-fadeOut{
         opacity: 0;

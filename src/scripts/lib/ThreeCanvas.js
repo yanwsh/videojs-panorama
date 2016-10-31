@@ -8,74 +8,39 @@
  */
 'use strict';
 
-import Detector from '../lib/Detector';
-import MobileBuffering from '../lib/MobileBuffering';
+import BaseCanvas from './BaseCanvas';
 import Util from './Util';
 
-const HAVE_ENOUGH_DATA = 4;
-
-var ThreeCanvas = function (baseComponent, settings = {}){
-    return {
+var ThreeDCanvas = function (baseComponent, THREE, settings = {}){
+    var parent = BaseCanvas(baseComponent, THREE, settings);
+    return Util.extend(parent, {
         constructor: function init(player, options){
-            this.settings = options;
-            this.width = player.el().offsetWidth, this.height = player.el().offsetHeight;
-            this.lon = options.initLon, this.lat = options.initLat, this.phi = 0, this.theta = 0;
-            this.videoType = options.videoType;
-            this.clickToToggle = options.clickToToggle;
-            this.mouseDown = false;
-            this.isUserInteracting = false;
-            this.threeddirection = options.threeddirection || "LeftRight";
+            parent.constructor.call(this, player, options);
 
             //define scene
             this.scene = new THREE.Scene();
+            var aspectRatio = this.width / this.height / 2;
             //define camera
-            this.cameraL = new THREE.PerspectiveCamera(options.initFov, this.width / this.height, 1, 2000);
+            this.cameraL = new THREE.PerspectiveCamera(options.initFov, aspectRatio, 1, 2000);
             this.cameraL.target = new THREE.Vector3( 0, 0, 0 );
 
-            this.cameraR = new THREE.PerspectiveCamera(options.initFov, this.width / this.height, 1, 2000);
+            this.cameraR = new THREE.PerspectiveCamera(options.initFov, aspectRatio, 1, 2000);
+            this.cameraR.position.set( 1000, 0, 0 );
             this.cameraR.target = new THREE.Vector3( 1000, 0, 0 );
 
-            //define render
-            this.renderer = new THREE.WebGLRenderer();
-            this.renderer.setPixelRatio(window.devicePixelRatio);
-            this.renderer.setSize(this.width, this.height);
-            this.renderer.autoClear = false;
-            this.renderer.setClearColor(0x000000, 1);
-
-            //define texture
-            var video = settings.getTech(player);
-            this.supportVideoTexture = Detector.supportVideoTexture();
-            if(!this.supportVideoTexture){
-                this.helperCanvas = player.addChild("HelperCanvas", {
-                    video: video,
-                    width: this.width,
-                    height: this.height
-                });
-                var context = this.helperCanvas.el();
-                this.texture = new THREE.Texture(context);
-            }else{
-                this.texture = new THREE.Texture(video);
-            }
-
-            video.style.display = "none";
-
-            this.texture.generateMipmaps = false;
-            this.texture.minFilter = THREE.LinearFilter;
-            this.texture.maxFilter = THREE.LinearFilter;
-            this.texture.format = THREE.RGBFormat;
-
-            var geometryL = new THREE.SphereGeometry(500, 60, 40);
-            var geometryR = new THREE.SphereGeometry(500, 60, 40);
-            geometryR.position.set( 1000, 0, 0 );
+            var geometryL = new THREE.SphereBufferGeometry(500, 60, 40).toNonIndexed();
+            var geometryR = new THREE.SphereBufferGeometry(500, 60, 40).toNonIndexed();
 
             var uvsL = geometryL.attributes.uv.array;
-            for ( var i = 0; i < uvsL.length / 2; i ++ ) {
+            var normalsL = geometryL.attributes.normal.array;
+            for ( var i = 0; i < normalsL.length / 3; i ++ ) {
                 uvsL[ i * 2 + 1 ] = uvsL[ i * 2 + 1 ] / 2;
             }
 
             var uvsR = geometryR.attributes.uv.array;
-            for ( var i = 0; i < uvsR.length / 2; i ++ ) {
-                uvsR[ i * 2 + 1 ] = uvsR[ i * 2 + 1 ] / 2;
+            var normalsR = geometryR.attributes.normal.array;
+            for ( var i = 0; i < normalsR.length / 3; i ++ ) {
+                uvsR[ i * 2 + 1 ] = uvsR[ i * 2 + 1 ] / 2 + 0.5;
             }
 
             geometryL.scale( - 1, 1, 1 );
@@ -88,10 +53,66 @@ var ThreeCanvas = function (baseComponent, settings = {}){
             this.meshR = new THREE.Mesh(geometryR,
                 new THREE.MeshBasicMaterial({ map: this.texture})
             );
+            this.meshR.position.set(1000, 0, 0);
+
+            this.scene.add(this.meshL);
+            this.scene.add(this.meshR);
+
+            if(options.callback) options.callback();
         },
 
+        handleResize: function () {
+            parent.handleResize.call(this);
+            var aspectRatio = this.width / this.height / 2;
+            this.cameraL.aspect = aspectRatio;
+            this.cameraR.aspect = aspectRatio;
+            this.cameraL.updateProjectionMatrix();
+            this.cameraR.updateProjectionMatrix();
+        },
 
-    };
+        handleMouseWheel: function(event){
+            parent.handleMouseWheel(event);
+            // WebKit
+            if ( event.wheelDeltaY ) {
+                this.cameraL.fov -= event.wheelDeltaY * 0.05;
+                // Opera / Explorer 9
+            } else if ( event.wheelDelta ) {
+                this.cameraL.fov -= event.wheelDelta * 0.05;
+                // Firefox
+            } else if ( event.detail ) {
+                this.cameraL.fov += event.detail * 1.0;
+            }
+            this.cameraL.fov = Math.min(this.settings.maxFov, this.cameraL.fov);
+            this.cameraL.fov = Math.max(this.settings.minFov, this.cameraL.fov);
+            this.cameraR.fov = this.cameraL.fov;
+            this.cameraL.updateProjectionMatrix();
+            this.cameraR.updateProjectionMatrix();
+        },
+
+        render: function(){
+            parent.render.call(this);
+            var viewPortWidth = this.width / 2, viewPortHeight = this.height;
+            this.cameraL.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
+            this.cameraL.target.y = 500 * Math.cos( this.phi );
+            this.cameraL.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
+            this.cameraL.lookAt(this.cameraL.target);
+
+            this.cameraR.target.x = 1000 + 500 * Math.sin( this.phi ) * Math.cos( this.theta );
+            this.cameraR.target.y = 500 * Math.cos( this.phi );
+            this.cameraR.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
+            this.cameraR.lookAt( this.cameraR.target );
+
+            // render left eye
+            this.renderer.setViewport( 0, 0, viewPortWidth, viewPortHeight );
+            this.renderer.setScissor( 0, 0, viewPortWidth, viewPortHeight );
+            this.renderer.render( this.scene, this.cameraL );
+
+            // render right eye
+            this.renderer.setViewport( viewPortWidth, 0, viewPortWidth, viewPortHeight );
+            this.renderer.setScissor( viewPortWidth, 0, viewPortWidth, viewPortHeight );
+            this.renderer.render( this.scene, this.cameraR );
+        }
+    });
 };
 
-module.exports = ThreeCanvas;
+export default ThreeDCanvas;

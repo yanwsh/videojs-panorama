@@ -100,19 +100,22 @@ function fovToProjection( fov, rightHanded, zNear, zFar ) {
     return fovPortToProjection( fovPort, rightHanded, zNear, zFar );
 }
 
-function extend(from, to)
+function extend(superClass, subClassMethods = {})
 {
-    if (from == null || typeof from != "object") return from;
-    if (from.constructor != Object && from.constructor != Array) return from;
-    if (from.constructor == Date || from.constructor == RegExp || from.constructor == Function ||
-        from.constructor == String || from.constructor == Number || from.constructor == Boolean)
-        return new from.constructor(from);
+    for(var method in superClass){
+        if(superClass.hasOwnProperty(method) && !subClassMethods.hasOwnProperty(method)){
+            subClassMethods[method] = superClass[method];
+        }
+    }
+    return subClassMethods;
+}
 
-    to = to || new from.constructor();
+function deepCopy(obj) {
+    var to = {};
 
-    for (var name in from)
+    for (var name in obj)
     {
-        to[name] = typeof to[name] == "undefined" ? extend(from[name], null) : to[name];
+        to[name] = obj[name];
     }
 
     return to;
@@ -124,5 +127,6 @@ export default {
     isIos: isIos,
     isRealIphone: isRealIphone,
     fovToProjection: fovToProjection,
-    extend: extend
+    extend: extend,
+    deepCopy: deepCopy
 };
