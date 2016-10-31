@@ -29,7 +29,7 @@ const defaults = {
     backToVerticalCenter: !runOnMobile,
     backToHorizonCenter: !runOnMobile,
     clickToToggle: false,
-    
+
     //limit viewable zoom
     minLat: -85,
     maxLat: 85,
@@ -38,16 +38,20 @@ const defaults = {
     maxLon: Infinity,
 
     videoType: "equirectangular",
-    
+
     rotateX: 0,
     rotateY: 0,
     rotateZ: 0,
-    
+
     autoMobileOrientation: false,
     mobileVibrationValue: util.isIos()? 0.022 : 1,
 
     VREnable: true,
-    VRGapDegree: 2.5
+    VRGapDegree: 2.5,
+
+    closePanorama: false
+
+
 };
 
 function playerResize(player){
@@ -104,7 +108,7 @@ const onPlayerReady = (player, options, settings) => {
         }
         return;
     }
-    player.addChild('Canvas', util.extend(options));
+    player.addChild('Canvas', util.deepCopy(options));
     var canvas = player.getChild('Canvas');
     if(runOnMobile){
         var videoElement = settings.getTech(player);
@@ -120,10 +124,10 @@ const onPlayerReady = (player, options, settings) => {
     }
     if(options.showNotice){
         player.on("playing", function(){
-            PopupNotification(player, util.extend(options));
+            PopupNotification(player, util.deepCopy(options));
         });
     }
-    if(options.VREnable){
+    if(options.VREnable && options.videoType !== "3dVideo"){
         player.controlBar.addChild('VRButton', {}, player.controlBar.children().length - 1);
     }
     canvas.hide();
@@ -167,10 +171,16 @@ const plugin = function(settings = {}){
      * @param    {Object} [options={}]
      *           An object of options left to the plugin author to define.
      */
-    const videoTypes = ["equirectangular", "fisheye"];
+    const videoTypes = ["equirectangular", "fisheye", "3dVideo"];
     const panorama = function(options) {
         if(settings.mergeOption) options = settings.mergeOption(defaults, options);
-        if(videoTypes.indexOf(options.videoType) == -1) defaults.videoType;
+        if(typeof settings._init === "undefined" || typeof settings._init !== "function") {
+            console.error("plugin must implement init function().");
+            return;
+        }
+        if(videoTypes.indexOf(options.videoType) == -1) options.videoType = defaults.videoType;
+        settings._init(options);
+        /* implement callback function when videojs is ready */
         this.ready(() => {
             onPlayerReady(this, options, settings);
         });

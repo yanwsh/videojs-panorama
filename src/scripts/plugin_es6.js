@@ -3,6 +3,7 @@
 import videojs from 'video.js';
 import THREE from 'three';
 import Canvas  from './lib/Canvas';
+import ThreeDCanvas from './lib/ThreeCanvas';
 import Notice  from './lib/Notice';
 import HelperCanvas from './lib/HelperCanvas';
 import VRButton from './lib/VRButton';
@@ -17,10 +18,6 @@ function getFullscreenToggleClickFn(player) {
 }
 
 var component = videojs.getComponent('Component');
-var canvas = Canvas(component, THREE, {
-    getTech: getTech
-});
-videojs.registerComponent('Canvas', videojs.extend(component, canvas));
 
 var notice = Notice(component);
 videojs.registerComponent('Notice', videojs.extend(component, notice));
@@ -34,6 +31,16 @@ videojs.registerComponent('VRButton', videojs.extend(button, vrBtn));
 
 // Register the plugin with video.js.
 videojs.plugin('panorama', panorama({
+    _init: function(options){
+        var canvas = (options.videoType !== "3dVideo")?
+            Canvas(component, window.THREE, {
+                getTech: getTech
+            }) :
+            ThreeDCanvas(component, window.THREE, {
+                getTech: getTech
+            });
+        videojs.registerComponent('Canvas', videojs.extend(component, canvas));
+    },
     mergeOption: function (defaults, options) {
         return videojs.mergeOptions(defaults, options);
     },

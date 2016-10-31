@@ -1,6 +1,7 @@
 'use strict';
 
 import Canvas  from './lib/Canvas';
+import ThreeDCanvas from './lib/ThreeCanvas';
 import Notice  from './lib/Notice';
 import HelperCanvas from './lib/HelperCanvas';
 import VRButton from './lib/VRButton';
@@ -19,11 +20,6 @@ var component = videojs.Component;
 var compatiableInitialFunction = function (player, options) {
     this.constructor(player, options);
 };
-var canvas = Canvas(component, window.THREE, {
-    getTech: getTech
-});
-canvas.init = compatiableInitialFunction;
-videojs.Canvas = component.extend(canvas);
 
 var notice = Notice(component);
 notice.init = compatiableInitialFunction;
@@ -45,6 +41,17 @@ videojs.VRButton = button.extend(vrBtn);
 
 // Register the plugin with video.js.
 videojs.plugin('panorama', panorama({
+    _init: function (options) {
+        var canvas = (options.videoType !== "3dVideo")?
+            Canvas(component, window.THREE, {
+                getTech: getTech
+            }) :
+            ThreeDCanvas(component, window.THREE, {
+                getTech: getTech
+            });
+        canvas.init = compatiableInitialFunction;
+        videojs.Canvas = component.extend(canvas);
+    },
     mergeOption: function (defaults, options) {
         return videojs.util.mergeOptions(defaults, options);
     },
