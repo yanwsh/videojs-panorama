@@ -137,6 +137,7 @@ const onPlayerReady = (player, options, settings) => {
     player.on("fullscreenchange", function () {
         canvas.handleResize();
     });
+    if(options.callback) options.callback();
 };
 
 const PopupNotification = (player, options = {

@@ -47,8 +47,6 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             );
             //this.mesh.scale.x = -1;
             this.scene.add(this.mesh);
-
-            if(options.callback) options.callback();
         },
 
         enableVR: function () {

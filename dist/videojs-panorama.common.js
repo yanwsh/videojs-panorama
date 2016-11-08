@@ -505,8 +505,6 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             this.mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: this.texture }));
             //this.mesh.scale.x = -1;
             this.scene.add(this.mesh);
-
-            if (options.callback) options.callback();
         },
 
         enableVR: function () {
@@ -624,8 +622,6 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}) {
         constructor: function init(player, options) {
             parent.constructor.call(this, player, options);
 
-            //this.threeddirection = options.threeddirection || "LeftRight";
-
             //define scene
             this.scene = new THREE.Scene();
             var aspectRatio = this.width / this.height / 2;
@@ -677,21 +673,19 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}) {
 
         handleMouseWheel: function (event) {
             parent.handleMouseWheel(event);
-            var fov = 0;
             // WebKit
             if (event.wheelDeltaY) {
-                fov -= event.wheelDeltaY * 0.05;
+                this.cameraL.fov -= event.wheelDeltaY * 0.05;
                 // Opera / Explorer 9
             } else if (event.wheelDelta) {
-                fov -= event.wheelDelta * 0.05;
+                this.cameraL.fov -= event.wheelDelta * 0.05;
                 // Firefox
             } else if (event.detail) {
-                fov += event.detail * 1.0;
+                this.cameraL.fov += event.detail * 1.0;
             }
-            fov = Math.min(this.settings.maxFov, fov);
-            fov = Math.max(this.settings.minFov, fov);
-            this.cameraL.fov = fov;
-            this.cameraR.fov = fov;
+            this.cameraL.fov = Math.min(this.settings.maxFov, this.cameraL.fov);
+            this.cameraL.fov = Math.max(this.settings.minFov, this.cameraL.fov);
+            this.cameraR.fov = this.cameraL.fov;
             this.cameraL.updateProjectionMatrix();
             this.cameraR.updateProjectionMatrix();
         },
@@ -1292,7 +1286,7 @@ const onPlayerReady = (player, options, settings) => {
             PopupNotification(player, util.deepCopy(options));
         });
     }
-    if (options.VREnable) {
+    if (options.VREnable && options.videoType !== "3dVideo") {
         player.controlBar.addChild('VRButton', {}, player.controlBar.children().length - 1);
     }
     canvas.hide();
@@ -1302,6 +1296,7 @@ const onPlayerReady = (player, options, settings) => {
     player.on("fullscreenchange", function () {
         canvas.handleResize();
     });
+    if (options.callback) options.callback();
 };
 
 const PopupNotification = (player, options = {
@@ -1352,7 +1347,7 @@ const plugin$1 = function (settings = {}) {
     };
 
     // Include the version number.
-    panorama.VERSION = '0.0.9';
+    panorama.VERSION = '0.1.0';
 
     return panorama;
 };
