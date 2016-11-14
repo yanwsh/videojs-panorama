@@ -11,7 +11,7 @@
 import Detector from '../lib/Detector';
 import MobileBuffering from '../lib/MobileBuffering';
 
-const HAVE_ENOUGH_DATA = 4;
+const HAVE_CURRENT_DATA = 2;
 
 var BaseCanvas = function (baseComponent, THREE, settings = {}) {
     return {
@@ -167,7 +167,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
         animate: function(){
             this.requestAnimationId = requestAnimationFrame( this.animate.bind(this) );
             if(!this.player().paused()){
-                if(typeof(this.texture) !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() === HAVE_ENOUGH_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
+                if(typeof(this.texture) !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() >= HAVE_CURRENT_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
                     var ct = new Date().getTime();
                     if (ct - this.time >= 30) {
                         this.texture.needsUpdate = true;

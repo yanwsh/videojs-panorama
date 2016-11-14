@@ -52,6 +52,7 @@ var Detector = {
 
     supportVideoTexture: function () {
         //ie 11 and edge 12 doesn't support video texture.
+        //live stream on safari doesn't support video texture
         var version = this.Check_Version();
         return (version === -1 || version >= 13);
     },
