@@ -808,33 +808,58 @@ var index = typeof Symbol === 'undefined' ? function (description) {
 
 var poorMansSymbol_commonJs = index;
 
+/*! npm.im/intervalometer */
+function intervalometer$1(cb, request, cancel, requestParameter) {
+	var requestId;
+	var previousLoopTime;
+	function loop(now) {
+		// must be requested before cb() because that might call .stop()
+		requestId = request(loop, requestParameter);
+
+		// called with "ms since last call". 0 on start()
+		cb(now - (previousLoopTime || now));
+
+		previousLoopTime = now;
+	}
+	return {
+		start: function start() {
+			if (!requestId) {
+				// prevent double starts
+				loop(0);
+			}
+		},
+		stop: function stop() {
+			cancel(requestId);
+			requestId = null;
+			previousLoopTime = 0;
+		}
+	};
+}
+
+function frameIntervalometer(cb) {
+	return intervalometer$1(cb, requestAnimationFrame, cancelAnimationFrame);
+}
+
+function timerIntervalometer(cb, delay) {
+	return intervalometer$1(cb, setTimeout, clearTimeout, delay);
+}
+
+
+
+var intervalometer_esModules = Object.freeze({
+	intervalometer: intervalometer$1,
+	frameIntervalometer: frameIntervalometer,
+	timerIntervalometer: timerIntervalometer
+});
+
+var require$$0 = ( intervalometer_esModules && intervalometer_esModules['default'] ) || intervalometer_esModules;
+
 function _interopDefault$1(ex) {
 	return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
 }
 
 var Symbol$1 = _interopDefault$1(poorMansSymbol_commonJs);
-
-function Intervalometer(cb) {
-	var rafId;
-	var previousLoopTime;
-	function loop(now) {
-		// must be requested before cb() because that might call .stop()
-		rafId = requestAnimationFrame(loop);
-		cb(now - (previousLoopTime || now)); // ms since last call. 0 on start()
-		previousLoopTime = now;
-	}
-	this.start = function () {
-		if (!rafId) {
-			// prevent double starts
-			loop(0);
-		}
-	};
-	this.stop = function () {
-		cancelAnimationFrame(rafId);
-		rafId = null;
-		previousLoopTime = 0;
-	};
-}
+var intervalometer = require$$0;
 
 function preventEvent(element, eventName, toggleProperty, preventWithProperty) {
 	function handler(e) {
@@ -880,8 +905,7 @@ function dispatchEventAsync(element, type) {
 }
 
 // iOS 10 adds support for native inline playback + silent autoplay
-// Also adds unprefixed css-grid. This check essentially excludes
-var isWhitelisted = /iPhone|iPod/i.test(navigator.userAgent) && document.head.style.grid === undefined;
+var isWhitelisted = /iPhone|iPod/i.test(navigator.userAgent) && !matchMedia('(-webkit-video-playable-inline)').matches;
 
 var ಠ = Symbol$1();
 var ಠevent = Symbol$1();
@@ -1041,7 +1065,7 @@ function addPlayer(video, hasAudio) {
 	player.paused = true; // track whether 'pause' events have been fired
 	player.hasAudio = hasAudio;
 	player.video = video;
-	player.updater = new Intervalometer(update.bind(player));
+	player.updater = intervalometer.frameIntervalometer(update.bind(player));
 
 	if (hasAudio) {
 		player.driver = getAudioFromVideo(video);
@@ -1151,7 +1175,7 @@ function enableInlineVideo(video, hasAudio, onlyWhitelisted) {
 	if (!hasAudio && video.autoplay) {
 		video.play();
 	}
-	if (navigator.platform === 'MacIntel' || navigator.platform === 'Windows') {
+	if (!/iPhone|iPod|iPad/.test(navigator.platform)) {
 		console.warn('iphone-inline-video is not guaranteed to work in emulated environments');
 	}
 }
