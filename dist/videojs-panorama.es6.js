@@ -54,6 +54,23 @@ var Detector = {
         return version === -1 || version >= 13;
     },
 
+    isLiveStreamOnSafari: function (videoElement) {
+        //live stream on safari doesn't support video texture
+        var videoSources = videoElement.querySelectorAll("source");
+        var currentSource = videoElement.src;
+        var result = false;
+        for (var i = 0; i < videoSources.length; i++) {
+            var currentVideoSource = videoSources[i];
+            if (currentVideoSource.src === currentSource) {
+                if (currentVideoSource.type == "application/x-mpegURL" && /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+                    result = true;
+                }
+                break;
+            }
+        }
+        return result;
+    },
+
     getWebGLErrorMessage: function () {
 
         var element = document.createElement('div');
@@ -111,7 +128,7 @@ var MobileBuffering = {
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-const HAVE_ENOUGH_DATA = 4;
+const HAVE_CURRENT_DATA = 2;
 
 var BaseCanvas = function (baseComponent, THREE, settings = {}) {
     return {
@@ -135,6 +152,8 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             //define texture, on ie 11, we need additional helper canvas to solve rendering issue.
             var video = settings.getTech(player);
             this.supportVideoTexture = Detector.supportVideoTexture();
+            this.liveStreamOnSafari = Detector.isLiveStreamOnSafari(video);
+            if (this.liveStreamOnSafari) this.supportVideoTexture = false;
             if (!this.supportVideoTexture) {
                 this.helperCanvas = player.addChild("HelperCanvas", {
                     video: video,
@@ -266,7 +285,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
         animate: function () {
             this.requestAnimationId = requestAnimationFrame(this.animate.bind(this));
             if (!this.player().paused()) {
-                if (typeof this.texture !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() === HAVE_ENOUGH_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
+                if (typeof this.texture !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() >= HAVE_CURRENT_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
                     var ct = new Date().getTime();
                     if (ct - this.time >= 30) {
                         this.texture.needsUpdate = true;
@@ -1292,6 +1311,7 @@ const onPlayerReady = (player, options, settings) => {
     if (runOnMobile) {
         var videoElement = settings.getTech(player);
         if (util.isRealIphone()) {
+            videoElement.setAttribute("playsinline", "");
             iphoneInlineVideo_commonJs(videoElement, true);
         }
         if (util.isIos()) {
