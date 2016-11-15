@@ -52,9 +52,22 @@ var Detector = {
 
     supportVideoTexture: function () {
         //ie 11 and edge 12 doesn't support video texture.
-        //live stream on safari doesn't support video texture
         var version = this.Check_Version();
         return (version === -1 || version >= 13);
+    },
+
+    isLiveStreamOnSafari: function (videoElement) {
+        //live stream on safari doesn't support video texture
+        var videoSources = videoElement.querySelectorAll("source");
+        var result = false;
+        for(var i = 0; i < videoSources.length; i++){
+            var currentVideoSource = videoSources[i];
+            if(currentVideoSource.type == "application/x-mpegURL" && /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)){
+                result = true;
+            }
+            break;
+        }
+        return result;
     },
 
     getWebGLErrorMessage: function () {
