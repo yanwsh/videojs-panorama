@@ -113,6 +113,8 @@ const onPlayerReady = (player, options, settings) => {
     if(runOnMobile){
         var videoElement = settings.getTech(player);
         if(util.isRealIphone()){
+            //ios 10 support play video inline
+            videoElement.setAttribute("playsinline", "");
             makeVideoPlayableInline(videoElement, true);
         }
         if(util.isIos()){
