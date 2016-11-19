@@ -50,9 +50,22 @@ var Detector = {
 
     supportVideoTexture: function supportVideoTexture() {
         //ie 11 and edge 12 doesn't support video texture.
-        //live stream on safari doesn't support video texture
         var version = this.Check_Version();
         return version === -1 || version >= 13;
+    },
+
+    isLiveStreamOnSafari: function isLiveStreamOnSafari(videoElement) {
+        //live stream on safari doesn't support video texture
+        var videoSources = videoElement.querySelectorAll("source");
+        var result = false;
+        for (var i = 0; i < videoSources.length; i++) {
+            var currentVideoSource = videoSources[i];
+            if (currentVideoSource.type == "application/x-mpegURL" && /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+                result = true;
+            }
+            break;
+        }
+        return result;
     },
 
     getWebGLErrorMessage: function getWebGLErrorMessage() {
@@ -138,6 +151,8 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
             //define texture, on ie 11, we need additional helper canvas to solve rendering issue.
             var video = settings.getTech(player);
             this.supportVideoTexture = Detector.supportVideoTexture();
+            this.liveStreamOnSafari = Detector.isLiveStreamOnSafari(video);
+            if (this.liveStreamOnSafari) this.supportVideoTexture = false;
             if (!this.supportVideoTexture) {
                 this.helperCanvas = player.addChild("HelperCanvas", {
                     video: video,
@@ -1360,6 +1375,8 @@ var onPlayerReady = function onPlayerReady(player, options, settings) {
     if (runOnMobile) {
         var videoElement = settings.getTech(player);
         if (util.isRealIphone()) {
+            //ios 10 support play video inline
+            videoElement.setAttribute("playsinline", "");
             enableInlineVideo(videoElement, true);
         }
         if (util.isIos()) {
@@ -1441,7 +1458,7 @@ var plugin$1 = function plugin$1() {
     };
 
     // Include the version number.
-    panorama.VERSION = '0.1.0';
+    panorama.VERSION = '0.1.1';
 
     return panorama;
 };

@@ -35,6 +35,8 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             //define texture, on ie 11, we need additional helper canvas to solve rendering issue.
             var video = settings.getTech(player);
             this.supportVideoTexture = Detector.supportVideoTexture();
+            this.liveStreamOnSafari = Detector.isLiveStreamOnSafari(video);
+            if(this.liveStreamOnSafari) this.supportVideoTexture = false;
             if(!this.supportVideoTexture){
                 this.helperCanvas = player.addChild("HelperCanvas", {
                     video: video,

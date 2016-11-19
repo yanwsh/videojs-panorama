@@ -172,7 +172,8 @@ gulp.task('browser-sync', ['build'], function() {
         server: {
             baseDir: "./"
         },
-        open: 'ui'
+        open: 'ui',
+        online: true,
     });
 });
 
