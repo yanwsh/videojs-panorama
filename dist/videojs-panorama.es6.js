@@ -1,5 +1,5 @@
 import videojs from 'video.js';
-import 'three';
+import THREE$1 from 'three';
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -22,7 +22,7 @@ var Detector = {
     workers: !!window.Worker,
     fileapi: window.File && window.FileReader && window.FileList && window.Blob,
 
-    Check_Version: function () {
+    Check_Version: function Check_Version() {
         var rv = -1; // Return value assumes failure.
 
         if (navigator.appName == 'Microsoft Internet Explorer') {
@@ -48,13 +48,14 @@ var Detector = {
         return rv;
     },
 
-    supportVideoTexture: function () {
+    supportVideoTexture: function supportVideoTexture() {
         //ie 11 and edge 12 doesn't support video texture.
+        //live stream on safari doesn't support video texture
         var version = this.Check_Version();
         return version === -1 || version >= 13;
     },
 
-    getWebGLErrorMessage: function () {
+    getWebGLErrorMessage: function getWebGLErrorMessage() {
 
         var element = document.createElement('div');
         element.id = 'webgl-error-message';
@@ -67,7 +68,7 @@ var Detector = {
         return element;
     },
 
-    addGetWebGLMessage: function (parameters) {
+    addGetWebGLMessage: function addGetWebGLMessage(parameters) {
 
         var parent, id, element;
 
@@ -91,7 +92,7 @@ var MobileBuffering = {
     prev_currentTime: 0,
     counter: 0,
 
-    isBuffering: function (currentTime) {
+    isBuffering: function isBuffering(currentTime) {
         if (currentTime == this.prev_currentTime) this.counter++;else this.counter = 0;
         this.prev_currentTime = currentTime;
         if (this.counter > 10) {
@@ -111,9 +112,11 @@ var MobileBuffering = {
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-const HAVE_ENOUGH_DATA = 4;
+var HAVE_CURRENT_DATA = 2;
 
-var BaseCanvas = function (baseComponent, THREE, settings = {}) {
+var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
+    var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
     return {
         constructor: function init(player, options) {
             this.settings = options;
@@ -167,7 +170,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             }.bind(this));
         },
 
-        attachControlEvents: function () {
+        attachControlEvents: function attachControlEvents() {
             this.on('mousemove', this.handleMouseMove.bind(this));
             this.on('touchmove', this.handleMouseMove.bind(this));
             this.on('mousedown', this.handleMouseDown.bind(this));
@@ -182,12 +185,12 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             this.on('mouseleave', this.handleMouseLease.bind(this));
         },
 
-        handleResize: function () {
+        handleResize: function handleResize() {
             this.width = this.player().el().offsetWidth, this.height = this.player().el().offsetHeight;
             this.renderer.setSize(this.width, this.height);
         },
 
-        handleMouseUp: function (event) {
+        handleMouseUp: function handleMouseUp(event) {
             this.mouseDown = false;
             if (this.clickToToggle) {
                 var clientX = event.clientX || event.changedTouches && event.changedTouches[0].clientX;
@@ -199,7 +202,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             }
         },
 
-        handleMouseDown: function (event) {
+        handleMouseDown: function handleMouseDown(event) {
             event.preventDefault();
             var clientX = event.clientX || event.touches && event.touches[0].clientX;
             var clientY = event.clientY || event.touches && event.touches[0].clientY;
@@ -211,7 +214,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             this.onPointerDownLat = this.lat;
         },
 
-        handleMouseMove: function (event) {
+        handleMouseMove: function handleMouseMove(event) {
             var clientX = event.clientX || event.touches && event.touches[0].clientX;
             var clientY = event.clientY || event.touches && event.touches[0].clientY;
             if (typeof clientX === "undefined" || clientY === "undefined") return;
@@ -228,7 +231,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             }
         },
 
-        handleMobileOrientation: function (event) {
+        handleMobileOrientation: function handleMobileOrientation(event) {
             if (typeof event.rotationRate === "undefined") return;
             var x = event.rotationRate.alpha;
             var y = event.rotationRate.beta;
@@ -250,23 +253,23 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             }
         },
 
-        handleMouseWheel: function (event) {
+        handleMouseWheel: function handleMouseWheel(event) {
             event.stopPropagation();
             event.preventDefault();
         },
 
-        handleMouseEnter: function (event) {
+        handleMouseEnter: function handleMouseEnter(event) {
             this.isUserInteracting = true;
         },
 
-        handleMouseLease: function (event) {
+        handleMouseLease: function handleMouseLease(event) {
             this.isUserInteracting = false;
         },
 
-        animate: function () {
+        animate: function animate() {
             this.requestAnimationId = requestAnimationFrame(this.animate.bind(this));
             if (!this.player().paused()) {
-                if (typeof this.texture !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() === HAVE_ENOUGH_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
+                if (typeof this.texture !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() >= HAVE_CURRENT_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
                     var ct = new Date().getTime();
                     if (ct - this.time >= 30) {
                         this.texture.needsUpdate = true;
@@ -289,7 +292,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             this.render();
         },
 
-        render: function () {
+        render: function render() {
             if (!this.isUserInteracting) {
                 var symbolLat = this.lat > this.settings.initLat ? -1 : 1;
                 var symbolLon = this.lon > this.settings.initLon ? -1 : 1;
@@ -311,12 +314,12 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             this.renderer.clear();
         },
 
-        playOnMobile: function () {
+        playOnMobile: function playOnMobile() {
             this.isPlayOnMobile = true;
             if (this.settings.autoMobileOrientation) window.addEventListener('devicemotion', this.handleMobileOrientation.bind(this));
         },
 
-        el: function () {
+        el: function el() {
             return this.el_;
         }
     };
@@ -428,7 +431,9 @@ function fovToProjection(fov, rightHanded, zNear, zFar) {
     return fovPortToProjection(fovPort, rightHanded, zNear, zFar);
 }
 
-function extend(superClass, subClassMethods = {}) {
+function extend(superClass) {
+    var subClassMethods = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     for (var method in superClass) {
         if (superClass.hasOwnProperty(method) && !subClassMethods.hasOwnProperty(method)) {
             subClassMethods[method] = superClass[method];
@@ -461,7 +466,9 @@ var util = {
  * Created by yanwsh on 4/3/16.
  */
 
-var Canvas = function (baseComponent, THREE, settings = {}) {
+var Canvas = function Canvas(baseComponent, THREE) {
+    var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
     var parent = BaseCanvas(baseComponent, THREE, settings);
 
     return util.extend(parent, {
@@ -503,7 +510,7 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             this.scene.add(this.mesh);
         },
 
-        enableVR: function () {
+        enableVR: function enableVR() {
             this.VRMode = true;
             if (typeof vrHMD !== 'undefined') {
                 var eyeParamsL = vrHMD.getEyeParameters('left');
@@ -517,13 +524,13 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             this.cameraR = new THREE.PerspectiveCamera(this.camera.fov, this.width / 2 / this.height, 1, 2000);
         },
 
-        disableVR: function () {
+        disableVR: function disableVR() {
             this.VRMode = false;
             this.renderer.setViewport(0, 0, this.width, this.height);
             this.renderer.setScissor(0, 0, this.width, this.height);
         },
 
-        handleResize: function () {
+        handleResize: function handleResize() {
             parent.handleResize.call(this);
             this.camera.aspect = this.width / this.height;
             this.camera.updateProjectionMatrix();
@@ -535,7 +542,7 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             }
         },
 
-        handleMouseWheel: function (event) {
+        handleMouseWheel: function handleMouseWheel(event) {
             parent.handleMouseWheel(event);
             // WebKit
             if (event.wheelDeltaY) {
@@ -558,7 +565,7 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             }
         },
 
-        render: function () {
+        render: function render() {
             parent.render.call(this);
             this.camera.target.x = 500 * Math.sin(this.phi) * Math.cos(this.theta);
             this.camera.target.y = 500 * Math.cos(this.phi);
@@ -612,7 +619,9 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-var ThreeDCanvas = function (baseComponent, THREE, settings = {}) {
+var ThreeDCanvas = function ThreeDCanvas(baseComponent, THREE) {
+    var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
     var parent = BaseCanvas(baseComponent, THREE, settings);
     return util.extend(parent, {
         constructor: function init(player, options) {
@@ -658,7 +667,7 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}) {
             if (options.callback) options.callback();
         },
 
-        handleResize: function () {
+        handleResize: function handleResize() {
             parent.handleResize.call(this);
             var aspectRatio = this.width / this.height / 2;
             this.cameraL.aspect = aspectRatio;
@@ -667,7 +676,7 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}) {
             this.cameraR.updateProjectionMatrix();
         },
 
-        handleMouseWheel: function (event) {
+        handleMouseWheel: function handleMouseWheel(event) {
             parent.handleMouseWheel(event);
             // WebKit
             if (event.wheelDeltaY) {
@@ -686,7 +695,7 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}) {
             this.cameraR.updateProjectionMatrix();
         },
 
-        render: function () {
+        render: function render() {
             parent.render.call(this);
             var viewPortWidth = this.width / 2,
                 viewPortHeight = this.height;
@@ -713,17 +722,100 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}) {
     });
 };
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var set = function set(object, property, value, receiver) {
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent !== null) {
+      set(parent, property, value, receiver);
+    }
+  } else if ("value" in desc && desc.writable) {
+    desc.value = value;
+  } else {
+    var setter = desc.set;
+
+    if (setter !== undefined) {
+      setter.call(receiver, value);
+    }
+  }
+
+  return value;
+};
+
 /**
  * Created by yanwsh on 4/4/16.
  */
 
-var Notice = function (baseComponent) {
+var Notice = function Notice(baseComponent) {
     var element = document.createElement('div');
     element.className = "vjs-video-notice-label";
 
     return {
         constructor: function init(player, options) {
-            if (typeof options.NoticeMessage == "object") {
+            if (_typeof(options.NoticeMessage) == "object") {
                 element = options.NoticeMessage;
                 options.el = options.NoticeMessage;
             } else if (typeof options.NoticeMessage == "string") {
@@ -734,7 +826,7 @@ var Notice = function (baseComponent) {
             baseComponent.call(this, player, options);
         },
 
-        el: function () {
+        el: function el() {
             return element;
         }
     };
@@ -746,7 +838,7 @@ var Notice = function (baseComponent) {
 var element = document.createElement('canvas');
 element.className = "vjs-video-helper-canvas";
 
-var HelperCanvas = function (baseComponent) {
+var HelperCanvas = function HelperCanvas(baseComponent) {
     return {
         constructor: function init(player, options) {
             this.videoElement = options.video;
@@ -763,15 +855,15 @@ var HelperCanvas = function (baseComponent) {
             baseComponent.call(this, player, options);
         },
 
-        getContext: function () {
+        getContext: function getContext() {
             return this.context;
         },
 
-        update: function () {
+        update: function update() {
             this.context.drawImage(this.videoElement, 0, 0, this.width, this.height);
         },
 
-        el: function () {
+        el: function el() {
             return element;
         }
     };
@@ -781,17 +873,17 @@ var HelperCanvas = function (baseComponent) {
  * Created by yanwsh on 8/13/16.
  */
 
-var VRButton = function (ButtonComponent) {
+var VRButton = function VRButton(ButtonComponent) {
     return {
         constructor: function init(player, options) {
             ButtonComponent.call(this, player, options);
         },
 
-        buildCSSClass: function () {
-            return `vjs-VR-control ${ ButtonComponent.prototype.buildCSSClass.call(this) }`;
+        buildCSSClass: function buildCSSClass() {
+            return "vjs-VR-control " + ButtonComponent.prototype.buildCSSClass.call(this);
         },
 
-        handleClick: function () {
+        handleClick: function handleClick() {
             var canvas = this.player().getChild("Canvas");
             !canvas.VRMode ? canvas.enableVR() : canvas.disableVR();
             canvas.VRMode ? this.addClass("enable") : this.removeClass("enable");
@@ -802,14 +894,12 @@ var VRButton = function (ButtonComponent) {
     };
 };
 
-var index = typeof Symbol === 'undefined' ? function (description) {
+var index$1 = typeof Symbol === 'undefined' ? function (description) {
 	return '@' + (description || '@') + Math.random();
 } : Symbol;
 
-var poorMansSymbol_commonJs = index;
-
 /*! npm.im/intervalometer */
-function intervalometer$1(cb, request, cancel, requestParameter) {
+function intervalometer(cb, request, cancel, requestParameter) {
 	var requestId;
 	var previousLoopTime;
 	function loop(now) {
@@ -837,30 +927,10 @@ function intervalometer$1(cb, request, cancel, requestParameter) {
 }
 
 function frameIntervalometer(cb) {
-	return intervalometer$1(cb, requestAnimationFrame, cancelAnimationFrame);
+	return intervalometer(cb, requestAnimationFrame, cancelAnimationFrame);
 }
 
-function timerIntervalometer(cb, delay) {
-	return intervalometer$1(cb, setTimeout, clearTimeout, delay);
-}
-
-
-
-var intervalometer_esModules = Object.freeze({
-	intervalometer: intervalometer$1,
-	frameIntervalometer: frameIntervalometer,
-	timerIntervalometer: timerIntervalometer
-});
-
-var require$$0 = ( intervalometer_esModules && intervalometer_esModules['default'] ) || intervalometer_esModules;
-
-function _interopDefault$1(ex) {
-	return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
-}
-
-var Symbol$1 = _interopDefault$1(poorMansSymbol_commonJs);
-var intervalometer = require$$0;
-
+/*! npm.im/iphone-inline-video */
 function preventEvent(element, eventName, toggleProperty, preventWithProperty) {
 	function handler(e) {
 		if (Boolean(element[toggleProperty]) === Boolean(preventWithProperty)) {
@@ -907,10 +977,10 @@ function dispatchEventAsync(element, type) {
 // iOS 10 adds support for native inline playback + silent autoplay
 var isWhitelisted = /iPhone|iPod/i.test(navigator.userAgent) && !matchMedia('(-webkit-video-playable-inline)').matches;
 
-var ಠ = Symbol$1();
-var ಠevent = Symbol$1();
-var ಠplay = Symbol$1('nativeplay');
-var ಠpause = Symbol$1('nativepause');
+var ಠ = index$1();
+var ಠevent = index$1();
+var ಠplay = index$1('nativeplay');
+var ಠpause = index$1('nativepause');
 
 /**
  * UTILS
@@ -954,7 +1024,7 @@ function isPlayerEnded(player) {
 	return player.driver.currentTime >= player.video.duration;
 }
 
-function update(timeDiff) {
+function update$1(timeDiff) {
 	var player = this;
 	// console.log('update', player.video.readyState, player.video.networkState, player.driver.readyState, player.driver.networkState, player.driver.paused);
 	if (player.video.readyState >= player.video.HAVE_FUTURE_DATA) {
@@ -1065,7 +1135,7 @@ function addPlayer(video, hasAudio) {
 	player.paused = true; // track whether 'pause' events have been fired
 	player.hasAudio = hasAudio;
 	player.video = video;
-	player.updater = intervalometer.frameIntervalometer(update.bind(player));
+	player.updater = frameIntervalometer(update$1.bind(player));
 
 	if (hasAudio) {
 		player.driver = getAudioFromVideo(video);
@@ -1080,10 +1150,10 @@ function addPlayer(video, hasAudio) {
 			src: video.src || video.currentSrc || 'data:',
 			muted: true,
 			paused: true,
-			pause: function () {
+			pause: function pause() {
 				player.driver.paused = true;
 			},
-			play: function () {
+			play: function play() {
 				player.driver.paused = false;
 				// media automatically goes to 0 if .play() is called when it's done
 				if (isPlayerEnded(player)) {
@@ -1182,15 +1252,13 @@ function enableInlineVideo(video, hasAudio, onlyWhitelisted) {
 
 enableInlineVideo.isWhitelisted = isWhitelisted;
 
-var iphoneInlineVideo_commonJs = enableInlineVideo;
-
 /**
  * Created by yanwsh on 4/3/16.
  */
-const runOnMobile = util.mobileAndTabletcheck();
+var runOnMobile = util.mobileAndTabletcheck();
 
 // Default options for the plugin.
-const defaults = {
+var defaults$1 = {
     clickAndDrag: runOnMobile,
     showNotice: true,
     NoticeMessage: "Please use your mouse drag and drop the video.",
@@ -1275,7 +1343,7 @@ function fullscreenOnIOS(player, clickFn) {
  * @param    {Player} player
  * @param    {Object} [options={}]
  */
-const onPlayerReady = (player, options, settings) => {
+var onPlayerReady = function onPlayerReady(player, options, settings) {
     player.addClass('vjs-panorama');
     if (!Detector.webgl) {
         PopupNotification(player, {
@@ -1292,7 +1360,7 @@ const onPlayerReady = (player, options, settings) => {
     if (runOnMobile) {
         var videoElement = settings.getTech(player);
         if (util.isRealIphone()) {
-            iphoneInlineVideo_commonJs(videoElement, true);
+            enableInlineVideo(videoElement, true);
         }
         if (util.isIos()) {
             fullscreenOnIOS(player, settings.getFullscreenToggleClickFn(player));
@@ -1319,16 +1387,18 @@ const onPlayerReady = (player, options, settings) => {
     if (options.callback) options.callback();
 };
 
-const PopupNotification = (player, options = {
-    NoticeMessage: ""
-}) => {
+var PopupNotification = function PopupNotification(player) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+        NoticeMessage: ""
+    };
+
     var notice = player.addChild('Notice', options);
 
     if (options.autoHideNotice > 0) {
         setTimeout(function () {
             notice.addClass("vjs-video-notice-fadeOut");
             var transitionEvent = util.whichTransitionEvent();
-            var hide = function () {
+            var hide = function hide() {
                 notice.hide();
                 notice.removeClass("vjs-video-notice-fadeOut");
                 notice.off(transitionEvent, hide);
@@ -1338,7 +1408,9 @@ const PopupNotification = (player, options = {
     }
 };
 
-const plugin$1 = function (settings = {}) {
+var plugin$1 = function plugin$1() {
+    var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
     /**
      * A video.js plugin.
      *
@@ -1351,18 +1423,20 @@ const plugin$1 = function (settings = {}) {
      * @param    {Object} [options={}]
      *           An object of options left to the plugin author to define.
      */
-    const videoTypes = ["equirectangular", "fisheye", "3dVideo"];
-    const panorama = function (options) {
-        if (settings.mergeOption) options = settings.mergeOption(defaults, options);
+    var videoTypes = ["equirectangular", "fisheye", "3dVideo"];
+    var panorama = function panorama(options) {
+        var _this = this;
+
+        if (settings.mergeOption) options = settings.mergeOption(defaults$1, options);
         if (typeof settings._init === "undefined" || typeof settings._init !== "function") {
             console.error("plugin must implement init function().");
             return;
         }
-        if (videoTypes.indexOf(options.videoType) == -1) options.videoType = defaults.videoType;
+        if (videoTypes.indexOf(options.videoType) == -1) options.videoType = defaults$1.videoType;
         settings._init(options);
         /* implement callback function when videojs is ready */
-        this.ready(() => {
-            onPlayerReady(this, options, settings);
+        this.ready(function () {
+            onPlayerReady(_this, options, settings);
         });
     };
 
@@ -1394,15 +1468,15 @@ videojs.registerComponent('VRButton', videojs.extend(button, vrBtn));
 
 // Register the plugin with video.js.
 videojs.plugin('panorama', plugin$1({
-    _init: function (options) {
-        var canvas = options.videoType !== "3dVideo" ? Canvas(component, window.THREE, {
+    _init: function _init(options) {
+        var canvas = options.videoType !== "3dVideo" ? Canvas(component, THREE$1, {
             getTech: getTech
-        }) : ThreeDCanvas(component, window.THREE, {
+        }) : ThreeDCanvas(component, THREE$1, {
             getTech: getTech
         });
         videojs.registerComponent('Canvas', videojs.extend(component, canvas));
     },
-    mergeOption: function (defaults, options) {
+    mergeOption: function mergeOption(defaults, options) {
         return videojs.mergeOptions(defaults, options);
     },
     getTech: getTech,

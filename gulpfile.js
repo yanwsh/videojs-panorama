@@ -23,6 +23,11 @@ var lazypipe = require('lazypipe');
 var browserSync = require('browser-sync').create();
 var rollupBabelLibBundler = require('rollup-babel-lib-bundler');
 
+var babel = require('rollup-plugin-babel');
+var json = require('rollup-plugin-json');
+var nodeResolve = require('rollup-plugin-node-resolve');
+var commonJS = require('rollup-plugin-commonjs');
+
 var config = {
     distPath: './dist',
     versions: [4, 5]
@@ -94,9 +99,22 @@ gulp.task('build-script-es6', function(done){
         dest: destPath,
         entry: entryFile,
         format: ['es6', 'cjs'],
-        externals: ['video.js', 'three'],
         postfix: {es6: '.es6', cjs: '.common'},
-        babel: {}
+        plugins: [
+            babel({
+                "presets": ["es2015-rollup"],
+                babelrc: false
+            }),
+            json(),
+            nodeResolve({
+                main: true,
+                jsnext: true,
+                extensions: ['.js', '.json'],
+                preferBuiltins: false,
+                skip: ['video.js', 'three']
+            }),
+            commonJS()
+        ]
     });
 
     promise.then(function(){

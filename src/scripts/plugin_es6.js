@@ -33,10 +33,10 @@ videojs.registerComponent('VRButton', videojs.extend(button, vrBtn));
 videojs.plugin('panorama', panorama({
     _init: function(options){
         var canvas = (options.videoType !== "3dVideo")?
-            Canvas(component, window.THREE, {
+            Canvas(component, THREE, {
                 getTech: getTech
             }) :
-            ThreeDCanvas(component, window.THREE, {
+            ThreeDCanvas(component, THREE, {
                 getTech: getTech
             });
         videojs.registerComponent('Canvas', videojs.extend(component, canvas));
