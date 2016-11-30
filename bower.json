@@ -1,7 +1,7 @@
 {
   "name": "@npm/videojs-panorama",
   "description": "a plugin for videojs run a full 360 degree panorama video.",
-  "main": "es5/plugin.js",
+  "main": "dist/videojs-panorama.v5.js",
   "authors": [
     "yanwsh@gmail.com"
   ],
@@ -25,7 +25,7 @@
   "dependencies": {
     "three.js": "^0.75.0"
   },
-  "devDependencies":{
+  "devDependencies": {
     "videojs_5": "video.js#5",
     "videojs_4": "video.js#4"
   }
