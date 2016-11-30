@@ -16,6 +16,12 @@ npm install --save videojs-panorama
 
 or
 
+```sh
+bower install --save videojs-panorama
+```
+
+or
+
 #### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases)
 
 ## Integration with video.js 4 and 5
