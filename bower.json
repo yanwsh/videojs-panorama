@@ -20,7 +20,9 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "assets",
+    "scripts"
   ],
   "dependencies": {
     "three.js": "^0.75.0"
