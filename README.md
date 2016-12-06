@@ -1,6 +1,6 @@
 # videojs-panorama
 
-a plugin for videojs run a full 360 degree panorama video. VR is supported right now!
+A [VideoJS][videojs] plugin to run a full 360 degree panorama video. VR is supported right now!
 
 #### [DEMO HERE](http://yanwsh.github.io/videojs-panorama/)
 
@@ -26,22 +26,22 @@ or
 
 ## Integration with video.js 4 and 5
 
-###1. If you don't have videoJs, add it's scripts and stylesheet to your page
+###1. If you don't have video.js, add its scripts and stylesheet to your page:
 
 ```html
-<!-- Video.js 4 -->
+<!-- video.js 4 -->
 <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
 <script src="http://vjs.zencdn.net/4.12/video.js"></script>
 ```
 or
 
 ```html
-<!-- Video.js 5 -->
+<!-- video.js 5 -->
 <link href="http://vjs.zencdn.net/5.8/video-js.css" rel="stylesheet">
 <script src="http://vjs.zencdn.net/5.8/video.js"></script>
 ```
 
-###2. Add three.js after videoJs script
+###2. Add three.js after video.js script
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r76/three.js"></script>
 ```
@@ -51,17 +51,17 @@ or
 <!-- Common -->
 <link href="//path/to/videojs-panorama.min.css" rel="stylesheet">
 ```
-and the videojs version specific plugin, you can find it in **dist** folder
+and the videojs version-specific plugin, available in the **dist** folder
 ```html
-<!-- Video.js 4 -->
+<!-- video.js 4 -->
 <script src="//path/to/videojs-panorama.v4.min.js"></script>
 ```
 or
 ```html
-<!-- Video.js 5 -->
+<!-- video.js 5 -->
 <script src="//path/to/videojs-panorama.v5.min.js"></script>
 ```
-###4. setup videojs panorama plugin
+###4. Set up the video.js panorama plugin
 ```js
 player.panorama({
     clickAndDrag: true,
@@ -71,27 +71,29 @@ player.panorama({
 });
 ```
 
-## Cross domian issue
-In order to avoid cross domain issue, please keep the code and video with in same domain. videojs-panorama use canvas and put video as resources, so it should be at same domain. Detail, please see: [https://forums.developer.apple.com/thread/36725](https://forums.developer.apple.com/thread/36725)
+## Cross domain issue
+In order to avoid a cross domain issue, please keep the code and video within same domain. videojs-panorama uses canvas and includes the video as a resource, so it should be at the same domain. For details, please see: [https://forums.developer.apple.com/thread/36725](https://forums.developer.apple.com/thread/36725)
 
-If you really want to use with in different domain, here are two solutions. If you have more good solutions, please let me know.
+If you really want to use a video hosted on a different domain, there are two solutions. 
+(If you have alternatives, please let me know.)
 
-## video player in iframe
-In order to avoid cross domain issue, we need to put video player inside iframe. However, mobile acceleration and fullscreen will not working on iframe. You need to set it up manually. Please check `iframe.html` and `iframe-video.html` for detail, it's a example let mobile acceleration and fullscreen functionality work on iframe. 
+## Video player in iframe
+In order to avoid the cross-domain issue, we need to put the video player inside an iframe. However, mobile acceleration and fullscreen do not work in iframes, so you will have to set it up manually. Please check `iframe.html` and `iframe-video.html` for details, they include examples to allow mobile acceleration and fullscreen functionality to work in iframes. 
 
-### Put it inside an iframe and use iframe in different domain. (best solution)
-### experimental, only work on chrome and firefox, it will be broken on safari
-please make sure to add `crossorigin="anonymous"` attribute in video tag. Like
+### Put it inside an iframe and use iframe in different domain. (Best solution)
+### Experimental, only works in Chrome and Firefox; does not work in Safari!
+Please make sure to add `crossorigin="anonymous"` attribute in video tag:
 ```js
         <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster.jpg"  crossorigin="anonymous" controls>
             <source src="assets/shark.mp4" type='video/mp4'>
         </video>
 ```
-On server side, you have to set cross origin header, like `Access-Control-Allow-Origin: *`.
+On the server side, you have to set a cross-origin header, like `Access-Control-Allow-Origin: *`.
 
 ## Resize problem
 
-Sometimes, video need to be resized, like fullscreen the video. For performance, this plugin doesn't handle resize automatically. But it's easy to handle on your side. Here's the example.
+Sometimes the video will need to be resized and/or go fullscreen. For performance, this plugin doesn't handle resize automatically. 
+Here's the solution:
 ```js
 var player = window.player = videojs('videojs-panorama-player', {}, function () {
     window.addEventListener("resize", function () {
