@@ -8,6 +8,7 @@ Make sure you have NodeJS 0.10 or higher and npm installed.
 
 1. Fork this repository and clone your fork
 1. Install dependencies: `npm install`
+1. Install (more) dependencies: `bower install`
 1. Run a development server: `gulp watch`
 
 ### Making Changes
