@@ -60,7 +60,7 @@ var Detector = {
         var result = false;
         for (var i = 0; i < videoSources.length; i++) {
             var currentVideoSource = videoSources[i];
-            if (currentVideoSource.type == "application/x-mpegURL" && /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+            if ((currentVideoSource.type == "application/x-mpegURL" || currentVideoSource.type == "application/vnd.apple.mpegurl") && /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
                 result = true;
             }
             break;
@@ -740,8 +740,14 @@ var ThreeDCanvas = function ThreeDCanvas(baseComponent, THREE) {
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
+
+
+
+
+
+
 
 
 
@@ -1458,7 +1464,7 @@ var plugin$1 = function plugin$1() {
     };
 
     // Include the version number.
-    panorama.VERSION = '0.1.1';
+    panorama.VERSION = '0.1.3';
 
     return panorama;
 };
