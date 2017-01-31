@@ -517,6 +517,31 @@ var Canvas = function Canvas(baseComponent, THREE) {
                 geometry.rotateX(options.rotateX);
                 geometry.rotateY(options.rotateY);
                 geometry.rotateZ(options.rotateZ);
+            } else if (this.videoType === "dual_fisheye") {
+                var _normals = geometry.attributes.normal.array;
+                var _uvs = geometry.attributes.uv.array;
+                var _l = _normals.length / 3;
+                for (var _i = 0; _i < _l / 2; _i++) {
+                    var _x2 = _normals[_i * 3 + 0];
+                    var _y = _normals[_i * 3 + 1];
+                    var _z = _normals[_i * 3 + 2];
+
+                    var _r = _x2 == 0 && _z == 0 ? 1 : Math.acos(_y) / Math.sqrt(_x2 * _x2 + _z * _z) * (2 / Math.PI);
+                    _uvs[_i * 2 + 0] = _x2 * 0.2 * _r + 0.25;
+                    _uvs[_i * 2 + 1] = _z * 0.4 * _r + 0.5;
+                }
+                for (var _i2 = _l / 2; _i2 < _l; _i2++) {
+                    var _x3 = _normals[_i2 * 3 + 0];
+                    var _y2 = _normals[_i2 * 3 + 1];
+                    var _z2 = _normals[_i2 * 3 + 2];
+
+                    var _r2 = _x3 == 0 && _z2 == 0 ? 1 : Math.acos(-_y2) / Math.sqrt(_x3 * _x3 + _z2 * _z2) * (2 / Math.PI);
+                    _uvs[_i2 * 2 + 0] = -_x3 * 0.2 * _r2 + 0.75;
+                    _uvs[_i2 * 2 + 1] = _z2 * 0.4 * _r2 + 0.5;
+                }
+                geometry.rotateX(options.rotateX);
+                geometry.rotateY(options.rotateY);
+                geometry.rotateZ(options.rotateZ);
             }
             geometry.scale(-1, 1, 1);
             //define mesh
@@ -1446,7 +1471,7 @@ var plugin$1 = function plugin$1() {
      * @param    {Object} [options={}]
      *           An object of options left to the plugin author to define.
      */
-    var videoTypes = ["equirectangular", "fisheye", "3dVideo"];
+    var videoTypes = ["equirectangular", "fisheye", "3dVideo", "dual_fisheye"];
     var panorama = function panorama(options) {
         var _this = this;
 

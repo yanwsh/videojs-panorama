@@ -22,19 +22,45 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             //define geometry
             var geometry = (this.videoType === "equirectangular")? new THREE.SphereGeometry(500, 60, 40): new THREE.SphereBufferGeometry( 500, 60, 40 ).toNonIndexed();
             if(this.videoType === "fisheye"){
-                var normals = geometry.attributes.normal.array;
-                var uvs = geometry.attributes.uv.array;
-                for ( var i = 0, l = normals.length / 3; i < l; i ++ ) {
-                    var x = normals[ i * 3 + 0 ];
-                    var y = normals[ i * 3 + 1 ];
-                    var z = normals[ i * 3 + 2 ];
+                let normals = geometry.attributes.normal.array;
+                let uvs = geometry.attributes.uv.array;
+                for ( let i = 0, l = normals.length / 3; i < l; i ++ ) {
+                    let x = normals[ i * 3 + 0 ];
+                    let y = normals[ i * 3 + 1 ];
+                    let z = normals[ i * 3 + 2 ];
 
-                    var r = Math.asin(Math.sqrt(x * x + z * z) / Math.sqrt(x * x  + y * y + z * z)) / Math.PI;
+                    let r = Math.asin(Math.sqrt(x * x + z * z) / Math.sqrt(x * x  + y * y + z * z)) / Math.PI;
                     if(y < 0) r = 1 - r;
-                    var theta = (x == 0 && z == 0)? 0 : Math.acos(x / Math.sqrt(x * x + z * z));
+                    let theta = (x == 0 && z == 0)? 0 : Math.acos(x / Math.sqrt(x * x + z * z));
                     if(z < 0) theta = theta * -1;
                     uvs[ i * 2 + 0 ] = -0.8 * r * Math.cos(theta) + 0.5;
                     uvs[ i * 2 + 1 ] = 0.8 * r * Math.sin(theta) + 0.5;
+                }
+                geometry.rotateX( options.rotateX);
+                geometry.rotateY( options.rotateY);
+                geometry.rotateZ( options.rotateZ);
+            }else if(this.videoType === "dual_fisheye"){
+                let normals = geometry.attributes.normal.array;
+                let uvs = geometry.attributes.uv.array;
+                let l = normals.length / 3;
+                for ( let i = 0; i < l / 2; i ++ ) {
+                    let x = normals[ i * 3 + 0 ];
+                    let y = normals[ i * 3 + 1 ];
+                    let z = normals[ i * 3 + 2 ];
+
+                    let r = ( x == 0 && z == 0 ) ? 1 : ( Math.acos( y ) / Math.sqrt( x * x + z * z ) ) * ( 2 / Math.PI );
+                    uvs[ i * 2 + 0 ] = x * (446/1920) * r  + (462/1920);
+                    uvs[ i * 2 + 1 ] = z * (466/1080) * r  + (482/1080) + 0.1;
+
+                }
+                for ( let i = l / 2; i < l; i ++ ) {
+                    let x = normals[ i * 3 + 0 ];
+                    let y = normals[ i * 3 + 1 ];
+                    let z = normals[ i * 3 + 2 ];
+
+                    let r = ( x == 0 && z == 0 ) ? 1 : ( Math.acos( - y ) / Math.sqrt( x * x + z * z ) ) * ( 2 / Math.PI );
+                    uvs[ i * 2 + 0 ] = - x * (446/1920) * r  + (1454/1920);
+                    uvs[ i * 2 + 1 ] = z * (466/1080) * r  + (482/1080) + 0.15;
                 }
                 geometry.rotateX( options.rotateX);
                 geometry.rotateY( options.rotateY);
