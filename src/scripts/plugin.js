@@ -174,7 +174,7 @@ const plugin = function(settings = {}){
      * @param    {Object} [options={}]
      *           An object of options left to the plugin author to define.
      */
-    const videoTypes = ["equirectangular", "fisheye", "3dVideo"];
+    const videoTypes = ["equirectangular", "fisheye", "3dVideo", "dual_fisheye"];
     const panorama = function(options) {
         if(settings.mergeOption) options = settings.mergeOption(defaults, options);
         if(typeof settings._init === "undefined" || typeof settings._init !== "function") {
