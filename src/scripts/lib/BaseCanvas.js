@@ -164,6 +164,9 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
 
         handleMouseLease: function (event) {
             this.isUserInteracting = false;
+            if(this.mouseDown) {
+                this.mouseDown = false;
+            }
         },
 
         animate: function(){
