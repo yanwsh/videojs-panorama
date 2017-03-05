@@ -49,9 +49,8 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
                     let z = normals[ i * 3 + 2 ];
 
                     let r = ( x == 0 && z == 0 ) ? 1 : ( Math.acos( y ) / Math.sqrt( x * x + z * z ) ) * ( 2 / Math.PI );
-                    uvs[ i * 2 + 0 ] = x * (446/1920) * r  + (462/1920);
-                    uvs[ i * 2 + 1 ] = z * (466/1080) * r  + (482/1080) + 0.1;
-
+                    uvs[ i * 2 + 0 ] = x * options.dualFish.circle1.rx * r * options.dualFish.circle1.coverX  + options.dualFish.circle1.x;
+                    uvs[ i * 2 + 1 ] = z * options.dualFish.circle1.ry * r * options.dualFish.circle1.coverY  + options.dualFish.circle1.y;
                 }
                 for ( let i = l / 2; i < l; i ++ ) {
                     let x = normals[ i * 3 + 0 ];
@@ -59,8 +58,8 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
                     let z = normals[ i * 3 + 2 ];
 
                     let r = ( x == 0 && z == 0 ) ? 1 : ( Math.acos( - y ) / Math.sqrt( x * x + z * z ) ) * ( 2 / Math.PI );
-                    uvs[ i * 2 + 0 ] = - x * (446/1920) * r  + (1454/1920);
-                    uvs[ i * 2 + 1 ] = z * (466/1080) * r  + (482/1080) + 0.15;
+                    uvs[ i * 2 + 0 ] = - x * options.dualFish.circle2.rx * r * options.dualFish.circle2.coverX  + options.dualFish.circle2.x;
+                    uvs[ i * 2 + 1 ] = z * options.dualFish.circle2.ry * r * options.dualFish.circle2.coverY  + options.dualFish.circle2.y;
                 }
                 geometry.rotateX( options.rotateX);
                 geometry.rotateY( options.rotateY);

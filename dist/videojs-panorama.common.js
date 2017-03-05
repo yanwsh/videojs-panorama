@@ -531,8 +531,8 @@ var Canvas = function Canvas(baseComponent, THREE) {
                     var _z = _normals[_i * 3 + 2];
 
                     var _r = _x2 == 0 && _z == 0 ? 1 : Math.acos(_y) / Math.sqrt(_x2 * _x2 + _z * _z) * (2 / Math.PI);
-                    _uvs[_i * 2 + 0] = _x2 * 0.2 * _r + 0.25;
-                    _uvs[_i * 2 + 1] = _z * 0.4 * _r + 0.5;
+                    _uvs[_i * 2 + 0] = _x2 * options.dualFish.circle1.rx * _r * options.dualFish.circle1.coverX + options.dualFish.circle1.x;
+                    _uvs[_i * 2 + 1] = _z * options.dualFish.circle1.ry * _r * options.dualFish.circle1.coverY + options.dualFish.circle1.y;
                 }
                 for (var _i2 = _l / 2; _i2 < _l; _i2++) {
                     var _x3 = _normals[_i2 * 3 + 0];
@@ -540,8 +540,8 @@ var Canvas = function Canvas(baseComponent, THREE) {
                     var _z2 = _normals[_i2 * 3 + 2];
 
                     var _r2 = _x3 == 0 && _z2 == 0 ? 1 : Math.acos(-_y2) / Math.sqrt(_x3 * _x3 + _z2 * _z2) * (2 / Math.PI);
-                    _uvs[_i2 * 2 + 0] = -_x3 * 0.2 * _r2 + 0.75;
-                    _uvs[_i2 * 2 + 1] = _z2 * 0.4 * _r2 + 0.5;
+                    _uvs[_i2 * 2 + 0] = -_x3 * options.dualFish.circle2.rx * _r2 * options.dualFish.circle2.coverX + options.dualFish.circle2.x;
+                    _uvs[_i2 * 2 + 1] = _z2 * options.dualFish.circle2.ry * _r2 * options.dualFish.circle2.coverY + options.dualFish.circle2.y;
                 }
                 geometry.rotateX(options.rotateX);
                 geometry.rotateY(options.rotateY);
@@ -1347,8 +1347,28 @@ var defaults$1 = {
     VREnable: true,
     VRGapDegree: 2.5,
 
-    closePanorama: false
+    closePanorama: false,
 
+    dualFish: {
+        width: 1920,
+        height: 1080,
+        circle1: {
+            x: 0.240625,
+            y: 0.553704,
+            rx: 0.23333,
+            ry: 0.43148,
+            coverX: 0.913,
+            coverY: 0.9
+        },
+        circle2: {
+            x: 0.757292,
+            y: 0.553704,
+            rx: 0.232292,
+            ry: 0.4296296,
+            coverX: 0.913,
+            coverY: 0.9308
+        }
+    }
 };
 
 function playerResize(player) {

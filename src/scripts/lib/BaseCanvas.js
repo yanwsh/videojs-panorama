@@ -40,8 +40,8 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             if(!this.supportVideoTexture){
                 this.helperCanvas = player.addChild("HelperCanvas", {
                     video: video,
-                    width: this.width,
-                    height: this.height
+                    width: (options.helperCanvas.width)? options.helperCanvas.width: this.width,
+                    height: (options.helperCanvas.height)? options.helperCanvas.height: this.height
                 });
                 var context = this.helperCanvas.el();
                 this.texture = new THREE.Texture(context);

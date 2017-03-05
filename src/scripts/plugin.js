@@ -49,9 +49,30 @@ const defaults = {
     VREnable: true,
     VRGapDegree: 2.5,
 
-    closePanorama: false
+    closePanorama: false,
 
+    helperCanvas: {},
 
+    dualFish: {
+        width: 1920,
+        height: 1080,
+        circle1: {
+            x: 0.240625,
+            y: 0.553704,
+            rx: 0.23333,
+            ry: 0.43148,
+            coverX: 0.913,
+            coverY: 0.9
+        },
+        circle2: {
+            x: 0.757292,
+            y: 0.553704,
+            rx: 0.232292,
+            ry: 0.4296296,
+            coverX: 0.913,
+            coverY: 0.9308
+        }
+    }
 };
 
 function playerResize(player){
@@ -129,7 +150,7 @@ const onPlayerReady = (player, options, settings) => {
             PopupNotification(player, util.deepCopy(options));
         });
     }
-    if(options.VREnable && options.videoType !== "3dVideo"){
+    if(options.VREnable){
         player.controlBar.addChild('VRButton', {}, player.controlBar.children().length - 1);
     }
     canvas.hide();
