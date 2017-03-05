@@ -7,12 +7,6 @@
     <link href="/bower_components/videojs_5/dist/video-js.css" rel="stylesheet">
     <link href="/dist/videojs-panorama.css" rel="stylesheet">
     <style>
-        body{
-            margin: 0;
-        }
-        body.vjs-full-window .player_wrapper{
-            position: static;
-        }
         .player_wrapper{
             position: relative;
             max-width: 960px;
@@ -21,6 +15,7 @@
         .player_container{
             padding-top: 56.25%;
         }
+
         #videojs-panorama-player{
             position: absolute;
             width: 100%;
@@ -33,14 +28,18 @@
 <body>
 <div class="player_wrapper">
     <div class="player_container">
-        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster.jpg"  crossorigin="anonymous" controls>
-            <source src="assets/threed.mp4" type='video/mp4'>
+        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster-2.jpg"  crossorigin="anonymous" controls>
+            <source src="assets/unstitched.mp4" type='video/mp4'>
         </video>
     </div>
 </div>
 
+<ul>
+    <li><a href="/test/">Run unit tests in browser.</a></li>
+    <li><a href="/docs/api/">Read generated docs.</a></li>
+</ul>
 <script src="/bower_components/videojs_5/dist/video.js"></script>
-<script src="/bower_components/three.js/three.js"></script>
+<script src="bower_components/three.js/three.js"></script>
 <script src="/dist/videojs-panorama.v5.js"></script>
 <script>
     function isMobile() {
@@ -50,33 +49,22 @@
     }
     (function(window, videojs) {
         var player = window.player = videojs('videojs-panorama-player', {}, function () {
-            window.addEventListener("resize", function () {
-                var canvas = player.getChild('Canvas');
-                if(canvas) canvas.handleResize();
-            });
         });
         var videoElement = document.getElementById("videojs-panorama-player");
         var width = videoElement.offsetWidth;
         var height = videoElement.offsetHeight;
         player.width(width), player.height(height);
         player.panorama({
-            clickToToggle: (!isMobile()),
-            autoMobileOrientation: true,
+            clickAndDrag: true,
             backToVerticalCenter: false,
             backToHorizonCenter: false,
-            initFov: 75,
-            initLat: -15,
-            initLon: -185,
-            clickAndDrag: true,
+            clickToToggle: true,
+            rotateZ: -Math.PI / 2,
             NoticeMessage: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video",
-            videoType: "3dVideo",
+            videoType: "dual_fisheye",
             callback: function () {
-                if(!isMobile()) player.play();
+                player.play();
             }
-        });
-
-        player.on("VRModeOn", function(){
-            player.controlBar.fullscreenToggle.trigger("tap");
         });
     }(window, window.videojs));
 </script>

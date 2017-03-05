@@ -16,15 +16,17 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}){
     return Util.extend(parent, {
         constructor: function init(player, options){
             parent.constructor.call(this, player, options);
-
+            //only show left part by default
+            this.VRMode = false;
             //define scene
             this.scene = new THREE.Scene();
-            var aspectRatio = this.width / this.height / 2;
+
+            var aspectRatio = this.width / this.height;
             //define camera
             this.cameraL = new THREE.PerspectiveCamera(options.initFov, aspectRatio, 1, 2000);
             this.cameraL.target = new THREE.Vector3( 0, 0, 0 );
 
-            this.cameraR = new THREE.PerspectiveCamera(options.initFov, aspectRatio, 1, 2000);
+            this.cameraR = new THREE.PerspectiveCamera(options.initFov, aspectRatio / 2, 1, 2000);
             this.cameraR.position.set( 1000, 0, 0 );
             this.cameraR.target = new THREE.Vector3( 1000, 0, 0 );
 
@@ -56,18 +58,23 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}){
             this.meshR.position.set(1000, 0, 0);
 
             this.scene.add(this.meshL);
-            this.scene.add(this.meshR);
 
             if(options.callback) options.callback();
         },
 
         handleResize: function () {
             parent.handleResize.call(this);
-            var aspectRatio = this.width / this.height / 2;
-            this.cameraL.aspect = aspectRatio;
-            this.cameraR.aspect = aspectRatio;
-            this.cameraL.updateProjectionMatrix();
-            this.cameraR.updateProjectionMatrix();
+            var aspectRatio = this.width / this.height;
+            if(!this.VRMode) {
+                this.cameraL.aspect = aspectRatio;
+                this.cameraL.updateProjectionMatrix();
+            }else{
+                aspectRatio /= 2;
+                this.cameraL.aspect = aspectRatio;
+                this.cameraR.aspect = aspectRatio;
+                this.cameraL.updateProjectionMatrix();
+                this.cameraR.updateProjectionMatrix();
+            }
         },
 
         handleMouseWheel: function(event){
@@ -84,33 +91,51 @@ var ThreeDCanvas = function (baseComponent, THREE, settings = {}){
             }
             this.cameraL.fov = Math.min(this.settings.maxFov, this.cameraL.fov);
             this.cameraL.fov = Math.max(this.settings.minFov, this.cameraL.fov);
-            this.cameraR.fov = this.cameraL.fov;
             this.cameraL.updateProjectionMatrix();
-            this.cameraR.updateProjectionMatrix();
+            if(this.VRMode){
+                this.cameraR.fov = this.cameraL.fov;
+                this.cameraR.updateProjectionMatrix();
+            }
+        },
+
+        enableVR: function() {
+            this.VRMode = true;
+            this.scene.add(this.meshR);
+            this.handleResize();
+        },
+
+        disableVR: function() {
+            this.VRMode = false;
+            this.scene.remove(this.meshR);
+            this.handleResize();
         },
 
         render: function(){
             parent.render.call(this);
-            var viewPortWidth = this.width / 2, viewPortHeight = this.height;
             this.cameraL.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );
             this.cameraL.target.y = 500 * Math.cos( this.phi );
             this.cameraL.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
             this.cameraL.lookAt(this.cameraL.target);
 
-            this.cameraR.target.x = 1000 + 500 * Math.sin( this.phi ) * Math.cos( this.theta );
-            this.cameraR.target.y = 500 * Math.cos( this.phi );
-            this.cameraR.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
-            this.cameraR.lookAt( this.cameraR.target );
+            if(this.VRMode){
+                var viewPortWidth = this.width / 2, viewPortHeight = this.height;
+                this.cameraR.target.x = 1000 + 500 * Math.sin( this.phi ) * Math.cos( this.theta );
+                this.cameraR.target.y = 500 * Math.cos( this.phi );
+                this.cameraR.target.z = 500 * Math.sin( this.phi ) * Math.sin( this.theta );
+                this.cameraR.lookAt( this.cameraR.target );
 
-            // render left eye
-            this.renderer.setViewport( 0, 0, viewPortWidth, viewPortHeight );
-            this.renderer.setScissor( 0, 0, viewPortWidth, viewPortHeight );
-            this.renderer.render( this.scene, this.cameraL );
+                // render left eye
+                this.renderer.setViewport( 0, 0, viewPortWidth, viewPortHeight );
+                this.renderer.setScissor( 0, 0, viewPortWidth, viewPortHeight );
+                this.renderer.render( this.scene, this.cameraL );
 
-            // render right eye
-            this.renderer.setViewport( viewPortWidth, 0, viewPortWidth, viewPortHeight );
-            this.renderer.setScissor( viewPortWidth, 0, viewPortWidth, viewPortHeight );
-            this.renderer.render( this.scene, this.cameraR );
+                // render right eye
+                this.renderer.setViewport( viewPortWidth, 0, viewPortWidth, viewPortHeight );
+                this.renderer.setScissor( viewPortWidth, 0, viewPortWidth, viewPortHeight );
+                this.renderer.render( this.scene, this.cameraR );
+            }else{
+                this.renderer.render( this.scene, this.cameraL );
+            }
         }
     });
 };
