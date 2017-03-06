@@ -10,6 +10,7 @@
 
 import Detector from '../lib/Detector';
 import MobileBuffering from '../lib/MobileBuffering';
+import Util from '../lib/Util';
 
 const HAVE_CURRENT_DATA = 2;
 
@@ -71,11 +72,11 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
 
         attachControlEvents: function(){
             this.on('mousemove', this.handleMouseMove.bind(this));
-            this.on('touchmove', this.handleMouseMove.bind(this));
+            this.on('touchmove', this.handleTouchMove.bind(this));
             this.on('mousedown', this.handleMouseDown.bind(this));
-            this.on('touchstart',this.handleMouseDown.bind(this));
+            this.on('touchstart',this.handleTouchStart.bind(this));
             this.on('mouseup', this.handleMouseUp.bind(this));
-            this.on('touchend', this.handleMouseUp.bind(this));
+            this.on('touchend', this.handleTouchEnd.bind(this));
             if(this.settings.scrollable){
                 this.on('mousewheel', this.handleMouseWheel.bind(this));
                 this.on('MozMousePixelScroll', this.handleMouseWheel.bind(this));
@@ -114,6 +115,19 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             this.onPointerDownLat = this.lat;
         },
 
+        handleTouchStart: function(event){
+            if(event.touches.length > 1){
+                this.isUserPinch = true;
+                this.multiTouchDistance = Util.getTouchesDistance(event.touches);
+            }
+            this.handleMouseDown(event);
+        },
+
+        handleTouchEnd: function(event){
+            this.isUserPinch = false;
+            this.handleMouseUp(event);
+        },
+
         handleMouseMove: function(event){
             var clientX = event.clientX || event.touches && event.touches[0].clientX;
             var clientY = event.clientY || event.touches && event.touches[0].clientY;
@@ -128,6 +142,13 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
                 var y = event.pageY - this.el_.offsetTop;
                 this.lon = (x / this.width) * 430 - 225;
                 this.lat = (y / this.height) * -180 + 90;
+            }
+        },
+
+        handleTouchMove: function(event){
+            //handle single touch event,
+            if(!this.isUserPinch || event.touches.length <= 1){
+                this.handleMouseMove(event);
             }
         },
 

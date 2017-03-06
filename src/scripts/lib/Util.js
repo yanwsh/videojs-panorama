@@ -121,6 +121,12 @@ function deepCopy(obj) {
     return to;
 }
 
+function getTouchesDistance(touches){
+    return Math.sqrt(
+        (touches[0].clientX-touches[1].clientX) * (touches[0].clientX-touches[1].clientX) +
+        (touches[0].clientY-touches[1].clientY) * (touches[0].clientY-touches[1].clientY));
+}
+
 export default {
     whichTransitionEvent: whichTransitionEvent,
     mobileAndTabletcheck: mobileAndTabletcheck,
@@ -128,5 +134,6 @@ export default {
     isRealIphone: isRealIphone,
     fovToProjection: fovToProjection,
     extend: extend,
-    deepCopy: deepCopy
+    deepCopy: deepCopy,
+    getTouchesDistance: getTouchesDistance
 };
