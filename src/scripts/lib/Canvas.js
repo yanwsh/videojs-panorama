@@ -129,6 +129,16 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
             }
         },
 
+        handleTouchMove: function (event) {
+            parent.handleTouchMove.call(this, event);
+            if(this.isUserPinch){
+                let currentDistance = Util.getTouchesDistance(event.touches);
+                event.wheelDeltaY =  (currentDistance - this.multiTouchDistance) * 2;
+                this.handleMouseWheel.call(this, event);
+                this.multiTouchDistance = currentDistance;
+            }
+        },
+
         render: function(){
             parent.render.call(this);
             this.camera.target.x = 500 * Math.sin( this.phi ) * Math.cos( this.theta );

@@ -76,7 +76,8 @@
         });
 
         player.on("VRModeOn", function(){
-            player.controlBar.fullscreenToggle.trigger("tap");
+            if(!player.isFullscreen())
+                player.controlBar.fullscreenToggle.trigger("tap");
         });
     }(window, window.videojs));
 </script>
