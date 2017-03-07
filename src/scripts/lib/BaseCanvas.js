@@ -50,7 +50,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
                 this.texture = new THREE.Texture(video);
             }
 
-            video.style.display = "none";
+            video.style.visibility = "hidden";
 
             this.texture.generateMipmaps = false;
             this.texture.minFilter = THREE.LinearFilter;
