@@ -64,7 +64,7 @@ var Detector = {
         var result = false;
         for (var i = 0; i < videoSources.length; i++) {
             var currentVideoSource = videoSources[i];
-            if ((currentVideoSource.type == "application/x-mpegURL" || currentVideoSource.type == "application/vnd.apple.mpegurl") && /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+            if ((currentVideoSource.type == "application/x-mpegURL" || currentVideoSource.type == "application/vnd.apple.mpegurl") && /(Safari|AppleWebKit)/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
                 result = true;
             }
             break;
@@ -1088,7 +1088,7 @@ function dispatchEventAsync(element, type) {
 }
 
 // iOS 10 adds support for native inline playback + silent autoplay
-var isWhitelisted = 'object-fit' in document.head.style && /iPhone|iPod/i.test(navigator.userAgent) && !matchMedia('(-webkit-video-playable-inline)').matches;
+var isWhitelisted = /iPhone|iPod/i.test(navigator.userAgent) && !matchMedia('(-webkit-video-playable-inline)').matches;
 
 var ಠ = index$1();
 var ಠevent = index$1();

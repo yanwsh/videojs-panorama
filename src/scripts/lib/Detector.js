@@ -62,7 +62,7 @@ var Detector = {
         var result = false;
         for(var i = 0; i < videoSources.length; i++){
             var currentVideoSource = videoSources[i];
-            if((currentVideoSource.type == "application/x-mpegURL" || currentVideoSource.type == "application/vnd.apple.mpegurl") && /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)){
+            if((currentVideoSource.type == "application/x-mpegURL" || currentVideoSource.type == "application/vnd.apple.mpegurl") && /(Safari|AppleWebKit)/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)){
                 result = true;
             }
             break;
