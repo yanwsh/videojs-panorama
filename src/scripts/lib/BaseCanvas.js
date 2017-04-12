@@ -66,7 +66,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             this.attachControlEvents();
             this.player().on("play", function () {
                 this.time = new Date().getTime();
-                this.animate();
+                this.startAnimation();
             }.bind(this));
         },
 
@@ -83,6 +83,36 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             }
             this.on('mouseenter', this.handleMouseEnter.bind(this));
             this.on('mouseleave', this.handleMouseLease.bind(this));
+            this.on('dispose', this.handleDispose.bind(this));
+        },
+
+        handleDispose: function (event){
+            this.off('mousemove', this.handleMouseMove.bind(this));
+            this.off('touchmove', this.handleTouchMove.bind(this));
+            this.off('mousedown', this.handleMouseDown.bind(this));
+            this.off('touchstart',this.handleTouchStart.bind(this));
+            this.off('mouseup', this.handleMouseUp.bind(this));
+            this.off('touchend', this.handleTouchEnd.bind(this));
+            if(this.settings.scrollable){
+                this.off('mousewheel', this.handleMouseWheel.bind(this));
+                this.off('MozMousePixelScroll', this.handleMouseWheel.bind(this));
+            }
+            this.off('mouseenter', this.handleMouseEnter.bind(this));
+            this.off('mouseleave', this.handleMouseLease.bind(this));
+            this.off('dispose', this.handleDispose.bind(this));
+            this.stopAnimation();
+        },
+
+        startAnimation: function(){
+            this.render_animation = true;
+            this.animate();
+        },
+
+        stopAnimation: function(){
+            this.render_animation = false;
+            if(this.requestAnimationId){
+                cancelAnimationFrame(this.requestAnimationId);
+            }
         },
 
         handleResize: function () {
@@ -138,8 +168,8 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
                     this.lat = ( clientY - this.onPointerDownPointerY ) * 0.2 + this.onPointerDownLat;
                 }
             }else{
-                var x = event.pageX - this.el_.offsetLeft;
-                var y = event.pageY - this.el_.offsetTop;
+                var x = clientX - this.el_.offsetLeft;
+                var y = clientY - this.el_.offsetTop;
                 this.lon = (x / this.width) * 430 - 225;
                 this.lat = (y / this.height) * -180 + 90;
             }
@@ -191,6 +221,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
         },
 
         animate: function(){
+            if(!this.render_animation) return;
             this.requestAnimationId = requestAnimationFrame( this.animate.bind(this) );
             if(!this.player().paused()){
                 if(typeof(this.texture) !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() >= HAVE_CURRENT_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
