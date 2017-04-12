@@ -327,7 +327,7 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
             this.attachControlEvents();
             this.player().on("play", function () {
                 this.time = new Date().getTime();
-                this.animate();
+                this.startAnimation();
             }.bind(this));
         },
 
@@ -344,6 +344,36 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
             }
             this.on('mouseenter', this.handleMouseEnter.bind(this));
             this.on('mouseleave', this.handleMouseLease.bind(this));
+            this.on('dispose', this.handleDispose.bind(this));
+        },
+
+        handleDispose: function handleDispose(event) {
+            this.off('mousemove', this.handleMouseMove.bind(this));
+            this.off('touchmove', this.handleTouchMove.bind(this));
+            this.off('mousedown', this.handleMouseDown.bind(this));
+            this.off('touchstart', this.handleTouchStart.bind(this));
+            this.off('mouseup', this.handleMouseUp.bind(this));
+            this.off('touchend', this.handleTouchEnd.bind(this));
+            if (this.settings.scrollable) {
+                this.off('mousewheel', this.handleMouseWheel.bind(this));
+                this.off('MozMousePixelScroll', this.handleMouseWheel.bind(this));
+            }
+            this.off('mouseenter', this.handleMouseEnter.bind(this));
+            this.off('mouseleave', this.handleMouseLease.bind(this));
+            this.off('dispose', this.handleDispose.bind(this));
+            this.stopAnimation();
+        },
+
+        startAnimation: function startAnimation() {
+            this.render_animation = true;
+            this.animate();
+        },
+
+        stopAnimation: function stopAnimation() {
+            this.render_animation = false;
+            if (this.requestAnimationId) {
+                cancelAnimationFrame(this.requestAnimationId);
+            }
         },
 
         handleResize: function handleResize() {
@@ -398,8 +428,8 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
                     this.lat = (clientY - this.onPointerDownPointerY) * 0.2 + this.onPointerDownLat;
                 }
             } else {
-                var x = event.pageX - this.el_.offsetLeft;
-                var y = event.pageY - this.el_.offsetTop;
+                var x = clientX - this.el_.offsetLeft;
+                var y = clientY - this.el_.offsetTop;
                 this.lon = x / this.width * 430 - 225;
                 this.lat = y / this.height * -180 + 90;
             }
@@ -451,6 +481,7 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
         },
 
         animate: function animate() {
+            if (!this.render_animation) return;
             this.requestAnimationId = requestAnimationFrame(this.animate.bind(this));
             if (!this.player().paused()) {
                 if (typeof this.texture !== "undefined" && (!this.isPlayOnMobile && this.player().readyState() >= HAVE_CURRENT_DATA || this.isPlayOnMobile && this.player().hasClass("vjs-playing"))) {
@@ -839,7 +870,118 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
 
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
 
 
 
