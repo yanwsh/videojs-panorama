@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "videojs_5": "video.js#5",
-    "videojs_4": "video.js#4"
+    "videojs_4": "video.js#4",
+    "videojs_6": "video.js#6"
   }
 }

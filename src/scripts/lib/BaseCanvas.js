@@ -36,6 +36,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             //define texture, on ie 11, we need additional helper canvas to solve rendering issue.
             var video = settings.getTech(player);
             this.supportVideoTexture = Detector.supportVideoTexture();
+            //safari don't support play live stream directly, we have to use additional canvas to render.
             this.liveStreamOnSafari = Detector.isLiveStreamOnSafari(video);
             if(this.liveStreamOnSafari) this.supportVideoTexture = false;
             if(!this.supportVideoTexture){
@@ -64,6 +65,9 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             baseComponent.call(this, player, options);
 
             this.attachControlEvents();
+            if(options.animations){
+                this.initialTimeline(options.animations);
+            }
             this.player().on("play", function () {
                 this.time = new Date().getTime();
                 this.startAnimation();
@@ -113,6 +117,47 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             if(this.requestAnimationId){
                 cancelAnimationFrame(this.requestAnimationId);
             }
+        },
+
+        settingTimeline: function () {
+            if(this.settings.autoMoving && this.settings.autoMoving.Timelines.length > 0){
+                //deep copy all key & value
+                this.animation_timeline = this.settings.autoMovingTimeline.slice(0);
+                this.current_animation = this.next_timeline();
+            }
+        },
+
+        add_timeline: function (animation) {
+            this.animation_timeline.unshift(animation);
+            this.current_animation = this.next_timeline();
+        },
+
+        next_timeline: function () {
+            var animation = this.animation_timeline.shift();
+            if(animation) animation = this.initialTimeline(Util.deepCopy(animation));
+            return animation;
+        },
+
+        initialTimeline: function (animation) {
+            animation.startValue = {};
+            animation.byValue = {};
+            animation.endValue = {};
+            if(typeof animation.ease === "string"){
+                animation.ease = Util.easeFunction[animation.ease];
+            }
+            if(typeof animation.ease === "undefined"){
+                animation.ease = Util.easeFunction.linear;
+            }
+
+            for (var key in animation.to){
+                if (animation.to.hasOwnProperty(key)) {
+                    var from = animation.from? animation.from[key] || this[key]: this[key];
+                    animation.startValue[key] = from;
+                    animation.endValue[key] = animation.to[key];
+                    animation.byValue[key] = animation.to[key] - from;
+                }
+            }
+            return animation;
         },
 
         handleResize: function () {

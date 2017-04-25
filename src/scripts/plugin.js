@@ -72,7 +72,9 @@ const defaults = {
             coverX: 0.913,
             coverY: 0.9308
         }
-    }
+    },
+
+    animations: false
 };
 
 function playerResize(player){
@@ -182,6 +184,8 @@ const PopupNotification = (player, options = {
     }
 };
 
+const videoTypes = ["equirectangular", "fisheye", "3dVideo", "dual_fisheye"];
+
 const plugin = function(settings = {}){
     /**
      * A video.js plugin.
@@ -196,21 +200,24 @@ const plugin = function(settings = {}){
      *           An object of options left to the plugin author to define.
      */
     const videoTypes = ["equirectangular", "fisheye", "3dVideo", "dual_fisheye"];
-    const panorama = function(options) {
-        if(settings.mergeOption) options = settings.mergeOption(defaults, options);
-        if(typeof settings._init === "undefined" || typeof settings._init !== "function") {
-            console.error("plugin must implement init function().");
-            return;
-        }
-        if(videoTypes.indexOf(options.videoType) == -1) options.videoType = defaults.videoType;
-        settings._init(options);
-        /* implement callback function when videojs is ready */
-        this.ready(() => {
-            onPlayerReady(this, options, settings);
-        });
-    };
 
-// Include the version number.
+    class panorama{
+        constructor(options){
+            if(settings.mergeOption) options = settings.mergeOption(defaults, options);
+            if(typeof settings._init === "undefined" || typeof settings._init !== "function") {
+                console.error("plugin must implement init function().");
+                return;
+            }
+            if(videoTypes.indexOf(options.videoType) == -1) options.videoType = defaults.videoType;
+            settings._init(options);
+            /* implement callback function when videojs is ready */
+            this.ready(() => {
+                onPlayerReady(this, options, settings);
+            });
+        }
+    }
+
+    // Include the version number.
     panorama.VERSION = '__VERSION__';
 
     return panorama;

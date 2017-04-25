@@ -76,7 +76,8 @@ gulp.task('build-script', function () {
             placeholder: '__VERSION__'
         })
         .transform(babelify, {
-            presets: ['es2015'],
+            presets: ["es2015"],
+            plugins: ["transform-object-assign"],
             sourceMaps: true
         })
         .bundle()
@@ -102,7 +103,8 @@ gulp.task('build-script-es6', function(done){
         postfix: {es6: '.es6', cjs: '.common'},
         plugins: [
             babel({
-                "presets": ["es2015-rollup"],
+                presets: ["es2015-rollup"],
+                plugins: ["transform-object-assign"],
                 babelrc: false
             }),
             json(),
