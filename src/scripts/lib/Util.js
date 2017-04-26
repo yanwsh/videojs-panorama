@@ -110,6 +110,10 @@ export function extend(superClass, subClassMethods = {})
     return subClassMethods;
 }
 
+/**
+ * @deprecated
+ * @todo use object assign instead.
+ */
 export function deepCopy(obj) {
     var to = {};
 
@@ -120,6 +124,28 @@ export function deepCopy(obj) {
 
     return to;
 }
+
+export const mergeOptions = (...sources) => {
+    let results = {};
+    sources.forEach((values)=>{
+        values.keys().forEach((key)=>{
+            let value = values[key];
+            if(!!value && typeof value !== "object"){
+                results[key] = value;
+                return;
+            }
+
+            let type = typeof results[key];
+            if(type !== "undefined" && type !== "object"){
+                results[key] = {};
+            }
+
+            results[key] = mergeOptions(results[key], value);
+        });
+    });
+
+    return results;
+};
 
 export function getTouchesDistance(touches){
     return Math.sqrt(
