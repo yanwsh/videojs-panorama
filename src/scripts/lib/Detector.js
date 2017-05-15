@@ -58,14 +58,20 @@ var Detector = {
 
     isLiveStreamOnSafari: function (videoElement) {
         //live stream on safari doesn't support video texture
-        var videoSources = videoElement.querySelectorAll("source");
+        var videoSources = [].slice.call(videoElement.querySelectorAll("source"));
         var result = false;
+        if(videoElement.src && videoElement.src.indexOf('.m3u8') > -1){
+            videoSources.push({
+                src: videoElement.src,
+                type: "application/x-mpegURL"
+            });
+        }
         for(var i = 0; i < videoSources.length; i++){
             var currentVideoSource = videoSources[i];
-            if((currentVideoSource.type == "application/x-mpegURL" || currentVideoSource.type == "application/vnd.apple.mpegurl") && /(Safari|AppleWebKit)/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)){
+            if((currentVideoSource.type === "application/x-mpegURL" || currentVideoSource.type === "application/vnd.apple.mpegurl") && /(Safari|AppleWebKit)/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)){
                 result = true;
+                break;
             }
-            break;
         }
         return result;
     },
