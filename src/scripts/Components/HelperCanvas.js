@@ -1,35 +1,42 @@
-'use strict';
+// @flow
 
-class HelperCanvas{
-    constructor(player, options){
-        this.player = player;
-        this.width = options.width;
-        this.height = options.height;
+import type { Player } from '../types';
+import Component from './Component';
 
-        this._el = document.createElement('canvas');
-        this._el.className = "vjs-video-helper-canvas";
+class HelperCanvas extends Component {
+    _videoElement: HTMLVideoElement;
+    _context: any;
+    _width: number;
+    _height: number;
 
-        this._el.width = this.width;
-        this._el.height = this.height;
-        this._el.style.display = "none";
+    constructor(player: Player, options?: any = {}){
+        let element: any = document.createElement('canvas');
+        element.className = "panorama-video-helper-canvas";
+        options.el = element;
+        super(player, options);
+        this._videoElement = player.getVideoEl();
+        this._width = this._videoElement.offsetWidth;
+        this._height = this._videoElement.offsetHeight;
 
-        this._context = this._el.getContext('2d');
+        this._context = element.getContext('2d');
+        this._context.drawImage(this._videoElement, 0, 0, this._width, this._height);
+        /**
+         * Get actual video dimension after video load.
+         */
+        player.one("loadedmetadata", () => {
+            this._width = this._videoElement.videoWidth;
+            this._height = this._videoElement.videoHeight;
+            this.render();
+        });
     }
 
-    handleResize(options){
-        this.width = options.width;
-        this.height = options.height;
-    }
-
-    update(){
-        this._context.drawImage(this.player, 0, 0, this.width, this.height);
-    }
-
-    get context(){
-        return this._context;
-    }
-
-    get el(){
+    el(){
         return this._el;
     }
+
+    render(){
+        this._context.drawImage(this._videoElement, 0, 0, this._width, this._height);
+    }
 }
+
+export default HelperCanvas;

@@ -41,7 +41,8 @@
 
 <script src="/bower_components/videojs_5/dist/video.js"></script>
 <script src="/bower_components/three.js/three.js"></script>
-<script src="/dist/videojs-panorama.v5.js"></script>
+
+<script src="/dist/videojs-panorama.js"></script>
 <script>
     function isMobile() {
         var check = false;
@@ -49,31 +50,31 @@
         return check;
     }
     (function(window, videojs) {
-        var player = window.player = videojs('videojs-panorama-player', {}, function () {
-            window.addEventListener("resize", function () {
-                var canvas = player.getChild('Canvas');
-                if(canvas) canvas.handleResize();
-            });
+        var player = window.player = videojs('videojs-panorama-player', {
+            autoplay: true,
+            plugins: {
+                panorama: {
+                    clickToToggle: true,
+                    clickAndDrag: true,
+                    autoMobileOrientation: true,
+                    initFov: 100,
+                    VREnable: isMobile(),
+                    Notice: {
+                        Enable: true,
+                        Message: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video"
+                    }
+                }
+            }
         });
         var videoElement = document.getElementById("videojs-panorama-player");
         var width = videoElement.offsetWidth;
         var height = videoElement.offsetHeight;
         player.width(width), player.height(height);
-        player.panorama({
-            clickToToggle: (!isMobile()),
-            autoMobileOrientation: true,
-            initFov: 100,
-            VREnable: isMobile(),
-            NoticeMessage: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video",
-            callback: function () {
-                //if(!isMobile()) player.play();
-            }
-        });
-
-        player.on("VRModeOn", function(){
-            if(!player.isFullscreen())
-                player.controlBar.fullscreenToggle.trigger("tap");
-        });
+//
+//        player.on("VRModeOn", function(){
+//            if(!player.isFullscreen())
+//                player.controlBar.fullscreenToggle.trigger("tap");
+//        });
     }(window, window.videojs));
 </script>
 </body>

@@ -90,6 +90,45 @@ gulp.task('build-script', function () {
     return mergeStream.apply(this, buildProcesses);
 });
 
+gulp.task('build-script-test', function(){
+    let fileName = 'index.js';
+    let entryFile = path.join('src/scripts', fileName);
+    let destPath = config.distPath;
+
+    return browserify({
+        entries: entryFile,
+        debug: true
+    })
+        .transform(versionify, {
+        placeholder: '__VERSION__'
+    })
+        .transform(babelify, {
+            presets: ["es2015", "flow"],
+            plugins: ["transform-object-assign"],
+            sourceMaps: true
+        })
+        .bundle()
+        .pipe(source(fileName))
+        .pipe(rename('videojs-panorama.js'))
+        .pipe(gulp.dest(destPath))
+        .pipe(buildProdJs(destPath));
+});
+
+gulp.task('browser-sync-test', ['build-script-test', 'build-styles'], function() {
+    browserSync.init({
+        server: {
+            baseDir: "./"
+        },
+        open: 'ui',
+        online: true,
+    });
+});
+
+gulp.task('watch-test', ['browser-sync-test'], function () {
+    gulp.watch('src/scripts/**/*.js', ['build-script-test']);
+    gulp.watch('src/styles/**/*.scss', ['build-styles']);
+});
+
 gulp.task('build-script-es6', function(done){
     var fileName = 'plugin_es6.js';
     var entryFile = path.join('src/scripts', fileName);
