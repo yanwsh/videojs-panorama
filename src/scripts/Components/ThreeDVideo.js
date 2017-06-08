@@ -5,9 +5,6 @@ import BaseCanvas from './BaseCanvas';
 import THREE from "three";
 
 class ThreeDVideo extends BaseCanvas{
-    _VRMode: boolean;
-    _scene: any;
-
     _cameraL: any;
     _cameraR: any;
 
@@ -18,8 +15,6 @@ class ThreeDVideo extends BaseCanvas{
         super(player, options);
 
         //only show left part by default
-        this._VRMode = false;
-        //define scene
         this._scene = new THREE.Scene();
 
         let aspectRatio = this._width / this._height;
@@ -65,7 +60,7 @@ class ThreeDVideo extends BaseCanvas{
         super.handleResize();
 
         let aspectRatio = this._width / this._height;
-        if(!this._VRMode) {
+        if(!this.VRMode) {
             this._cameraL.aspect = aspectRatio;
             this._cameraL.updateProjectionMatrix();
         }else{
@@ -93,20 +88,20 @@ class ThreeDVideo extends BaseCanvas{
         this._cameraL.fov = Math.min(this.options.maxFov, this._cameraL.fov);
         this._cameraL.fov = Math.max(this.options.minFov, this._cameraL.fov);
         this._cameraL.updateProjectionMatrix();
-        if(this._VRMode){
+        if(this.VRMode){
             this._cameraR.fov = this._cameraL.fov;
             this._cameraR.updateProjectionMatrix();
         }
     }
 
     enableVR() {
-        this._VRMode = true;
+        super.enableVR();
         this._scene.add(this._meshR);
         this.handleResize();
     }
 
     disableVR() {
-        this._VRMode = false;
+        super.disableVR();
         this._scene.remove(this._meshR);
         this.handleResize();
     }
@@ -119,7 +114,7 @@ class ThreeDVideo extends BaseCanvas{
         this._cameraL.target.z = 500 * Math.sin( this._phi ) * Math.sin( this._theta );
         this._cameraL.lookAt(this._cameraL.target);
 
-        if(this._VRMode){
+        if(this.VRMode){
             let viewPortWidth = this._width / 2, viewPortHeight = this._height;
             this._cameraR.target.x = 1000 + 500 * Math.sin( this._phi ) * Math.cos( this._theta );
             this._cameraR.target.y = 500 * Math.cos( this._phi );

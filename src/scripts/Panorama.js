@@ -8,6 +8,7 @@ import Equirectangular from './Components/Equirectangular';
 import Fisheye from './Components/Fisheye';
 import DualFisheye from './Components/DualFisheye'
 import Notification from './Components/Notification';
+import VRButton from './Components/VRButton';
 import { Detector, webGLErrorMessage, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone } from './utils';
 import { warning } from './utils/index';
 
@@ -46,6 +47,7 @@ const defaults: Settings = {
 
     VREnable: true,
     VRGapDegree: 2.5,
+    VRFullscreen: true,//auto fullscreen when in vr mode
 
     Sphere:{
         rotateX: 0,
@@ -216,6 +218,12 @@ class Panorama extends EventEmitter{
             this.player.removeClass("vjs-using-native-controls");
         }
 
+        if(this.options.VREnable){
+            let controlbar = this.player.controlBar();
+            let index = controlbar.childNodes.length;
+            this.player.addComponent("VRButton", new VRButton(player, this.options), this.player.controlBar(), index - 1);
+        }
+
         this.attachEvents();
     }
 
@@ -258,6 +266,18 @@ class Panorama extends EventEmitter{
         if(this.options.clickToToggle){
             this.canvas.addListener("tap", ()=>{
                 this.player.paused()? this.player.play() : this.player.pause();
+            });
+        }
+
+        if(this.options.VREnable){
+            let VRButton = this.player.getComponent("VRButton").component;
+            VRButton.addListener("click", ()=>{
+                let VRMode = this.canvas.VRMode;
+                (!VRMode)? this.canvas.enableVR() : this.canvas.disableVR();
+                (!VRMode)?  this.trigger('VRModeOn'):  this.trigger('VRModeOff');
+                if(!VRMode && this.options.VRFullscreen){
+                    this.player.enableFullscreen();
+                }
             });
         }
     }

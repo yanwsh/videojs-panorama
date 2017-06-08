@@ -50,13 +50,22 @@ class BasePlayer implements Player {
         throw Error('Not implemented');
     }
 
-    addComponent(name: string, component: Component, location: ?HTMLElement): Component{
+    addComponent(name: string, component: Component, location: ?HTMLElement, index: ?number): Component{
         if(!location){
             location = this.playerInstance.el();
         }
+        if(!index){
+            index = -1;
+        }
 
         if(typeof component.el === "function" && component.el()){
-            location.append(component.el());
+            if(index === -1){
+                location.append(component.el());
+            }else{
+                let children = location.childNodes;
+                let child = children[index];
+                location.insertBefore(component.el(), child);
+            }
         }
 
         this._components.push({
@@ -114,6 +123,14 @@ class BasePlayer implements Player {
 
     reportUserActivity(): void{
         this.playerInstance.reportUserActivity();
+    }
+
+    controlBar(): HTMLElement{
+        throw Error('Not implemented');
+    }
+
+    enableFullscreen(): void{
+        throw Error('Not implemented');
     }
 }
 

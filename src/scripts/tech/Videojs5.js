@@ -81,6 +81,16 @@ class Videojs5 extends BasePlayer{
             }
         });
     }
+
+    controlBar(): HTMLElement{
+        let controlBar = this.playerInstance.controlBar;
+        return controlBar.el();
+    }
+
+    enableFullscreen(): void{
+         if(!this.playerInstance.isFullscreen())
+             this.playerInstance.controlBar.fullscreenToggle.trigger("tap");
+    }
 }
 
 export default Videojs5;

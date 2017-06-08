@@ -6,8 +6,6 @@ import THREE from "three";
 import { getTouchesDistance, fovToProjection, mergeOptions } from '../utils'
 
 class TwoDVideo extends BaseCanvas{
-    _VRMode: boolean;
-    _scene: any;
     _camera: any;
 
     _eyeFOVL: any;
@@ -19,7 +17,6 @@ class TwoDVideo extends BaseCanvas{
     constructor(player: Player, options: Settings){
         super(player, options);
 
-        this._VRMode = false;
         //define scene
         this._scene = new THREE.Scene();
         //define camera
@@ -28,7 +25,7 @@ class TwoDVideo extends BaseCanvas{
     }
 
     enableVR(){
-        this._VRMode = true;
+        super.enableVR();
 
         if(typeof window.vrHMD !== 'undefined'){
             let eyeParamsL = window.vrHMD.getEyeParameters( 'left' );
@@ -43,7 +40,7 @@ class TwoDVideo extends BaseCanvas{
     }
 
     disableVR(){
-        this._VRMode = false;
+        super.disableVR();
         this._renderer.setViewport( 0, 0, this._width, this._height );
         this._renderer.setScissor( 0, 0, this._width, this._height );
     }
@@ -52,7 +49,7 @@ class TwoDVideo extends BaseCanvas{
         super.handleResize();
         this._camera.aspect = this._width / this._height;
         this._camera.updateProjectionMatrix();
-        if(this._VRMode){
+        if(this.VRMode){
             this._cameraL.aspect = this._camera.aspect / 2;
             this._cameraR.aspect = this._camera.aspect / 2;
             this._cameraL.updateProjectionMatrix();
@@ -76,7 +73,7 @@ class TwoDVideo extends BaseCanvas{
         this._camera.fov = Math.min(this.options.maxFov, this._camera.fov);
         this._camera.fov = Math.max(this.options.minFov, this._camera.fov);
         this._camera.updateProjectionMatrix();
-        if(this._VRMode){
+        if(this.VRMode){
             this._cameraL.fov = this._camera.fov;
             this._cameraR.fov = this._camera.fov;
             this._cameraL.updateProjectionMatrix();
@@ -103,7 +100,7 @@ class TwoDVideo extends BaseCanvas{
         this._camera.target.z = 500 * Math.sin( this._phi ) * Math.sin( this._theta );
         this._camera.lookAt( this._camera.target );
 
-        if(!this._VRMode){
+        if(!this.VRMode){
             this._renderer.render( this._scene, this._camera );
         }
         else{

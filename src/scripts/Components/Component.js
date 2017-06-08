@@ -134,11 +134,27 @@ class Component extends EventEmitter{
     }
 
     createEl(tagName?: string = "div", properties?: any, attributes?: any): HTMLElement{
-        return document.createElement(tagName);
+        let el = document.createElement(tagName);
+        el.className = this.buildCSSClass();
+        return el;
     }
 
     el(): HTMLElement{
         return this._el;
+    }
+
+    /**
+     * Builds the default DOM class name. Should be overriden by sub-components.
+     *
+     * @return {string}
+     *         The DOM class name for this object.
+     *
+     * @abstract
+     */
+    buildCSSClass() {
+        // Child classes can include a function that does:
+        // return 'CLASS NAME' + this._super();
+        return '';
     }
 
     on(name: string, action: Function): void{
@@ -166,6 +182,10 @@ class Component extends EventEmitter{
 
     removeClass(name: string){
         this.el().classList.remove(name);
+    }
+
+    toggleClass(name: string){
+        this.el().classList.toggle(name);
     }
 
     show(){

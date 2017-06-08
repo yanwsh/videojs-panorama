@@ -29,10 +29,12 @@ class BaseCanvas extends Component{
     _helperCanvas: HelperCanvas;
     _renderer: any;
     _texture: any;
+    _scene: any;
 
     /**
      * Interaction
      */
+    _VRMode: boolean;
     _mouseDown: boolean;
     _mouseDownPointer: Point;
     _mouseDownLocation: Location;
@@ -61,6 +63,7 @@ class BaseCanvas extends Component{
         this._mouseDown = false;
         this._isUserInteracting = false;
         this._runOnMobile = mobileAndTabletcheck();
+        this._VRMode = false;
 
         this._mouseDownPointer = {
             x: 0,
@@ -279,6 +282,14 @@ class BaseCanvas extends Component{
         }
     }
 
+    enableVR() {
+        this._VRMode = true;
+    }
+
+    disableVR() {
+        this._VRMode = false;
+    }
+
     animate(){
         this._requestAnimationId = requestAnimationFrame( this.animate.bind(this) );
         let ct = new Date().getTime();
@@ -321,6 +332,10 @@ class BaseCanvas extends Component{
         }
         this._renderer.clear();
         this.trigger("render");
+    }
+
+    get VRMode(): boolean{
+        return this._VRMode;
     }
 }
 

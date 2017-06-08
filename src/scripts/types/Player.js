@@ -12,7 +12,7 @@ export interface Player {
     off(...args: any): void;
     one(...args: any): void;
 
-    addComponent(name: string, component: Component, location: ?HTMLElement): Component;
+    addComponent(name: string, component: Component, location: ?HTMLElement, index: ?number): Component;
     removeComponent(name: string): void;
     getComponent(name: string): Component;
 
@@ -26,4 +26,7 @@ export interface Player {
 
     trigger(name: string): void;
     reportUserActivity(): void;
+
+    controlBar(): HTMLElement;
+    enableFullscreen(): void;
 }

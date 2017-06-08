@@ -62,6 +62,7 @@ export type Settings = {
      */
     VREnable: boolean;
     VRGapDegree: number;
+    VRFullscreen: boolean;
 
     Sphere?: {
         rotateX?: number;
