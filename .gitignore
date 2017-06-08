@@ -34,3 +34,5 @@ es5/
 test/dist/
 
 _local
+
+dist/
