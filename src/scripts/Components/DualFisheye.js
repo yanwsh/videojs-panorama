@@ -10,7 +10,7 @@ class DualFisheye extends TwoDVideo{
     constructor(player: Player, options: Settings){
         super(player, options);
 
-        let geometry = new THREE.SphereGeometry(500, 60, 40);
+        let geometry = new THREE.SphereBufferGeometry( 500, 60, 40 ).toNonIndexed();
         let normals = geometry.attributes.normal.array;
         let uvs = geometry.attributes.uv.array;
         let l = normals.length / 3;
@@ -35,6 +35,7 @@ class DualFisheye extends TwoDVideo{
         geometry.rotateX( this.options.Sphere.rotateX);
         geometry.rotateY( this.options.Sphere.rotateY);
         geometry.rotateZ( this.options.Sphere.rotateZ);
+        geometry.scale( - 1, 1, 1 );
 
         //define mesh
         this._mesh = new THREE.Mesh(geometry,

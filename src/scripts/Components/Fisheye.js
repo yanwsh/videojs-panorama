@@ -28,6 +28,7 @@ class Fisheye extends TwoDVideo{
         geometry.rotateX( this.options.Sphere.rotateX);
         geometry.rotateY( this.options.Sphere.rotateY);
         geometry.rotateZ( this.options.Sphere.rotateZ);
+        geometry.scale( - 1, 1, 1 );
         //define mesh
         this._mesh = new THREE.Mesh(geometry,
             new THREE.MeshBasicMaterial({ map: this._texture})

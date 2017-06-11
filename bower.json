@@ -1,7 +1,7 @@
 {
   "name": "videojs-panorama",
   "description": "a plugin for videojs run a full 360 degree panorama video.",
-  "main": "dist/videojs-panorama.v5.js",
+  "main": "dist/videojs-panorama.js",
   "authors": [
     "yanwsh@gmail.com"
   ],

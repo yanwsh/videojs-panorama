@@ -38,6 +38,7 @@ class BaseCanvas extends Component{
     _mouseDown: boolean;
     _mouseDownPointer: Point;
     _mouseDownLocation: Location;
+    _accelector: Point;
 
     _isUserInteracting: boolean;
     _isUserPinch: boolean;
@@ -56,7 +57,10 @@ class BaseCanvas extends Component{
         super(player, options);
         this._width = this.player.el().offsetWidth, this._height = this.player.el().offsetHeight;
         this._lon = this.options.initLon, this._lat = this.options.initLat, this._phi = 0, this._theta = 0;
-
+        this._accelector = {
+            x: 0,
+            y: 0
+        };
         this._renderer.setSize(this._width, this._height);
 
         //init interaction
@@ -183,10 +187,14 @@ class BaseCanvas extends Component{
 
     handleMouseEnter(event: MouseEvent) {
         this._isUserInteracting = true;
+        this._accelector.x = 0;
+        this._accelector.y = 0;
     }
 
     handleMouseLease(event: MouseEvent) {
         this._isUserInteracting = false;
+        this._accelector.x = 0;
+        this._accelector.y = 0;
         if(this._mouseDown) {
             this._mouseDown = false;
         }
@@ -209,17 +217,32 @@ class BaseCanvas extends Component{
         const clientX = event.clientX || event.touches && event.touches[0].clientX;
         const clientY = event.clientY || event.touches && event.touches[0].clientY;
 
-        if(typeof clientX !== "undefined" && clientY !== "undefined") {
+        if(this.options.MouseEnable && typeof clientX !== "undefined" && typeof clientY !== "undefined") {
             if(this.options.clickAndDrag){
                 if(this._mouseDown){
                     this._lon = ( this._mouseDownPointer.x - clientX ) * 0.2 + this._mouseDownLocation.Lon;
                     this._lat = ( clientY - this._mouseDownPointer.y ) * 0.2 + this._mouseDownLocation.Lat;
+                    this._accelector.x = 0;
+                    this._accelector.y = 0;
+                }else{
+                    var rect = this.el().getBoundingClientRect();
+                    const x = clientX - this._width / 2 - rect.left;
+                    const y = this._height / 2 - (clientY - rect.top);
+                    let angle = 0;
+                    if(x === 0){
+                        angle = (y > 0)? Math.PI / 2 : Math.PI * 3 / 2;
+                    }else if(x > 0 && y > 0){
+                        angle = Math.atan(y / x);
+                    }else if(x > 0 && y < 0){
+                        angle = 2 * Math.PI - Math.atan(y * -1 / x);
+                    }else if(x < 0 && y > 0){
+                        angle = Math.PI - Math.atan(y / x * -1);
+                    }else {
+                        angle = Math.PI + Math.atan(y / x);
+                    }
+                    this._accelector.x = Math.cos(angle) * this.options.movingSpeed.x * Math.abs(x);
+                    this._accelector.y = Math.sin(angle) * this.options.movingSpeed.y * Math.abs(y);
                 }
-            }else{
-                const x = clientX - this._el.offsetLeft;
-                const y = clientY - this._el.offsetTop;
-                this._lon = (x / this._width) * 430 - 225;
-                this._lat = (y / this._height) * -180 + 90;
             }
         }
     }
@@ -321,6 +344,14 @@ class BaseCanvas extends Component{
                     this._lon < (this.options.initLon + Math.abs(this.options.returnLonSpeed))
                 )? this.options.initLon : this._lon + this.options.returnLonSpeed * symbolLon;
             }
+        }else if(this._accelector.x !== 0 && this._accelector.y !== 0){
+            this._lat += this._accelector.y;
+            this._lon += this._accelector.x;
+        }
+        if(this._lon > 360){
+            this._lon -= 360;
+        }else if(this._lon < 0){
+            this._lon += 360;
         }
         this._lat = Math.max( this.options.minLat, Math.min( this.options.maxLat, this._lat ) );
         this._lon = Math.max( this.options.minLon, Math.min( this.options.maxLon, this._lon ) );

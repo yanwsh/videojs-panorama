@@ -1,4 +1,5 @@
 // @flow
+import { Point } from './Point';
 
 export type VideoTypes = "equirectangular" | "fisheye" | "3dVideo" | "dual_fisheye";
 /**
@@ -15,7 +16,9 @@ export type Settings = {
      * User Interaction Settings
      */
     //disable mouse interaction, only rotate view when user click and drag the mouse.
+    MouseEnable?: boolean;
     clickAndDrag?: boolean;
+    movingSpeed?: Point;
     //pause video when mouse click view
     clickToToggle?: boolean;
     //scorll mouse to zoom in and out the view
@@ -100,6 +103,8 @@ export type Settings = {
         HideTime?: number;
     };
 
+    ready?: Function;
+
     /**
      * @deprecated
      */
@@ -144,4 +149,8 @@ export type Settings = {
      * @deprecated
      */
     autoHideNotice?: number;
+    /**
+     * @deprecated
+     */
+    callback?: Function;
 }

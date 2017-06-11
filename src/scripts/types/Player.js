@@ -1,8 +1,14 @@
 // @flow
 import type Component from '../Components/Component';
 
+export interface ComponentData{
+    name: string;
+    component: Component;
+    location: HTMLElement;
+}
+
 export interface Player {
-    static onPlayerReady(): void;
+    static registerPlugin(): void;
 
     el(): HTMLElement;
     getVideoEl(): HTMLVideoElement;
@@ -12,9 +18,11 @@ export interface Player {
     off(...args: any): void;
     one(...args: any): void;
 
+    ready(fn: Function): void;
+
     addComponent(name: string, component: Component, location: ?HTMLElement, index: ?number): Component;
     removeComponent(name: string): void;
-    getComponent(name: string): Component;
+    getComponent(name: string): ComponentData;
 
     addClass(name: string): void;
     removeClass(name: string): void;

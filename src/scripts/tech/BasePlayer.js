@@ -1,10 +1,9 @@
 // @ flow
 
-import type { Player } from '../types';
-import type { Component } from '../Components/Component';
-
+import type { Player, ComponentData } from '../types';
 
 class BasePlayer implements Player {
+    _components: Array<ComponentData>;
     constructor(playerInstance){
         if (Object.getPrototypeOf(this) === BasePlayer.prototype) {
             throw Error('abstract class should not be instantiated directly; write a subclass');
@@ -14,7 +13,7 @@ class BasePlayer implements Player {
         this._components = [];
     }
 
-    static onPlayerReady(){
+    static registerPlugin(){
         throw Error('Not implemented');
     }
 
@@ -52,7 +51,7 @@ class BasePlayer implements Player {
 
     addComponent(name: string, component: Component, location: ?HTMLElement, index: ?number): Component{
         if(!location){
-            location = this.playerInstance.el();
+            location = this.el();
         }
         if(!index){
             index = -1;
@@ -90,7 +89,7 @@ class BasePlayer implements Player {
         }, []);
     }
 
-    getComponent(name: string): Component{
+    getComponent(name: string): ComponentData{
         let component;
         for(let i = 0; i < this._components.length; i++){
             if(this._components[i].name === name){
@@ -110,19 +109,19 @@ class BasePlayer implements Player {
     }
 
     paused(): boolean{
-        return this.playerInstance.paused();
+        throw Error('Not implemented');
     }
 
     readyState(): number{
-        return this.playerInstance.readyState();
+        throw Error('Not implemented');
     }
 
     trigger(name: string): void{
-        this.playerInstance.trigger(name);
+        throw Error('Not implemented');
     }
 
     reportUserActivity(): void{
-        this.playerInstance.reportUserActivity();
+        throw Error('Not implemented');
     }
 
     controlBar(): HTMLElement{
@@ -130,6 +129,10 @@ class BasePlayer implements Player {
     }
 
     enableFullscreen(): void{
+        throw Error('Not implemented');
+    }
+
+    ready(fn: Function): void{
         throw Error('Not implemented');
     }
 }

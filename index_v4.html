@@ -42,9 +42,9 @@
     <li><a href="/test/">Run unit tests in browser.</a></li>
     <li><a href="/docs/api/">Read generated docs.</a></li>
 </ul>
-<script src="/bower_components/videojs_4/dist/video-js/video.js"></script>
+<script src="//vjs.zencdn.net/4.12.15/video.js"></script>
 <script src="bower_components/three.js/three.js"></script>
-<script src="/dist/videojs-panorama.v4.js"></script>
+<script src="/dist/videojs-panorama.js"></script>
 <script>
     function isMobile() {
         var check = false;
@@ -63,15 +63,7 @@
         player.panorama({
             clickToToggle: (!isMobile()),
             autoMobileOrientation: true,
-            VREnable: isMobile(),
-            callback: function () {
-                if(!isMobile()) player.play();
-            }
-        });
-
-        player.on("VRModeOn", function(){
-            if(!player.isFullscreen())
-                player.controlBar.fullscreenToggle.trigger("tap");
+            VREnable: isMobile()
         });
     }(window, window.videojs));
 </script>

@@ -6,7 +6,8 @@ import type BaseCanvas from './Components/BaseCanvas';
 import EventEmitter from 'wolfy87-eventemitter';
 import Equirectangular from './Components/Equirectangular';
 import Fisheye from './Components/Fisheye';
-import DualFisheye from './Components/DualFisheye'
+import DualFisheye from './Components/DualFisheye';
+import ThreeDVideo from './Components/ThreeDVideo';
 import Notification from './Components/Notification';
 import VRButton from './Components/VRButton';
 import { Detector, webGLErrorMessage, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone } from './utils';
@@ -18,7 +19,12 @@ const videoTypes = ["equirectangular", "fisheye", "3dVideo", "dual_fisheye"];
 
 const defaults: Settings = {
     videoType: "equirectangular",
-    clickAndDrag: runOnMobile,
+    MouseEnable: true,
+    clickAndDrag: true,
+    movingSpeed: {
+        x: 0.0005,
+        y: 0.0005
+    },
     clickToToggle: false,
     scrollable: true,
     resizable: true,
@@ -28,19 +34,19 @@ const defaults: Settings = {
     minFov: 51,
     //initial position for the video
     initLat: 0,
-    initLon: -180,
+    initLon: 180,
     //A float value back to center when mouse out the canvas. The higher, the faster.
     returnLatSpeed: 0.5,
     returnLonSpeed: 2,
-    backToInitLat: !runOnMobile,
-    backToInitLon: !runOnMobile,
+    backToInitLat: false,
+    backToInitLon: false,
 
     //limit viewable zoom
     minLat: -85,
     maxLat: 85,
 
-    minLon: -Infinity,
-    maxLon: Infinity,
+    minLon: 0,
+    maxLon: 360,
 
     autoMobileOrientation: true,
     mobileVibrationValue: isIos()? 0.022 : 1,
@@ -121,6 +127,10 @@ class Panorama extends EventEmitter{
         if(typeof options.helperCanvas !== "undefined"){
             warning(`helperCanvas is deprecated, you don't have to set it up on new version.`);
         }
+        if(typeof options.callback !== "undefined"){
+            warning(`callback is deprecated, please use ready.`);
+            options.ready = options.callback;
+        }
         if(typeof options.Sphere === "undefined"){
             options.Sphere = {};
         }
@@ -177,6 +187,9 @@ class Panorama extends EventEmitter{
             case "dual_fisheye":
                 VideoClass = DualFisheye;
                 break;
+            case "3dVideo":
+                VideoClass = ThreeDVideo;
+                break;
             default:
                 VideoClass = Equirectangular;
         }
@@ -185,9 +198,7 @@ class Panorama extends EventEmitter{
 
     constructor(player: Player, options: any = {}){
         super();
-        if (process.env.NODE_ENV !== 'production') {
-            Panorama.checkOptions(options);
-        }
+        Panorama.checkOptions(options);
         this._options = mergeOptions({}, defaults, options);
         this._player = player;
 
@@ -198,33 +209,39 @@ class Panorama extends EventEmitter{
             return;
         }
 
-        let VideoClass = Panorama.chooseVideoComponent(this.options.videoType);
-        //add canvas to player
-        this._canvas = new VideoClass(player, this.options);
-        this.canvas.hide();
-        this.player.addComponent("Canvas", this.canvas);
+        this.player.ready(()=>{
+            let VideoClass = Panorama.chooseVideoComponent(this.options.videoType);
+            //add canvas to player
+            this._canvas = new VideoClass(player, this.options);
+            this.canvas.hide();
+            this.player.addComponent("Canvas", this.canvas);
 
-        if(runOnMobile){
-            var videoElement = this.player.getVideoEl();
-            if(isRealIphone()){
-                //ios 10 support play video inline
-                videoElement.setAttribute("playsinline", "");
-                makeVideoPlayableInline(videoElement, true);
+            if(runOnMobile){
+                var videoElement = this.player.getVideoEl();
+                if(isRealIphone()){
+                    //ios 10 support play video inline
+                    videoElement.setAttribute("playsinline", "");
+                    makeVideoPlayableInline(videoElement, true);
+                }
+                if(isIos()){
+                    this.player.fullscreenOnIOS();
+                }
+                this.player.addClass("vjs-panorama-mobile-inline-video");
+                this.player.removeClass("vjs-using-native-controls");
             }
-            if(isIos()){
-                this.player.fullscreenOnIOS();
+
+            if(this.options.VREnable){
+                let controlbar = this.player.controlBar();
+                let index = controlbar.childNodes.length;
+                this.player.addComponent("VRButton", new VRButton(player, this.options), this.player.controlBar(), index - 1);
             }
-            this.player.addClass("vjs-panorama-mobile-inline-video");
-            this.player.removeClass("vjs-using-native-controls");
-        }
 
-        if(this.options.VREnable){
-            let controlbar = this.player.controlBar();
-            let index = controlbar.childNodes.length;
-            this.player.addComponent("VRButton", new VRButton(player, this.options), this.player.controlBar(), index - 1);
-        }
+            this.attachEvents();
 
-        this.attachEvents();
+            if(this.options.ready){
+                this.options.ready.call(this);
+            }
+        });
     }
 
     dispose(){
@@ -280,6 +297,12 @@ class Panorama extends EventEmitter{
                 }
             });
         }
+
+        this.canvas.addListener("render", ()=>{
+            this.trigger("render", [
+                this.canvas._lat, this.canvas._lon
+            ]);
+        });
     }
 
     detachEvents(){

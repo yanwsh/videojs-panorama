@@ -51,11 +51,7 @@
     .vjs-video-canvas{
       position: absolute;
       top: 0;
-      left: 50%;
-      -webkit-transform: translateX(-50%) translateZ(0);
-      -moz-transform: translateX(-50%) translateZ(0);
-      -o-transform: translateX(-50%) translateZ(0);
-      transform: translateX(-50%) translateZ(0);
+      left: 0;
       min-width: 100%;
       min-height: 100%;
       width: auto;
