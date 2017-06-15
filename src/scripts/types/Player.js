@@ -12,6 +12,7 @@ export interface Player {
 
     el(): HTMLElement;
     getVideoEl(): HTMLVideoElement;
+    getThumbnailURL(): string;
     fullscreenOnIOS(): void;
 
     on(...args: any): void;

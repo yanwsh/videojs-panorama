@@ -48,7 +48,11 @@
   &.vjs-panorama {
     display: block;
 
-    .vjs-video-canvas{
+    .vjs-big-play-button{
+      z-index: 5;
+    }
+
+    .vjs-panorama-canvas{
       position: absolute;
       top: 0;
       left: 0;

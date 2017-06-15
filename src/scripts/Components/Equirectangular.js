@@ -7,8 +7,8 @@ import THREE from "three";
 class Equirectangular extends TwoDVideo{
     _mesh: any;
 
-    constructor(player: Player, options: Settings){
-        super(player, options);
+    constructor(player: Player, options: Settings, renderElement: HTMLElement){
+        super(player, options, renderElement);
 
         let geometry = new THREE.SphereGeometry(500, 60, 40);
         geometry.scale( - 1, 1, 1 );

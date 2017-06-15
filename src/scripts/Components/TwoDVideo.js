@@ -14,8 +14,8 @@ class TwoDVideo extends BaseCanvas{
     _cameraL: any;
     _cameraR: any;
 
-    constructor(player: Player, options: Settings){
-        super(player, options);
+    constructor(player: Player, options: Settings, renderElement: HTMLElement){
+        super(player, options, renderElement);
 
         //define scene
         this._scene = new THREE.Scene();

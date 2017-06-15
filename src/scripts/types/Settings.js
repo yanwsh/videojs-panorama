@@ -67,6 +67,10 @@ export type Settings = {
     VRGapDegree: number;
     VRFullscreen: boolean;
 
+    PanoramaThumbnail?: boolean;
+    KeyboardControl?: boolean;
+    KeyboardMovingSpeed?: Point;
+
     Sphere?: {
         rotateX?: number;
         rotateY?: number;

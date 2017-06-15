@@ -53,8 +53,8 @@ class BaseCanvas extends Component{
      * @param player
      * @param options
      */
-    constructor(player: Player, options: Settings){
-        super(player, options);
+    constructor(player: Player, options: Settings, renderElement: HTMLElement){
+        super(player, options, renderElement);
         this._width = this.player.el().offsetWidth, this._height = this.player.el().offsetHeight;
         this._lon = this.options.initLon, this._lat = this.options.initLat, this._phi = 0, this._theta = 0;
         this._accelector = {
@@ -92,14 +92,15 @@ class BaseCanvas extends Component{
         this._renderer.autoClear = false;
         this._renderer.setClearColor(0x000000, 1);
 
-        const video = this.player.getVideoEl();
-        if(this.options.useHelperCanvas === true || (!supportVideoTexture(video) && this.options.useHelperCanvas === "auto")){
+        const renderElement = this._renderElement;
+
+        if(renderElement.tagName.toLowerCase() === "video" && (this.options.useHelperCanvas === true || (!supportVideoTexture(renderElement) && this.options.useHelperCanvas === "auto"))){
             this._helperCanvas = this.player.addComponent("HelperCanvas", new HelperCanvas(this.player));
             // $FlowFixMe
             const context = this._helperCanvas.el();
             this._texture = new THREE.Texture(context);
         }else{
-            this._texture = new THREE.Texture(video);
+            this._texture = new THREE.Texture(renderElement);
         }
 
         this._texture.generateMipmaps = false;
@@ -108,7 +109,7 @@ class BaseCanvas extends Component{
         this._texture.format = THREE.RGBFormat;
 
         let el: HTMLElement = this._renderer.domElement;
-        el.classList.add('vjs-video-canvas');
+        el.classList.add('vjs-panorama-canvas');
 
         return el;
     }
@@ -149,6 +150,10 @@ class BaseCanvas extends Component{
         if(this.options.autoMobileOrientation){
             window.addEventListener('devicemotion', this.handleMobileOrientation.bind(this));
         }
+        if(this.options.KeyboardControl){
+            window.addEventListener( 'keydown', this.handleKeyDown.bind(this));
+            window.addEventListener( 'keyup', this.handleKeyUp.bind(this) );
+        }
     }
 
     detachControlEvents(): void{
@@ -169,6 +174,10 @@ class BaseCanvas extends Component{
         }
         if(this.options.autoMobileOrientation){
             window.removeEventListener('devicemotion', this.handleMobileOrientation.bind(this));
+        }
+        if(this.options.KeyboardControl){
+            window.removeEventListener( 'keydown', this.handleKeyDown.bind(this));
+            window.removeEventListener( 'keyup', this.handleKeyUp.bind(this) );
         }
     }
 
@@ -305,6 +314,32 @@ class BaseCanvas extends Component{
         }
     }
 
+    handleKeyDown(event: any){
+        this._isUserInteracting = true;
+        switch(event.keyCode){
+            case 38: /*up*/
+            case 87: /*W*/
+                this._lat += this.options.KeyboardMovingSpeed.y;
+                break;
+            case 37: /*left*/
+            case 65: /*A*/
+                this._lon -= this.options.KeyboardMovingSpeed.x;
+                break;
+            case 39: /*right*/
+            case 68: /*D*/
+                this._lon += this.options.KeyboardMovingSpeed.x;
+                break;
+            case 40: /*down*/
+            case 83: /*S*/
+                this._lat -= this.options.KeyboardMovingSpeed.y;
+                break;
+        }
+    }
+
+    handleKeyUp(event: any){
+        this._isUserInteracting = false;
+    }
+
     enableVR() {
         this._VRMode = true;
     }
@@ -323,7 +358,7 @@ class BaseCanvas extends Component{
         }
 
         //canvas should only be rendered when video is ready or will report `no video` warning message.
-        if(this.player.readyState() >= HAVE_CURRENT_DATA){
+        if(this._renderElement.tagName.toLowerCase() !== "video" || this.player.readyState() >= HAVE_CURRENT_DATA){
             this.render();
         }
     }

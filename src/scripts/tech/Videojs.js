@@ -18,6 +18,10 @@ class Videojs extends BasePlayer{
         throw Error('Not implemented');
     }
 
+    getThumbnailURL(): string{
+        return this.playerInstance.poster();
+    }
+
     on(...args: any): void{
         this.playerInstance.on(...args);
     }
@@ -70,7 +74,7 @@ class Videojs extends BasePlayer{
     }
 
     fullscreenOnIOS(): void{
-        let canvas: Component = this.getComponent("Canvas").component;
+        let canvas: Component = this.getComponent("VideoCanvas").component;
         let resizeFn = this.resizeCanvasFn(canvas);
         this.playerInstance.controlBar.fullscreenToggle.off("tap", this.originalFullscreenClickFn());
         this.playerInstance.controlBar.fullscreenToggle.on("tap", () => {
