@@ -7,8 +7,8 @@ import THREE from "three";
 class Fisheye extends TwoDVideo{
     _mesh: any;
 
-    constructor(player: Player, options: Settings){
-        super(player, options);
+    constructor(player: Player, options: Settings, renderElement: HTMLElement){
+        super(player, options, renderElement);
 
         let geometry = new THREE.SphereBufferGeometry( 500, 60, 40 ).toNonIndexed();
         let normals = geometry.attributes.normal.array;

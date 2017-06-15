@@ -17,11 +17,15 @@ class BasePlayer implements Player {
         throw Error('Not implemented');
     }
 
-    el(): HTMLVideoElement{
+    el(): HTMLElement{
         throw Error('Not implemented');
     }
 
-    getTechEl(): HTMLElement{
+    getVideoEl(): HTMLVideoElement{
+        throw Error('Not implemented');
+    }
+
+    getThumbnailURL(): string{
         throw Error('Not implemented');
     }
 
@@ -81,9 +85,7 @@ class BasePlayer implements Player {
             if(component.name !== name){
                 acc.push(component)
             }else{
-                if(typeof component.el === "function" && component.el()){
-                    component.location.parentNode.removeChild(component.el());
-                }
+                component.component.dispose();
             }
             return acc;
         }, []);

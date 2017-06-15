@@ -12,8 +12,9 @@ class Component extends EventEmitter{
     _id: string;
     _el: HTMLElement;
     _player: Player;
+    _renderElement: HTMLElement;
 
-    constructor(player: Player, options: any = {}, ready?: () => void){
+    constructor(player: Player, options: any = {}, renderElement: HTMLElement, ready?: () => void){
         super();
 
         this._player = player;
@@ -21,6 +22,8 @@ class Component extends EventEmitter{
         this._options = mergeOptions({}, this._options);
         // Updated options with supplied options
         this._options = mergeOptions(this._options, options);
+
+        this._renderElement = renderElement;
 
         // Get ID from options or options element if one is supplied
         this._id = options.id || (options.el && options.el.id);

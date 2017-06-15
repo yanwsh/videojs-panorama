@@ -9,6 +9,7 @@ import Fisheye from './Components/Fisheye';
 import DualFisheye from './Components/DualFisheye';
 import ThreeDVideo from './Components/ThreeDVideo';
 import Notification from './Components/Notification';
+import Thumbnail from './Components/Thumbnail';
 import VRButton from './Components/VRButton';
 import { Detector, webGLErrorMessage, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone } from './utils';
 import { warning } from './utils/index';
@@ -55,6 +56,13 @@ const defaults: Settings = {
     VRGapDegree: 2.5,
     VRFullscreen: true,//auto fullscreen when in vr mode
 
+    PanoramaThumbnail: false,
+    KeyboardControl: false,
+    KeyboardMovingSpeed: {
+        x: 1,
+        y: 1
+    },
+
     Sphere:{
         rotateX: 0,
         rotateY: 0,
@@ -95,7 +103,8 @@ const defaults: Settings = {
 class Panorama extends EventEmitter{
     _options: Settings;
     _player: Player;
-    _canvas: BaseCanvas;
+    _videoCanvas: BaseCanvas;
+    _thumbnailCanvas: BaseCanvas;
 
     /**
      * check legacy option settings and produce warning message if user use legacy options, automatically set it to new options.
@@ -209,15 +218,35 @@ class Panorama extends EventEmitter{
             return;
         }
 
+        let VideoClass = Panorama.chooseVideoComponent(this.options.videoType);
+        //render 360 thumbnail
+        if(this.options.PanoramaThumbnail){
+            let thumbnailURL = player.getThumbnailURL();
+            let poster = new Thumbnail(player, {
+                posterSrc: thumbnailURL
+            });
+            this.player.addComponent("Thumbnail", poster);
+
+            poster.el().style.visibility = "hidden";
+            this._thumbnailCanvas = new VideoClass(player, this.options, poster.el());
+            this.thumbnailCanvas.startAnimation();
+            this.player.addComponent("ThumbnailCanvas", this.thumbnailCanvas);
+
+            this.player.one("play", () => {
+                this.thumbnailCanvas.hide();
+                this.player.removeComponent("Thumbnail");
+                this.player.removeComponent("ThumbnailCanvas");
+            });
+        }
+
         this.player.ready(()=>{
-            let VideoClass = Panorama.chooseVideoComponent(this.options.videoType);
             //add canvas to player
-            this._canvas = new VideoClass(player, this.options);
-            this.canvas.hide();
-            this.player.addComponent("Canvas", this.canvas);
+            this._videoCanvas = new VideoClass(player, this.options, player.getVideoEl());
+            this.videoCanvas.hide();
+            this.player.addComponent("VideoCanvas", this.videoCanvas);
 
             if(runOnMobile){
-                var videoElement = this.player.getVideoEl();
+                let videoElement = this.player.getVideoEl();
                 if(isRealIphone()){
                     //ios 10 support play video inline
                     videoElement.setAttribute("playsinline", "");
@@ -246,6 +275,8 @@ class Panorama extends EventEmitter{
 
     dispose(){
         this.detachEvents();
+        this.player.getVideoEl().style.visibility = "visible";
+        this.player.removeComponent("VideoCanvas");
     }
 
     attachEvents(){
@@ -258,8 +289,21 @@ class Panorama extends EventEmitter{
 
         const handlePlay = () => {
             this.player.getVideoEl().style.visibility = "hidden";
-            this.canvas.startAnimation();
-            this.canvas.show();
+            this.videoCanvas.startAnimation();
+            this.videoCanvas.show();
+
+            //detect black screen
+            if(window.console && window.console.error){
+                let originalErrorFunction = window.console.error;
+                window.console.error = (error)=>{
+                    if(error.message.indexOf("insecure") !== -1){
+                        this.dispose();
+                    }
+                };
+                setTimeout(()=>{
+                    window.console.error = originalErrorFunction;
+                }, 500);
+            }
         };
         if(!this.player.paused()){
             handlePlay();
@@ -268,20 +312,20 @@ class Panorama extends EventEmitter{
         }
 
         this.player.on("fullscreenchange",  () => {
-            this.canvas.handleResize();
+            this.videoCanvas.handleResize();
         });
 
         const report = () => {
             this.player.reportUserActivity();
         };
 
-        this.canvas.addListeners({
+        this.videoCanvas.addListeners({
             "touchMove": report,
             "tap": report
         });
 
         if(this.options.clickToToggle){
-            this.canvas.addListener("tap", ()=>{
+            this.videoCanvas.addListener("tap", ()=>{
                 this.player.paused()? this.player.play() : this.player.pause();
             });
         }
@@ -289,8 +333,8 @@ class Panorama extends EventEmitter{
         if(this.options.VREnable){
             let VRButton = this.player.getComponent("VRButton").component;
             VRButton.addListener("click", ()=>{
-                let VRMode = this.canvas.VRMode;
-                (!VRMode)? this.canvas.enableVR() : this.canvas.disableVR();
+                let VRMode = this.videoCanvas.VRMode;
+                (!VRMode)? this.videoCanvas.enableVR() : this.videoCanvas.disableVR();
                 (!VRMode)?  this.trigger('VRModeOn'):  this.trigger('VRModeOff');
                 if(!VRMode && this.options.VRFullscreen){
                     this.player.enableFullscreen();
@@ -298,16 +342,16 @@ class Panorama extends EventEmitter{
             });
         }
 
-        this.canvas.addListener("render", ()=>{
+        this.videoCanvas.addListener("render", ()=>{
             this.trigger("render", [
-                this.canvas._lat, this.canvas._lon
+                this.videoCanvas._lat, this.videoCanvas._lon
             ]);
         });
     }
 
     detachEvents(){
-        if(this.canvas){
-            this.canvas.stopAnimation();
+        if(this.videoCanvas){
+            this.videoCanvas.stopAnimation();
         }
     }
 
@@ -327,8 +371,12 @@ class Panorama extends EventEmitter{
         }
     }
 
-    get canvas(): BaseCanvas{
-        return this._canvas;
+    get thumbnailCanvas(): BaseCanvas{
+        return this._thumbnailCanvas;
+    }
+
+    get videoCanvas(): BaseCanvas{
+        return this._videoCanvas;
     }
 
     get player(): Player{

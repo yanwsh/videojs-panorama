@@ -11,8 +11,8 @@ class ThreeDVideo extends BaseCanvas{
     _meshL: any;
     _meshR: any;
 
-    constructor(player: Player, options: Settings){
-        super(player, options);
+    constructor(player: Player, options: Settings, renderElement: HTMLElement){
+        super(player, options, renderElement);
 
         //only show left part by default
         this._scene = new THREE.Scene();
