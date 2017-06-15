@@ -79,18 +79,22 @@ class Videojs extends BasePlayer{
         this.playerInstance.controlBar.fullscreenToggle.off("tap", this.originalFullscreenClickFn());
         this.playerInstance.controlBar.fullscreenToggle.on("tap", () => {
             if(!this.playerInstance.isFullscreen()){
+                this.trigger("before_EnterFullscreen");
                 //set to fullscreen
                 this.playerInstance.isFullscreen(true);
                 this.playerInstance.enterFullWindow();
                 resizeFn();
                 window.addEventListener("devicemotion", resizeFn);
+                this.trigger("after_EnterFullscreen");
             }else{
+                this.trigger("before_ExitFullscreen");
                 this.playerInstance.isFullscreen(false);
                 this.playerInstance.exitFullWindow();
                 this.playerInstance.el().style.width = "";
                 this.playerInstance.el().style.height = "";
                 canvas.component.handleResize();
                 window.removeEventListener("devicemotion", resizeFn);
+                this.trigger("after_ExitFullscreen");
             }
         });
     }

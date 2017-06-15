@@ -223,13 +223,15 @@ class Panorama extends EventEmitter{
         if(this.options.PanoramaThumbnail){
             let thumbnailURL = player.getThumbnailURL();
             let poster = new Thumbnail(player, {
-                posterSrc: thumbnailURL
+                posterSrc: thumbnailURL,
+                onComplete: ()=>{
+                    this.thumbnailCanvas.startAnimation();
+                }
             });
             this.player.addComponent("Thumbnail", poster);
 
             poster.el().style.visibility = "hidden";
             this._thumbnailCanvas = new VideoClass(player, this.options, poster.el());
-            this.thumbnailCanvas.startAnimation();
             this.player.addComponent("ThumbnailCanvas", this.thumbnailCanvas);
 
             this.player.one("play", () => {
@@ -346,6 +348,13 @@ class Panorama extends EventEmitter{
             this.trigger("render", [
                 this.videoCanvas._lat, this.videoCanvas._lon
             ]);
+        });
+
+        let triggerPlayerEvents = ["before_EnterFullscreen", "after_EnterFullscreen", "before_ExitFullscreen", "after_ExitFullscreen"];
+        triggerPlayerEvents.forEach((eventName)=>{
+            this.player.on(eventName, ()=>{
+                this.trigger(eventName);
+            });
         });
     }
 

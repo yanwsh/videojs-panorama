@@ -6,6 +6,7 @@ import Component from './Component';
 class Thumbnail extends Component{
     constructor(player: Player, options: {
         posterSrc: string;
+        onComplete?: Function;
         el?: HTMLElement;
     }){
         let el: HTMLElement;
@@ -16,6 +17,12 @@ class Thumbnail extends Component{
         options.el = el;
 
         super(player, options);
+
+        this.one('load', ()=>{
+            if(options.onComplete){
+                options.onComplete();
+            }
+        })
     }
 }
 
