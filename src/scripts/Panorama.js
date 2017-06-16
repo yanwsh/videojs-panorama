@@ -225,7 +225,7 @@ class Panorama extends EventEmitter{
             let poster = new Thumbnail(player, {
                 posterSrc: thumbnailURL,
                 onComplete: ()=>{
-                    this.thumbnailCanvas.startAnimation();
+                    this.thumbnailCanvas.animate(true);
                 }
             });
             this.player.addComponent("Thumbnail", poster);

@@ -348,10 +348,11 @@ class BaseCanvas extends Component{
         this._VRMode = false;
     }
 
-    animate(){
+    // $FlowFixMe
+    animate(forceUpdate?: boolean = false){
         this._requestAnimationId = requestAnimationFrame( this.animate.bind(this) );
         let ct = new Date().getTime();
-        if (ct - this._time >= 30) {
+        if (forceUpdate || ct - this._time >= 30) {
             this._texture.needsUpdate = true;
             this._time = ct;
             this.trigger("textureRender");
