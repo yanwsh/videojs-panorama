@@ -13,10 +13,11 @@ class Notification extends Component{
         let message = options.Message;
         if(typeof message === 'string'){
             el = document.createElement('div');
-            el.className = "vjs-video-notice-label";
+            el.className = "vjs-video-notice-label vjs-video-notice-show";
             el.innerText = message;
         } else {
             el = message;
+            el.classList.add("vjs-video-notice-show");
         }
 
         options.el = el;

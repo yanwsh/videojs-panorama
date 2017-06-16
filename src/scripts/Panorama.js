@@ -230,7 +230,7 @@ class Panorama extends EventEmitter{
             });
             this.player.addComponent("Thumbnail", poster);
 
-            poster.el().style.visibility = "hidden";
+            poster.el().style.display = "none";
             this._thumbnailCanvas = new VideoClass(player, this.options, poster.el());
             this.player.addComponent("ThumbnailCanvas", this.thumbnailCanvas);
 
@@ -371,6 +371,7 @@ class Panorama extends EventEmitter{
 
         if(this.options.Notice && this.options.Notice.HideTime && this.options.Notice.HideTime > 0){
             setTimeout(function () {
+                notice.removeClass("vjs-video-notice-show");
                 notice.addClass("vjs-video-notice-fadeOut");
                 notice.one(transitionEvent, ()=>{
                     notice.hide();

@@ -92,7 +92,7 @@ class Videojs extends BasePlayer{
                 this.playerInstance.exitFullWindow();
                 this.playerInstance.el().style.width = "";
                 this.playerInstance.el().style.height = "";
-                canvas.component.handleResize();
+                canvas.handleResize();
                 window.removeEventListener("devicemotion", resizeFn);
                 this.trigger("after_ExitFullscreen");
             }
