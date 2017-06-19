@@ -10,11 +10,12 @@ import { mergeOptions, warning } from '../utils';
 class Component extends EventEmitter{
     _options: any;
     _id: string;
-    _el: HTMLElement;
+    _el: HTMLElement | null;
     _player: Player;
     _renderElement: HTMLElement;
+    _children: Component[];
 
-    constructor(player: Player, options: any = {}, renderElement: HTMLElement, ready?: () => void){
+    constructor(player: Player, options: any = {}, renderElement?: HTMLElement, ready?: () => void){
         super();
 
         this._player = player;
@@ -32,19 +33,24 @@ class Component extends EventEmitter{
 
         this.emitTapEvents();
 
+        this._children = [];
+
         if(ready){
             ready.call(this);
         }
     }
 
     dispose(){
+        for(let i = 0; i < this._children.length; i++){
+            this._children[i].dispose();
+        }
+
         if(this._el){
             if(this._el.parentNode){
                 this._el.parentNode.removeChild(this._el);
             }
 
-            // $FlowFixMe
-            this.el_ = null;
+            this._el = null;
         }
     }
 
@@ -139,6 +145,13 @@ class Component extends EventEmitter{
     createEl(tagName?: string = "div", properties?: any, attributes?: any): HTMLElement{
         let el = document.createElement(tagName);
         el.className = this.buildCSSClass();
+
+        for(let attribute in attributes){
+            if(attributes.hasOwnProperty(attribute)){
+                let value = attributes[attribute];
+                el.setAttribute(attribute, value);
+            }
+        }
         return el;
     }
 
@@ -197,6 +210,50 @@ class Component extends EventEmitter{
 
     hide(){
         this.el().style.display = "none";
+    }
+
+    addChild(name: string, component: Component, index: ?number) : void{
+        let location = this.el();
+        if(!index){
+            index = -1;
+        }
+
+        if(typeof component.el === "function" && component.el()){
+            if(index === -1){
+                location.append(component.el());
+            }else{
+                let children = location.childNodes;
+                let child = children[index];
+                location.insertBefore(component.el(), child);
+            }
+        }
+
+        this._children.push({
+            name,
+            component
+        });
+    }
+
+    removeChild(name: string): void{
+        this._children = this._children.reduce((acc, component)=>{
+            if(component.name !== name){
+                acc.push(component);
+            }else{
+                component.component.dispose();
+            }
+            return acc;
+        }, []);
+    }
+
+    getChild(name: string): Component | null{
+        let component;
+        for(let i = 0; i < this._children.length; i++){
+            if(this._children[i].name === name){
+                component = this._children[i];
+                break;
+            }
+        }
+        return component? component.component: null;
     }
 
     get player(): Player{

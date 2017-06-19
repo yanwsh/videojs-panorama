@@ -18,7 +18,7 @@ const runOnMobile = mobileAndTabletcheck();
 
 const videoTypes = ["equirectangular", "fisheye", "3dVideo", "dual_fisheye"];
 
-const defaults: Settings = {
+export const defaults: Settings = {
     videoType: "equirectangular",
     MouseEnable: true,
     clickAndDrag: true,
@@ -52,7 +52,7 @@ const defaults: Settings = {
     autoMobileOrientation: true,
     mobileVibrationValue: isIos()? 0.022 : 1,
 
-    VREnable: true,
+    VREnable: runOnMobile,
     VRGapDegree: 2.5,
     VRFullscreen: true,//auto fullscreen when in vr mode
 
@@ -104,7 +104,7 @@ class Panorama extends EventEmitter{
     _options: Settings;
     _player: Player;
     _videoCanvas: BaseCanvas;
-    _thumbnailCanvas: BaseCanvas;
+    _thumbnailCanvas: BaseCanvas | null;
 
     /**
      * check legacy option settings and produce warning message if user use legacy options, automatically set it to new options.
@@ -220,12 +220,15 @@ class Panorama extends EventEmitter{
 
         let VideoClass = Panorama.chooseVideoComponent(this.options.videoType);
         //render 360 thumbnail
-        if(this.options.PanoramaThumbnail){
+        if(this.options.PanoramaThumbnail && player.getThumbnailURL()){
             let thumbnailURL = player.getThumbnailURL();
             let poster = new Thumbnail(player, {
                 posterSrc: thumbnailURL,
                 onComplete: ()=>{
-                    this.thumbnailCanvas.animate(true);
+                    if(this.thumbnailCanvas){
+                        this.thumbnailCanvas._texture.needsUpdate = true;
+                        this.thumbnailCanvas.startAnimation();
+                    }
                 }
             });
             this.player.addComponent("Thumbnail", poster);
@@ -235,10 +238,33 @@ class Panorama extends EventEmitter{
             this.player.addComponent("ThumbnailCanvas", this.thumbnailCanvas);
 
             this.player.one("play", () => {
-                this.thumbnailCanvas.hide();
+                this.thumbnailCanvas && this.thumbnailCanvas.hide();
                 this.player.removeComponent("Thumbnail");
                 this.player.removeComponent("ThumbnailCanvas");
+                this._thumbnailCanvas = null;
             });
+        }
+
+        if(runOnMobile){
+            let videoElement = this.player.getVideoEl();
+            if(isRealIphone()){
+                //ios 10 support play video inline
+                videoElement.setAttribute("playsinline", "");
+                makeVideoPlayableInline(videoElement, true);
+            }
+            if(isIos()){
+                this.player.fullscreenOnIOS();
+            }
+            this.player.addClass("vjs-panorama-mobile-inline-video");
+            this.player.removeClass("vjs-using-native-controls");
+        }
+
+        if(this.options.VREnable){
+            let controlbar = this.player.controlBar();
+            let index = controlbar.childNodes.length;
+            let vrButton = new VRButton(player, this.options);
+            vrButton.disable();
+            this.player.addComponent("VRButton", vrButton, this.player.controlBar(), index - 1);
         }
 
         this.player.ready(()=>{
@@ -247,27 +273,12 @@ class Panorama extends EventEmitter{
             this.videoCanvas.hide();
             this.player.addComponent("VideoCanvas", this.videoCanvas);
 
-            if(runOnMobile){
-                let videoElement = this.player.getVideoEl();
-                if(isRealIphone()){
-                    //ios 10 support play video inline
-                    videoElement.setAttribute("playsinline", "");
-                    makeVideoPlayableInline(videoElement, true);
-                }
-                if(isIos()){
-                    this.player.fullscreenOnIOS();
-                }
-                this.player.addClass("vjs-panorama-mobile-inline-video");
-                this.player.removeClass("vjs-using-native-controls");
-            }
+            this.attachEvents();
 
             if(this.options.VREnable){
-                let controlbar = this.player.controlBar();
-                let index = controlbar.childNodes.length;
-                this.player.addComponent("VRButton", new VRButton(player, this.options), this.player.controlBar(), index - 1);
+                let vrButton = this.player.getComponent("VRButton").component;
+                vrButton.enable();
             }
-
-            this.attachEvents();
 
             if(this.options.ready){
                 this.options.ready.call(this);
@@ -381,7 +392,7 @@ class Panorama extends EventEmitter{
         }
     }
 
-    get thumbnailCanvas(): BaseCanvas{
+    get thumbnailCanvas(): BaseCanvas | null{
         return this._thumbnailCanvas;
     }
 

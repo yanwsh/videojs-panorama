@@ -103,7 +103,7 @@ gulp.task('build-script-test', function(){
         placeholder: '__VERSION__'
     })
         .transform(babelify, {
-            presets: ["es2015", "flow"],
+            presets: ["stage-3", "es2015", "flow"],
             plugins: ["transform-object-assign"],
             sourceMaps: true
         })

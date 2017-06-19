@@ -3,13 +3,13 @@
 import type { Player } from '../types';
 import Videojs4 from './Videojs4';
 import Videojs5 from './Videojs5';
-import HTML5 from './Html5';
+import MediaElement from './MediaElementPlayer';
 import { getVideojsVersion, warning } from '../utils';
 
 const VIDEOPLAYER = {
     'videojs_v4': Videojs4 ,
     'videojs_v5' : Videojs5,
-    'native': HTML5
+    'MediaElementPlayer': MediaElement
 };
 
 function checkType(playerType: string): Class<Player> | null{
@@ -22,22 +22,25 @@ function checkType(playerType: string): Class<Player> | null{
     return null;
 }
 
-function chooseTech(): Class<Player> {
+function chooseTech(): Class<Player> | null {
     if(typeof window.videojs !== "undefined"){
         let version = window.videojs.VERSION;
         let major = getVideojsVersion(version);
-        if(major === 0){
-            return VIDEOPLAYER['native'];
-        }else if(major === 4){
+        if(major === 4){
             return VIDEOPLAYER['videojs_v4'];
-        }else {
+        }else{
             return VIDEOPLAYER['videojs_v5'];
         }
     }
-    return VIDEOPLAYER['native'];
+
+    if(typeof window.MediaElementPlayer !== "undefined"){
+        return VIDEOPLAYER["MediaElementPlayer"];
+    }
+    
+    return null;
 }
 
-function Loader(playerType: string): Class<Player>{
+function Loader(playerType: string): Class<Player> | null{
     let preferType = checkType(playerType);
     if(!preferType){
         preferType = chooseTech();

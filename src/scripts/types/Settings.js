@@ -2,6 +2,12 @@
 import { Point } from './Point';
 
 export type VideoTypes = "equirectangular" | "fisheye" | "3dVideo" | "dual_fisheye";
+
+export type NativePlayer = {
+    poster?: string;
+    controls?: boolean;
+};
+
 /**
  * panorama settings options
  */
@@ -106,6 +112,8 @@ export type Settings = {
         Message?: string | HTMLElement;
         HideTime?: number;
     };
+
+    NativePlayer?: NativePlayer;
 
     ready?: Function;
 

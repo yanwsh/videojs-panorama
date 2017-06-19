@@ -33,7 +33,7 @@
 <body>
 <div class="player_wrapper">
     <div class="player_container">
-        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster-360.jpg"  crossorigin="anonymous" controls>
+        <video id="videojs-panorama-player" class="video-js vjs-default-skin"  crossorigin="anonymous" controls>
             <source src="assets/shark.mp4" type='video/mp4'>
         </video>
     </div>
@@ -51,6 +51,7 @@
     }
     (function(window, videojs) {
         var player = window.player = videojs('videojs-panorama-player', {
+            poster: "assets/poster-360.jpg",
             plugins: {
             }
         });

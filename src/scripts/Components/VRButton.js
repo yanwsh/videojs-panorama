@@ -1,9 +1,9 @@
 // @flow
 
 import type { Player } from '../types';
-import ClickableComponent from './ClickableComponent';
+import Button from './Button';
 
-class VRButton extends ClickableComponent{
+class VRButton extends Button{
     constructor(player: Player, options: any = {}){
         super(player, options);
     }

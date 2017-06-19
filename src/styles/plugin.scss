@@ -1,7 +1,3 @@
-/**
- * Created by yanwsh on 4/3/16.
- */
-
 .IIV::-webkit-media-controls-play-button,
 .IIV::-webkit-media-controls-start-playback-button {
   opacity: 0;
@@ -26,126 +22,167 @@
 .video-js {
   .vjs-control-bar{
     z-index: 5;
-
-    .vjs-VR-control{
-      cursor: pointer;
-
-      &::before{
-        font-family: "VideoJS-Panorama";
-        content: "\e900";
-      }
-
-      &.enable::before{
-        content: "\e901";
-      }
-    }
   }
 
   &.vjs-using-native-controls .vjs-poster, &.vjs-using-native-controls .vjs-big-play-button{
     display: block;
   }
+}
 
-  &.vjs-panorama {
-    display: block;
+.vjs-panorama {
+  display: block;
 
-    .vjs-big-play-button{
-      z-index: 5;
+  .vjs-big-play-button{
+    z-index: 5;
+  }
+
+  .vjs-panorama-canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    background: #000;
+    cursor: pointer;
+  }
+
+  .vjs-video-notice-label{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 1.3em;
+    font-size: 1vw;
+    padding: 0.5em 1em;
+    background: rgba(0, 0, 0, 0.8);
+    color: #FFF;
+    -webkit-border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    border-radius: 0.5em;
+    -webkit-transition: opacity 0.3s linear;
+    -moz-transition: opacity 0.3s linear;
+    -ms-transition: opacity 0.3s linear;
+    -o-transition: opacity 0.3s linear;
+    transition: opacity 0.3s linear;
+    pointer-events: none;
+
+    &.vjs-video-notice-fadeOut{
+      opacity: 0;
+    }
+  }
+
+  #webgl-error-message{
+    position: relative;
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: normal;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    padding: 1.5em;
+    width: 400px;
+    margin: 5em auto 0px;
+    background: rgb(255, 255, 255);
+
+    -webkit-transition: opacity 0.3s linear;
+    -moz-transition: opacity 0.3s linear;
+    -ms-transition: opacity 0.3s linear;
+    -o-transition: opacity 0.3s linear;
+    transition: opacity 0.3s linear;
+
+    &.vjs-video-notice-fadeOut{
+      opacity: 0;
+    }
+  }
+
+  .vjs-loading-spinner{
+    z-index: 10;
+  }
+
+  &.vjs-panorama-mobile-inline-video.vjs-seeking .vjs-loading-spinner{
+    display: none;
+  }
+
+  &.vjs-panorama-mobile-inline-video.vjs-waiting .vjs-loading-spinner{
+    display: block!important;
+  }
+
+  &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner{
+    display: block!important;
+  }
+
+
+  &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:before,
+  &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:after{
+    -webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
+    animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite; }
+
+  &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:before,
+  &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:before {
+    border-top-color: white; }
+
+  &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:after,
+  &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:after {
+    border-top-color: white;
+    -webkit-animation-delay: 0.44s;
+    animation-delay: 0.44s; }
+
+  .vjs-VR-control{
+    cursor: pointer;
+
+    &::before{
+      font-family: "VideoJS-Panorama";
+      content: "\e900";
     }
 
-    .vjs-panorama-canvas{
-      position: absolute;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      width: auto;
-      height: auto;
-      background: #000;
-      cursor: pointer;
+    &.enable::before{
+      content: "\e901";
+    }
+  }
+}
+
+//overwrite for media element
+.mejs__video{
+  .mejs__overlay-play{
+    pointer-events: none;
+    z-index: 11;
+  }
+
+  .mejs__controls{
+    z-index: 11;
+  }
+
+  .vjs-panorama-canvas{
+    z-index: 10;
+  }
+  .vjs-VR-control{
+    float: left;
+    position: relative;
+    font-size: 10px;
+    height: 40px;
+    line-height: 10px;
+    margin: 0;
+    width: 32px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+
+    &[disabled^="disabled"]{
+      opacity: 0.5;
     }
 
-    .vjs-video-notice-label{
+    &:before{
       position: absolute;
+      color: #FFFFFF;
+      font-size: 2em;
       top: 50%;
       left: 50%;
-      -webkit-transform: translate(-50%, -50%);
-      -moz-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-      -o-transform: translate(-50%, -50%);
       transform: translate(-50%, -50%);
-      font-size: 1.3em;
-      font-size: 1vw;
-      padding: 0.5em 1em;
-      background: rgba(0, 0, 0, 0.8);
-      color: #FFF;
-      -webkit-border-radius: 0.5em;
-      -moz-border-radius: 0.5em;
-      border-radius: 0.5em;
-      -webkit-transition: opacity 0.3s linear;
-      -moz-transition: opacity 0.3s linear;
-      -ms-transition: opacity 0.3s linear;
-      -o-transition: opacity 0.3s linear;
-      transition: opacity 0.3s linear;
-      pointer-events: none;
-
-      &.vjs-video-notice-fadeOut{
-        opacity: 0;
-      }
     }
-
-    #webgl-error-message{
-      position: relative;
-      font-family: monospace;
-      font-size: 13px;
-      font-weight: normal;
-      text-align: center;
-      color: rgb(0, 0, 0);
-      padding: 1.5em;
-      width: 400px;
-      margin: 5em auto 0px;
-      background: rgb(255, 255, 255);
-
-      -webkit-transition: opacity 0.3s linear;
-      -moz-transition: opacity 0.3s linear;
-      -ms-transition: opacity 0.3s linear;
-      -o-transition: opacity 0.3s linear;
-      transition: opacity 0.3s linear;
-
-      &.vjs-video-notice-fadeOut{
-        opacity: 0;
-      }
-    }
-
-    .vjs-loading-spinner{
-      z-index: 10;
-    }
-
-    &.vjs-panorama-mobile-inline-video.vjs-seeking .vjs-loading-spinner{
-      display: none;
-    }
-
-    &.vjs-panorama-mobile-inline-video.vjs-waiting .vjs-loading-spinner{
-      display: block!important;
-    }
-
-    &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner{
-      display: block!important;
-    }
-
-
-    &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:before,
-    &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:after{
-      -webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
-      animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite; }
-
-    &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:before,
-    &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:before {
-      border-top-color: white; }
-
-    &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:after,
-    &.vjs-panorama-mobile-inline-video-buffering .vjs-loading-spinner:after {
-      border-top-color: white;
-      -webkit-animation-delay: 0.44s;
-      animation-delay: 0.44s; }
   }
 }
