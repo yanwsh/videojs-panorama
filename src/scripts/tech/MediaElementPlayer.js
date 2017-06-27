@@ -1,7 +1,7 @@
 // @ flow
 
 import  Panorama, { defaults } from '../Panorama';
-import { mergeOptions } from '../utils/merge-options';
+import { mergeOptions, customEvent } from '../utils';
 import BasePlayer from './BasePlayer';
 
 class MediaElement extends BasePlayer{
@@ -54,29 +54,31 @@ class MediaElement extends BasePlayer{
     on(...args: any): void{
         let name = args[0];
         let fn = args[1];
-        this.getVideoEl().addEventListener(name, fn.bind(this));
+        this.getVideoEl().addEventListener(name, fn);
     }
 
     off(...args: any): void{
         let name = args[0];
         let fn = args[1];
-        this.getVideoEl().removeEventListener(name, fn.bind(this));
-    }
-
-    trigger(name: string): void{
-        //todo add trigger method
-        if(this._triggerCallback){
-            this._triggerCallback(name);
-        }
+        this.getVideoEl().removeEventListener(name, fn);
     }
 
     one(...args: any): void{
         let name = args[0];
         let fn = args[1];
-        this.on(name, ()=>{
-            fn.call(this);
-            this.off(name, fn);
+        let oneTimeFunction;
+        this.on(name, oneTimeFunction = ()=>{
+            fn();
+            this.off(name, oneTimeFunction);
         });
+    }
+
+    trigger(name: string): void{
+        let event = customEvent(name, this.el());
+        this.getVideoEl().dispatchEvent(event);
+        if(this._triggerCallback){
+            this._triggerCallback(name);
+        }
     }
 
     paused(): boolean{
@@ -102,9 +104,7 @@ class MediaElement extends BasePlayer{
     }
 
     ready(fn: Function): void{
-        this.getVideoEl().addEventListener('canplay', ()=>{
-            fn.call(this);
-        });
+        this.one('canplay', fn);
     }
 }
 

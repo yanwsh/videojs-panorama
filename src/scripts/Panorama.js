@@ -11,7 +11,7 @@ import ThreeDVideo from './Components/ThreeDVideo';
 import Notification from './Components/Notification';
 import Thumbnail from './Components/Thumbnail';
 import VRButton from './Components/VRButton';
-import { Detector, webGLErrorMessage, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone } from './utils';
+import { Detector, webGLErrorMessage, crossDomainWarning, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone } from './utils';
 import { warning } from './utils/index';
 
 const runOnMobile = mobileAndTabletcheck();
@@ -317,6 +317,7 @@ class Panorama extends EventEmitter{
                 let originalErrorFunction = window.console.error;
                 window.console.error = (error)=>{
                     if(error.message.indexOf("insecure") !== -1){
+                        this.popupNotification(crossDomainWarning());
                         this.dispose();
                     }
                 };

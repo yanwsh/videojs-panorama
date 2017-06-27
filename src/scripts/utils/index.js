@@ -7,3 +7,4 @@ export * from './version';
 export * from './mobile';
 export * from './vr';
 export * from './animation';
+export * from './event';

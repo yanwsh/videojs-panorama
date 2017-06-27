@@ -20,3 +20,9 @@ export const warning = (message: string): void => {
         }
     }
 };
+
+export const crossDomainWarning = (): HTMLElement => {
+    let element = document.createElement( 'div' );
+    element.innerHTML = "Sorry, Your browser don't support cross domain.";
+    return element;
+};

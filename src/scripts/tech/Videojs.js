@@ -107,7 +107,7 @@ class Videojs extends BasePlayer{
                 window.removeEventListener("devicemotion", resizeFn);
                 this.trigger("after_ExitFullscreen");
             }
-            canvas.handleResize();
+            this.trigger("fullscreenchange");
         });
     }
 

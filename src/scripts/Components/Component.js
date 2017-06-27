@@ -182,9 +182,10 @@ class Component extends EventEmitter{
     }
 
     one(name: string, action: Function): void{
-        this.on(name, ()=>{
-           action.call(this);
-           this.off(name, action);
+        let oneTimeFunction;
+        this.on(name, oneTimeFunction = ()=>{
+           action();
+           this.off(name, oneTimeFunction);
         });
     }
 
