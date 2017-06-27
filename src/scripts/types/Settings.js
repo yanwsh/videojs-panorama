@@ -3,10 +3,31 @@ import { Point } from './Point';
 
 export type VideoTypes = "equirectangular" | "fisheye" | "3dVideo" | "dual_fisheye";
 
-export type NativePlayer = {
-    poster?: string;
-    controls?: boolean;
-};
+export type MarkerSettings = {
+    lat: number;
+    lon: number;
+    radius: number;
+
+    /**
+     * use custom dom
+     */
+    element?: HTMLElement;
+
+    /**
+     * timeline when should marker be shown
+     */
+    keyPoint: number;
+
+    /**
+     * when should marker disappear, set -1 if you don't want it disappear
+     */
+    duration: number;
+
+    /**
+     * callback function when marker is disappear
+     */
+    complete?: Function;
+}
 
 /**
  * panorama settings options
@@ -113,7 +134,7 @@ export type Settings = {
         HideTime?: number;
     };
 
-    NativePlayer?: NativePlayer;
+    Markers?: MarkerSettings[],
 
     ready?: Function;
 

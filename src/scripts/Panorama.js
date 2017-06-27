@@ -94,7 +94,9 @@ export const defaults: Settings = {
         Enable: true,
         Message: "Please use your mouse drag and drop the video.",
         HideTime: 3000,
-    }
+    },
+
+    Markers: []
 };
 
 /**
