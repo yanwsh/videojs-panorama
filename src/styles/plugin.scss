@@ -148,6 +148,16 @@
 
 //overwrite for media element
 .mejs__video{
+  &.mejs__container-fullscreen{
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: fixed!important;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+  }
+
   .mejs__overlay-play{
     pointer-events: none;
     z-index: 11;

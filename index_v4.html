@@ -33,7 +33,7 @@
 <body>
 <div id="player_wrapper" class="player_wrapper">
     <div class="player_container">
-        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster.jpg"  crossorigin="anonymous" controls>
+        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster-360.jpg"  crossorigin="anonymous" controls>
             <source src="assets/shark.mp4" type='video/mp4'>
         </video>
     </div>
@@ -61,7 +61,8 @@
         });
 
         player.panorama({
-            clickToToggle: (!isMobile()),
+            PanoramaThumbnail: true,
+            clickToToggle: true,
             autoMobileOrientation: true,
             VREnable: isMobile()
         });

@@ -1,12 +1,15 @@
 // @ flow
 
 import  Panorama, { defaults } from '../Panorama';
-import { mergeOptions, customEvent } from '../utils';
+import { mergeOptions, customEvent, isIos } from '../utils';
 import BasePlayer from './BasePlayer';
 
 class MediaElement extends BasePlayer{
     constructor(playerInstance: any){
         super(playerInstance);
+        if(isIos()){
+            this._fullscreenOnIOS();
+        }
     }
 
     static registerPlugin(){
@@ -101,6 +104,46 @@ class MediaElement extends BasePlayer{
         if(!this.playerInstance.isFullScreen){
             this.playerInstance.enterFullScreen();
         }
+    }
+
+    _resizeCanvasFn(canvas: Component): Function{
+        return ()=>{
+            this.playerInstance.container.style.width = "100%";
+            this.playerInstance.container.style.height = "100%";
+            canvas.handleResize();
+        };
+    }
+
+    _fullscreenOnIOS(){
+        let self = this;
+        //disable fullscreen on ios
+        this.playerInstance.enterFullScreen = function(){
+            let canvas: Component = self.getComponent("VideoCanvas");
+            let resizeFn = self._resizeCanvasFn(canvas).bind(self);
+            self.trigger("before_EnterFullscreen");
+            document.documentElement.classList.add(`${this.options.classPrefix}fullscreen`);
+            self.addClass(`${this.options.classPrefix}container-fullscreen`);
+            this.container.style.width = "100%";
+            this.container.style.height = "100%";
+            window.addEventListener("devicemotion", resizeFn); //trigger when user rotate screen
+            self.trigger("after_EnterFullscreen");
+            this.isFullScreen = true;
+            canvas.handleResize();
+        };
+
+        this.playerInstance.exitFullScreen = function(){
+            let canvas: Component = self.getComponent("VideoCanvas");
+            let resizeFn = self._resizeCanvasFn(canvas).bind(self);
+            self.trigger("before_ExitFullscreen");
+            document.documentElement.classList.remove(`${this.options.classPrefix}fullscreen`);
+            self.removeClass(`${this.options.classPrefix}container-fullscreen`);
+            this.isFullScreen = false;
+            this.container.style.width = "";
+            this.container.style.height = "";
+            window.removeEventListener("devicemotion", resizeFn);
+            self.trigger("after_ExitFullscreen");
+            canvas.handleResize();
+        };
     }
 
     ready(fn: Function): void{

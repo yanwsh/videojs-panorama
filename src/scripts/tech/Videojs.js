@@ -52,8 +52,6 @@ class Videojs extends BasePlayer{
 
     _resizeCanvasFn(canvas: Component): Function{
         return ()=>{
-            this.playerInstance.el().style.width = window.innerWidth + "px";
-            this.playerInstance.el().style.height = window.innerHeight + "px";
             canvas.handleResize();
         };
     }
@@ -94,16 +92,12 @@ class Videojs extends BasePlayer{
                 //set to fullscreen
                 this.playerInstance.isFullscreen(true);
                 this.playerInstance.enterFullWindow();
-                this.playerInstance.el().style.width = window.innerWidth + "px";
-                this.playerInstance.el().style.height = window.innerHeight + "px";
                 window.addEventListener("devicemotion", resizeFn); //trigger when user rotate screen
                 this.trigger("after_EnterFullscreen");
             }else{
                 this.trigger("before_ExitFullscreen");
                 this.playerInstance.isFullscreen(false);
                 this.playerInstance.exitFullWindow();
-                this.playerInstance.el().style.width = "";
-                this.playerInstance.el().style.height = "";
                 window.removeEventListener("devicemotion", resizeFn);
                 this.trigger("after_ExitFullscreen");
             }
