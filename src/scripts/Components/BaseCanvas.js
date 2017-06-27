@@ -261,7 +261,7 @@ class BaseCanvas extends Component{
         if(this.options.clickToToggle){
             const clientX = event.clientX || event.changedTouches && event.changedTouches[0].clientX;
             const clientY = event.clientY || event.changedTouches && event.changedTouches[0].clientY;
-            if(typeof clientX !== "undefined" && clientY !== "undefined") {
+            if(typeof clientX !== "undefined" && clientY !== "undefined" && this.options.clickToToggle) {
                 const diffX = Math.abs(clientX - this._mouseDownPointer.x);
                 const diffY = Math.abs(clientY - this._mouseDownPointer.y);
                 if(diffX < 0.1 && diffY < 0.1)

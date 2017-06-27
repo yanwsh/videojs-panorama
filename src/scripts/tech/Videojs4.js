@@ -19,7 +19,7 @@ class Videojs4 extends BaseVideoJs{
             this.playerInstance.h.el();
     }
 
-    originalFullscreenClickFn(){
+    _originalFullscreenClickFn(){
         return this.playerInstance.controlBar.fullscreenToggle.onClick || this.playerInstance.controlBar.fullscreenToggle.u;
     }
 }

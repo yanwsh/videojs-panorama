@@ -1,7 +1,7 @@
 // @flow
 
 import makeVideoPlayableInline from 'iphone-inline-video';
-import type {Settings, Player, VideoTypes} from './types/index';
+import type {Settings, Player, VideoTypes, Coordinates} from './types/index';
 import type BaseCanvas from './Components/BaseCanvas';
 import EventEmitter from 'wolfy87-eventemitter';
 import Equirectangular from './Components/Equirectangular';
@@ -245,6 +245,7 @@ class Panorama extends EventEmitter{
             });
         }
 
+        //enable inline play on mobile
         if(runOnMobile){
             let videoElement = this.player.getVideoEl();
             if(isRealIphone()){
@@ -252,13 +253,12 @@ class Panorama extends EventEmitter{
                 videoElement.setAttribute("playsinline", "");
                 makeVideoPlayableInline(videoElement, true);
             }
-            if(isIos()){
-                this.player.fullscreenOnIOS();
-            }
             this.player.addClass("vjs-panorama-mobile-inline-video");
+            //by default videojs hide control bar on mobile device.
             this.player.removeClass("vjs-using-native-controls");
         }
 
+        //add vr icon to player
         if(this.options.VREnable){
             let controlbar = this.player.controlBar();
             let index = controlbar.childNodes.length;
@@ -276,13 +276,18 @@ class Panorama extends EventEmitter{
             this.attachEvents();
 
             if(this.options.VREnable){
-                let vrButton = this.player.getComponent("VRButton").component;
-                vrButton.enable();
+                let vrButton = this.player.getComponent("VRButton");
+                vrButton && vrButton.enable();
             }
 
             if(this.options.ready){
                 this.options.ready.call(this);
             }
+        });
+
+        //register trigger callback function, so everything trigger to player will also trigger in here
+        this.player.registerTriggerCallback((eventName)=>{
+            this.trigger(eventName);
         });
     }
 
@@ -293,6 +298,7 @@ class Panorama extends EventEmitter{
     }
 
     attachEvents(){
+        //show notice message
         if(this.options.Notice && this.options.Notice.Enable){
             this.player.one("playing", ()=>{
                 let message = this.options.Notice && this.options.Notice.Message || "";
@@ -300,6 +306,7 @@ class Panorama extends EventEmitter{
             });
         }
 
+        //enable canvas rendering when video is playing
         const handlePlay = () => {
             this.player.getVideoEl().style.visibility = "hidden";
             this.videoCanvas.startAnimation();
@@ -324,10 +331,6 @@ class Panorama extends EventEmitter{
             this.player.one("play", handlePlay);
         }
 
-        this.player.on("fullscreenchange",  () => {
-            this.videoCanvas.handleResize();
-        });
-
         const report = () => {
             this.player.reportUserActivity();
         };
@@ -336,40 +339,12 @@ class Panorama extends EventEmitter{
             "touchMove": report,
             "tap": report
         });
-
-        if(this.options.clickToToggle){
-            this.videoCanvas.addListener("tap", ()=>{
-                this.player.paused()? this.player.play() : this.player.pause();
-            });
-        }
-
-        if(this.options.VREnable){
-            let VRButton = this.player.getComponent("VRButton").component;
-            VRButton.addListener("click", ()=>{
-                let VRMode = this.videoCanvas.VRMode;
-                (!VRMode)? this.videoCanvas.enableVR() : this.videoCanvas.disableVR();
-                (!VRMode)?  this.trigger('VRModeOn'):  this.trigger('VRModeOff');
-                if(!VRMode && this.options.VRFullscreen){
-                    this.player.enableFullscreen();
-                }
-            });
-        }
-
-        this.videoCanvas.addListener("render", ()=>{
-            this.trigger("render", [
-                this.videoCanvas._lat, this.videoCanvas._lon
-            ]);
-        });
-
-        let triggerPlayerEvents = ["before_EnterFullscreen", "after_EnterFullscreen", "before_ExitFullscreen", "after_ExitFullscreen"];
-        triggerPlayerEvents.forEach((eventName)=>{
-            this.player.on(eventName, ()=>{
-                this.trigger(eventName);
-            });
-        });
     }
 
     detachEvents(){
+        if(this.thumbnailCanvas){
+            this.thumbnailCanvas.stopAnimation();
+        }
         if(this.videoCanvas){
             this.videoCanvas.stopAnimation();
         }
@@ -389,6 +364,14 @@ class Panorama extends EventEmitter{
                     notice.removeClass("vjs-video-notice-fadeOut");
                 });
             }, this.options.Notice.HideTime);
+        }
+    }
+
+    getCoordinates(): Coordinates{
+        let canvas = this.thumbnailCanvas || this.videoCanvas;
+        return {
+            lat: canvas._lat,
+            lon: canvas._lon
         }
     }
 

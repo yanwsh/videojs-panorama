@@ -1,9 +1,12 @@
 // @ flow
 
+import type Component from '../Components/Component';
 import type { Player, ComponentData } from '../types';
 
 class BasePlayer implements Player {
     _components: Array<ComponentData>;
+    _triggerCallback: Function;
+
     constructor(playerInstance){
         if (Object.getPrototypeOf(this) === BasePlayer.prototype) {
             throw Error('abstract class should not be instantiated directly; write a subclass');
@@ -15,6 +18,10 @@ class BasePlayer implements Player {
 
     static registerPlugin(){
         throw Error('Not implemented');
+    }
+
+    registerTriggerCallback(callback: Function): void{
+        this._triggerCallback = callback;
     }
 
     el(): HTMLElement{
@@ -41,15 +48,15 @@ class BasePlayer implements Player {
         throw Error('Not implemented');
     }
 
+    trigger(name: string): void{
+        throw Error('Not implemented');
+    }
+
     addClass(name: string): void{
         throw Error('Not implemented');
     }
 
     removeClass(name: string): void{
-        throw Error('Not implemented');
-    }
-
-    fullscreenOnIOS(): void{
         throw Error('Not implemented');
     }
 
@@ -91,15 +98,15 @@ class BasePlayer implements Player {
         }, []);
     }
 
-    getComponent(name: string): ComponentData{
-        let component;
+    getComponent(name: string): Component | null{
+        let componentData;
         for(let i = 0; i < this._components.length; i++){
             if(this._components[i].name === name){
-                component = this._components[i];
+                componentData = this._components[i];
                 break;
             }
         }
-        return component;
+        return componentData? componentData.component: null;
     }
 
     play(): void{
@@ -115,10 +122,6 @@ class BasePlayer implements Player {
     }
 
     readyState(): number{
-        throw Error('Not implemented');
-    }
-
-    trigger(name: string): void{
         throw Error('Not implemented');
     }
 

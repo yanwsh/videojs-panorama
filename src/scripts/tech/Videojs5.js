@@ -17,7 +17,7 @@ class Videojs5 extends BaseVideoJs{
         return this.playerInstance.tech({ IWillNotUseThisInPlugins: true }).el();
     }
 
-    originalFullscreenClickFn(){
+    _originalFullscreenClickFn(){
         return this.playerInstance.controlBar.fullscreenToggle.handleClick;
     }
 }

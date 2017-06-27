@@ -10,7 +10,7 @@ if(playerClass){
     playerClass.registerPlugin();
 }
 else{
-    throw new Error("could not found support player.");
+    throw new Error("Could not found support player.");
 }
 
 const plugin = (playerDom: string | HTMLVideoElement, options: Settings) => {

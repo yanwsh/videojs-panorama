@@ -63,6 +63,13 @@ class MediaElement extends BasePlayer{
         this.getVideoEl().removeEventListener(name, fn.bind(this));
     }
 
+    trigger(name: string): void{
+        //todo add trigger method
+        if(this._triggerCallback){
+            this._triggerCallback(name);
+        }
+    }
+
     one(...args: any): void{
         let name = args[0];
         let fn = args[1];
@@ -70,18 +77,6 @@ class MediaElement extends BasePlayer{
             fn.call(this);
             this.off(name, fn);
         });
-    }
-
-    fullscreenOnIOS(): void{
-        throw Error('Not implemented');
-    }
-
-    play(): void{
-        this.playerInstance.play();
-    }
-
-    pause(): void{
-        this.playerInstance.pause()
     }
 
     paused(): boolean{

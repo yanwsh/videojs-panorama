@@ -1,13 +1,21 @@
 // @flow
 
-import videojs from 'video.js';
 import BasePlayer from './BasePlayer';
-
 import Component from '../Components/Component';
+import { isIos } from '../utils';
 
 class Videojs extends BasePlayer{
     constructor(playerInstance: any){
         super(playerInstance);
+        //ios device don't support fullscreen, we have to monkey patch the original fullscreen function.
+        if(isIos()){
+            this._fullscreenOnIOS();
+        }
+        //resize video if fullscreen change, this is used for ios device
+        this.on("fullscreenchange",  () => {
+            let canvas: Component = this.getComponent("VideoCanvas");
+            canvas.handleResize();
+        });
     }
 
     el(): HTMLElement{
@@ -42,7 +50,7 @@ class Videojs extends BasePlayer{
         this.playerInstance.removeClass(name);
     }
 
-    resizeCanvasFn(canvas: Component): Function{
+    _resizeCanvasFn(canvas: Component): Function{
         return ()=>{
             this.playerInstance.el().style.width = window.innerWidth + "px";
             this.playerInstance.el().style.height = window.innerHeight + "px";
@@ -60,6 +68,9 @@ class Videojs extends BasePlayer{
 
     trigger(name: string): void{
         this.playerInstance.trigger(name);
+        if(this._triggerCallback){
+            this._triggerCallback(name);
+        }
     }
 
     reportUserActivity(): void{
@@ -69,22 +80,23 @@ class Videojs extends BasePlayer{
     /**
      * Get original fullscreen function
      */
-    originalFullscreenClickFn(){
+    _originalFullscreenClickFn(){
         throw Error('Not implemented');
     }
 
-    fullscreenOnIOS(): void{
-        let canvas: Component = this.getComponent("VideoCanvas").component;
-        let resizeFn = this.resizeCanvasFn(canvas);
-        this.playerInstance.controlBar.fullscreenToggle.off("tap", this.originalFullscreenClickFn());
+    _fullscreenOnIOS(): void{
+        this.playerInstance.controlBar.fullscreenToggle.off("tap", this._originalFullscreenClickFn());
         this.playerInstance.controlBar.fullscreenToggle.on("tap", () => {
+            let canvas: Component = this.getComponent("VideoCanvas");
+            let resizeFn = this._resizeCanvasFn(canvas);
             if(!this.playerInstance.isFullscreen()){
                 this.trigger("before_EnterFullscreen");
                 //set to fullscreen
                 this.playerInstance.isFullscreen(true);
                 this.playerInstance.enterFullWindow();
-                resizeFn();
-                window.addEventListener("devicemotion", resizeFn);
+                this.playerInstance.el().style.width = window.innerWidth + "px";
+                this.playerInstance.el().style.height = window.innerHeight + "px";
+                window.addEventListener("devicemotion", resizeFn); //trigger when user rotate screen
                 this.trigger("after_EnterFullscreen");
             }else{
                 this.trigger("before_ExitFullscreen");
@@ -92,10 +104,10 @@ class Videojs extends BasePlayer{
                 this.playerInstance.exitFullWindow();
                 this.playerInstance.el().style.width = "";
                 this.playerInstance.el().style.height = "";
-                canvas.handleResize();
                 window.removeEventListener("devicemotion", resizeFn);
                 this.trigger("after_ExitFullscreen");
             }
+            canvas.handleResize();
         });
     }
 
