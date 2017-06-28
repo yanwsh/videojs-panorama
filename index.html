@@ -63,7 +63,27 @@
             Notice: {
                 Enable: true,
                 Message: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video"
-            }
+            },
+            Markers: [
+                {
+                    location: {
+                        lat: 0,
+                        lon: 180
+                    },
+                    radius: 500,
+                    element: "Marker 1",
+                    keyPoint: 5000,
+                    duration: 10000
+                },
+                {
+                    location: {
+                        lat: 20,
+                        lon: 160
+                    },
+                    radius: 500,
+                    element: "Marker 2",
+                }
+            ]
         });
 
         window.player = player;

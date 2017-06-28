@@ -1,27 +1,29 @@
 // @flow
-import { Point } from './Point';
+import { Point, Coordinates } from './Point';
 
 export type VideoTypes = "equirectangular" | "fisheye" | "3dVideo" | "dual_fisheye";
 
 export type MarkerSettings = {
-    lat: number;
-    lon: number;
+    location: Coordinates;
+
     radius: number;
+
+    id?: string;
 
     /**
      * use custom dom
      */
-    element?: HTMLElement;
+    element: HTMLElement | string;
 
     /**
      * timeline when should marker be shown
      */
-    keyPoint: number;
+    keyPoint?: number;
 
     /**
      * when should marker disappear, set -1 if you don't want it disappear
      */
-    duration: number;
+    duration?: number;
 
     /**
      * callback function when marker is disappear

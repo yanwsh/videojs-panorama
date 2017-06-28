@@ -132,6 +132,19 @@
     -webkit-animation-delay: 0.44s;
     animation-delay: 0.44s; }
 
+  .vjs-marker{
+    position: absolute;
+    display: none;
+
+    &.vjs-marker--enable{
+      display: block!important;
+    }
+
+    &.vjs-marker--backside{
+      display: none!important;
+    }
+  }
+
   .vjs-VR-control{
     cursor: pointer;
 

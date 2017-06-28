@@ -11,8 +11,8 @@ import ThreeDVideo from './Components/ThreeDVideo';
 import Notification from './Components/Notification';
 import Thumbnail from './Components/Thumbnail';
 import VRButton from './Components/VRButton';
-import { Detector, webGLErrorMessage, crossDomainWarning, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone } from './utils';
-import { warning } from './utils/index';
+import Marker from './Components/Marker';
+import { Detector, webGLErrorMessage, crossDomainWarning, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone, warning } from './utils';
 
 const runOnMobile = mobileAndTabletcheck();
 
@@ -107,6 +107,8 @@ class Panorama extends EventEmitter{
     _player: Player;
     _videoCanvas: BaseCanvas;
     _thumbnailCanvas: BaseCanvas | null;
+    //save total markers enable to generate marker id
+    _totalMarkers: number;
 
     /**
      * check legacy option settings and produce warning message if user use legacy options, automatically set it to new options.
@@ -212,6 +214,7 @@ class Panorama extends EventEmitter{
         Panorama.checkOptions(options);
         this._options = mergeOptions({}, defaults, options);
         this._player = player;
+        this._totalMarkers = 0;
 
         this.player.addClass("vjs-panorama");
 
@@ -314,6 +317,13 @@ class Panorama extends EventEmitter{
             this.videoCanvas.startAnimation();
             this.videoCanvas.show();
 
+            //initial markers
+            if(this.options.Markers){
+                this.options.Markers.forEach((markSetting: any)=>{
+                    this.addMarker(markSetting);
+                });
+            }
+
             //detect black screen
             if(window.console && window.console.error){
                 let originalErrorFunction = window.console.error;
@@ -376,6 +386,18 @@ class Panorama extends EventEmitter{
             lat: canvas._lat,
             lon: canvas._lon
         }
+    }
+
+    addMarker(markSetting: any): Marker{
+        this._totalMarkers++;
+        markSetting.id = markSetting.id? markSetting.id : `marker_${this._totalMarkers}`;
+        let marker = new Marker(this.player, markSetting);
+        this.player.addComponent(markSetting.id, marker);
+        return marker;
+    }
+
+    removeMarker(markerId: string): void{
+        this.player.removeComponent(markerId);
     }
 
     get thumbnailCanvas(): BaseCanvas | null{

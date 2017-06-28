@@ -140,6 +140,10 @@ class BasePlayer implements Player {
     ready(fn: Function): void{
         throw Error('Not implemented');
     }
+
+    get components(): Array<ComponentData>{
+        return this._components;
+    }
 }
 
 export default BasePlayer;
