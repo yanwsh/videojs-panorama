@@ -88,6 +88,14 @@ class Marker extends Component{
             this.el().style.top  =  `${point.y}px`;
         }
     }
+
+    get enable(): boolean{
+        return this._enable;
+    }
+
+    get position(): THREE.Vector3{
+        return this._position;
+    }
 }
 
 export default Marker;

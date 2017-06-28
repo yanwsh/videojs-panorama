@@ -1,8 +1,8 @@
 // @ flow
 
 import EventEmitter from 'wolfy87-eventemitter';
-import type { Player, Settings } from '../types';
-import { mergeOptions, warning } from '../utils';
+import type { Player } from '../types';
+import { mergeOptions, ComponentData } from '../utils';
 
 /**
  * base Component layer, which will be use when videojs is not supported environment.
@@ -13,7 +13,7 @@ class Component extends EventEmitter{
     _el: HTMLElement | null;
     _player: Player;
     _renderElement: HTMLElement;
-    _children: Component[];
+    _children: ComponentData[];
 
     constructor(player: Player, options: any = {}, renderElement?: HTMLElement, ready?: () => void){
         super();
@@ -42,7 +42,7 @@ class Component extends EventEmitter{
 
     dispose(){
         for(let i = 0; i < this._children.length; i++){
-            this._children[i].dispose();
+            this._children[i].component.dispose();
         }
 
         if(this._el){
@@ -221,7 +221,7 @@ class Component extends EventEmitter{
 
         if(typeof component.el === "function" && component.el()){
             if(index === -1){
-                location.append(component.el());
+                location.appendChild(component.el());
             }else{
                 let children = location.childNodes;
                 let child = children[index];
@@ -231,7 +231,8 @@ class Component extends EventEmitter{
 
         this._children.push({
             name,
-            component
+            component,
+            location
         });
     }
 

@@ -96,7 +96,7 @@ class BaseCanvas extends Component{
 
         if(renderElement.tagName.toLowerCase() === "video" && (this.options.useHelperCanvas === true || (!supportVideoTexture(renderElement) && this.options.useHelperCanvas === "auto"))){
             this._helperCanvas = this.player.addComponent("HelperCanvas", new HelperCanvas(this.player));
-            // $FlowFixMe
+
             const context = this._helperCanvas.el();
             this._texture = new THREE.Texture(context);
         }else{
