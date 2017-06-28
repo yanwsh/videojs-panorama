@@ -27,7 +27,7 @@ export function isObject(value: any) {
  */
 export function isPlain(value: any) {
     return isObject(value) &&
-        toString.call(value) === '[object Object]' &&
+        Object.prototype.toString.call(value) === '[object Object]' &&
         value.constructor === Object;
 }
 
