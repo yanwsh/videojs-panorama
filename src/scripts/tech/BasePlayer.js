@@ -70,7 +70,7 @@ class BasePlayer implements Player {
 
         if(typeof component.el === "function" && component.el()){
             if(index === -1){
-                location.append(component.el());
+                location.appendChild(component.el());
             }else{
                 let children = location.childNodes;
                 let child = children[index];
