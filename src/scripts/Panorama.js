@@ -22,12 +22,12 @@ const videoTypes = ["equirectangular", "fisheye", "dual_fisheye", "VR1803D", "VR
 export const defaults: Settings = {
     videoType: "equirectangular",
     MouseEnable: true,
-    clickAndDrag: true,
+    clickAndDrag: false,
     movingSpeed: {
         x: 0.0005,
         y: 0.0005
     },
-    clickToToggle: false,
+    clickToToggle: true,
     scrollable: true,
     resizable: true,
     useHelperCanvas: "auto",
@@ -110,6 +110,8 @@ export const VR180Defaults: any = {
 
     minLon: 50,
     maxLon: 130,
+
+    clickAndDrag: true
 };
 
 /**
