@@ -136,7 +136,7 @@ export type Settings = {
         HideTime?: number;
     };
 
-    Markers?: MarkerSettings[],
+    Markers?: MarkerSettings[] | boolean,
 
     ready?: Function;
 

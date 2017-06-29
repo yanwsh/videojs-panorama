@@ -96,7 +96,7 @@ export const defaults: Settings = {
         HideTime: 3000,
     },
 
-    Markers: []
+    Markers: false
 };
 
 /**
@@ -315,7 +315,7 @@ class Panorama extends EventEmitter{
             this.videoCanvas.show();
 
             //initial markers
-            if(this.options.Markers){
+            if(this.options.Markers && Array.isArray(this.options.Markers)){
                 let markerContainer = new MarkerContainer(this.player, {
                     canvas: this.videoCanvas,
                     markers: this.options.Markers,
