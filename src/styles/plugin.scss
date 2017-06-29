@@ -153,13 +153,17 @@
       &.vjs-marker-group--enable{
         display: block;
       }
-
-      &.vjs-marker-container--VREnable{
-        width: 50%;
-      }
     }
 
+    &.vjs-marker-container--VREnable{
+      .vjs-marker-group{
+        width: 50%;
+      }
 
+      .vjs-marker{
+        white-space: nowrap;
+      }
+    }
   }
 
   .vjs-marker{
