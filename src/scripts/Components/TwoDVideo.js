@@ -37,6 +37,8 @@ class TwoDVideo extends BaseCanvas{
 
         this._cameraL = new THREE.PerspectiveCamera(this._camera.fov, this._width / 2 / this._height, 1, 2000);
         this._cameraR = new THREE.PerspectiveCamera(this._camera.fov, this._width / 2 / this._height, 1, 2000);
+        this._cameraL.target = new THREE.Vector3( 0, 0, 0 );
+        this._cameraR.target = new THREE.Vector3( 0, 0, 0 );
     }
 
     disableVR(){
@@ -115,16 +117,16 @@ class TwoDVideo extends BaseCanvas{
                 let thetaL = THREE.Math.degToRad( lonL );
                 let thetaR = THREE.Math.degToRad( lonR );
 
-                //deep copy target value
-                let targetL = mergeOptions({}, this._camera.target);
-                targetL.x = 500 * Math.sin( this._phi ) * Math.cos( thetaL );
-                targetL.z = 500 * Math.sin( this._phi ) * Math.sin( thetaL );
-                this._cameraL.lookAt(targetL);
 
-                let targetR = mergeOptions({}, this._camera.target);
-                targetR.x = 500 * Math.sin( this._phi ) * Math.cos( thetaR );
-                targetR.z = 500 * Math.sin( this._phi ) * Math.sin( thetaR );
-                this._cameraR.lookAt(targetR);
+                this._cameraL.target.x = 500 * Math.sin( this._phi ) * Math.cos( thetaL );
+                this._cameraL.target.y = this._camera.target.y;
+                this._cameraL.target.z = 500 * Math.sin( this._phi ) * Math.sin( thetaL );
+                this._cameraL.lookAt(this._cameraL.target);
+
+                this._cameraR.target.x = 500 * Math.sin( this._phi ) * Math.cos( thetaR );
+                this._cameraR.target.y = this._camera.target.y;
+                this._cameraR.target.z = 500 * Math.sin( this._phi ) * Math.sin( thetaR );
+                this._cameraR.lookAt(this._cameraR.target);
             }
             // render left eye
             this._renderer.setViewport( 0, 0, viewPortWidth, viewPortHeight );

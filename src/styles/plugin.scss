@@ -132,12 +132,43 @@
     -webkit-animation-delay: 0.44s;
     animation-delay: 0.44s; }
 
+  .vjs-marker-container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+    align-content: stretch;
+    pointer-events: none;
+
+    .vjs-marker-group{
+      display: none;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      &.vjs-marker-group--enable{
+        display: block;
+      }
+
+      &.vjs-marker-container--VREnable{
+        width: 50%;
+      }
+    }
+
+
+  }
+
   .vjs-marker{
     position: absolute;
     display: none;
 
     &.vjs-marker--enable{
       display: block!important;
+      pointer-events: auto;
     }
 
     &.vjs-marker--backside{

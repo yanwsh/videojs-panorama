@@ -3,6 +3,7 @@
 import type { Player, MarkerSettings, Point } from '../types';
 import THREE from "three";
 import Component from './Component';
+import BaseCanvas from './BaseCanvas';
 import { mergeOptions } from '../utils';
 
 const defaults = {
@@ -11,7 +12,6 @@ const defaults = {
 };
 
 class Marker extends Component{
-    _canvas: Component;
     _position: THREE.Vector3;
     _enable: boolean;
 
@@ -35,7 +35,6 @@ class Marker extends Component{
         super(player, options);
         this._options = mergeOptions({}, defaults, options);
 
-        this._canvas = player.getComponent("VideoCanvas");
         let phi = THREE.Math.degToRad( 90 - options.location.lat );
         let theta = THREE.Math.degToRad( options.location.lon );
         this._position = new THREE.Vector3(
@@ -43,46 +42,32 @@ class Marker extends Component{
             options.radius * Math.cos( phi ),
             options.radius * Math.sin( phi ) * Math.sin( theta ),
         );
-        if(this.options.keyPoint > 0){
-            let timeupdate;
-            this.player.on("timeupdate", timeupdate = () => {
-                let currentTime = this.player.getVideoEl().currentTime * 1000;
-                if(this.options.duration > 0){
-                    (this.options.keyPoint <= currentTime && currentTime < this.options.keyPoint + this.options.duration)?
-                        !this._enable && this.attachEvents() : this._enable && this.detachEvents();
-                }else{
-                    (this.options.keyPoint <= currentTime)?
-                        !this._enable && this.attachEvents() : this._enable && this.detachEvents();
-                }
-            });
-        }else{
-            this.attachEvents();
+        if(this.options.keyPoint < 0){
+            this.enableMarker();
         }
-
     }
 
-    attachEvents(){
+    enableMarker(){
         this._enable = true;
         this.addClass("vjs-marker--enable");
-        this._canvas.addListener("render", this.render.bind(this));
     }
 
-    detachEvents(){
+    disableMarker(){
         this._enable = false;
         this.removeClass("vjs-marker--enable");
-        this._canvas.removeListener("render", this.render.bind(this));
     }
 
-    render(){
-        let angle = this._position.angleTo(this._canvas._camera.target);
+    render(canvas: BaseCanvas, camera: THREE.PerspectiveCamera){
+        let angle = this._position.angleTo(camera.target);
         if(angle > Math.PI * 0.4){
             this.addClass("vjs-marker--backside");
         }else{
             this.removeClass("vjs-marker--backside");
-            let vector = this._position.clone().project(this._canvas._camera);
+            let vector = this._position.clone().project(camera);
+            let width = canvas.VRMode? canvas._width / 2: canvas._width;
             let point: Point = {
-                x: (vector.x + 1) / 2 * this._canvas._width,
-                y: - (vector.y - 1) / 2 * this._canvas._height
+                x: (vector.x + 1) / 2 * width,
+                y: - (vector.y - 1) / 2 * canvas._height
             };
             this.el().style.left =  `${point.x}px`;
             this.el().style.top  =  `${point.y}px`;
