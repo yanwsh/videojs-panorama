@@ -7,7 +7,8 @@ import EventEmitter from 'wolfy87-eventemitter';
 import Equirectangular from './Components/Equirectangular';
 import Fisheye from './Components/Fisheye';
 import DualFisheye from './Components/DualFisheye';
-import ThreeDVideo from './Components/ThreeDVideo';
+import VR3603D from './Components/VR3603D';
+import VR1803D from './Components/VR1803D';
 import Notification from './Components/Notification';
 import Thumbnail from './Components/Thumbnail';
 import VRButton from './Components/VRButton';
@@ -16,7 +17,7 @@ import { Detector, webGLErrorMessage, crossDomainWarning, transitionEvent, merge
 
 const runOnMobile = mobileAndTabletcheck();
 
-const videoTypes = ["equirectangular", "fisheye", "3dVideo", "dual_fisheye"];
+const videoTypes = ["equirectangular", "fisheye", "dual_fisheye", "VR1803D", "VR3603D"];
 
 export const defaults: Settings = {
     videoType: "equirectangular",
@@ -99,6 +100,18 @@ export const defaults: Settings = {
     Markers: false
 };
 
+export const VR180Defaults: any = {
+    //initial position for the video
+    initLat: 0,
+    initLon: 90,
+    //limit viewable zoom
+    minLat: -75,
+    maxLat: 55,
+
+    minLon: 50,
+    maxLon: 130,
+};
+
 /**
  * panorama controller class which control required components
  */
@@ -114,7 +127,11 @@ class Panorama extends EventEmitter{
      * @returns {*} the latest version which we use.
      */
     static checkOptions(options: Settings): void {
-        if(options.videoType && videoTypes.indexOf(options.videoType) === -1){
+        if(options.videoType === "3dVideo"){
+            warning(`videoType: ${String(options.videoType)} is deprecated, please use VR3603D`);
+            options.videoType = "VR3603D";
+        }
+        else if(options.videoType && videoTypes.indexOf(options.videoType) === -1){
             warning(`videoType: ${String(options.videoType)} is not supported, set video type to ${String(defaults.videoType)}.`);
             options.videoType = defaults.videoType;
         }
@@ -198,8 +215,11 @@ class Panorama extends EventEmitter{
             case "dual_fisheye":
                 VideoClass = DualFisheye;
                 break;
-            case "3dVideo":
-                VideoClass = ThreeDVideo;
+            case "VR3603D":
+                VideoClass = VR3603D;
+                break;
+            case "VR1803D":
+                VideoClass = VR1803D;
                 break;
             default:
                 VideoClass = Equirectangular;
@@ -210,6 +230,9 @@ class Panorama extends EventEmitter{
     constructor(player: Player, options: any = {}){
         super();
         Panorama.checkOptions(options);
+        if(options.videoType === "VR1803D"){
+            options = mergeOptions({}, VR180Defaults, options);
+        }
         this._options = mergeOptions({}, defaults, options);
         this._player = player;
 

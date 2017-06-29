@@ -233,25 +233,26 @@ class BaseCanvas extends Component{
                     this._lat = ( clientY - this._mouseDownPointer.y ) * 0.2 + this._mouseDownLocation.Lat;
                     this._accelector.x = 0;
                     this._accelector.y = 0;
-                }else{
-                    var rect = this.el().getBoundingClientRect();
-                    const x = clientX - this._width / 2 - rect.left;
-                    const y = this._height / 2 - (clientY - rect.top);
-                    let angle = 0;
-                    if(x === 0){
-                        angle = (y > 0)? Math.PI / 2 : Math.PI * 3 / 2;
-                    }else if(x > 0 && y > 0){
-                        angle = Math.atan(y / x);
-                    }else if(x > 0 && y < 0){
-                        angle = 2 * Math.PI - Math.atan(y * -1 / x);
-                    }else if(x < 0 && y > 0){
-                        angle = Math.PI - Math.atan(y / x * -1);
-                    }else {
-                        angle = Math.PI + Math.atan(y / x);
-                    }
-                    this._accelector.x = Math.cos(angle) * this.options.movingSpeed.x * Math.abs(x);
-                    this._accelector.y = Math.sin(angle) * this.options.movingSpeed.y * Math.abs(y);
                 }
+                //do nothing if mouse down is not detected.
+            }else{
+                var rect = this.el().getBoundingClientRect();
+                const x = clientX - this._width / 2 - rect.left;
+                const y = this._height / 2 - (clientY - rect.top);
+                let angle = 0;
+                if(x === 0){
+                    angle = (y > 0)? Math.PI / 2 : Math.PI * 3 / 2;
+                }else if(x > 0 && y > 0){
+                    angle = Math.atan(y / x);
+                }else if(x > 0 && y < 0){
+                    angle = 2 * Math.PI - Math.atan(y * -1 / x);
+                }else if(x < 0 && y > 0){
+                    angle = Math.PI - Math.atan(y / x * -1);
+                }else {
+                    angle = Math.PI + Math.atan(y / x);
+                }
+                this._accelector.x = Math.cos(angle) * this.options.movingSpeed.x * Math.abs(x);
+                this._accelector.y = Math.sin(angle) * this.options.movingSpeed.y * Math.abs(y);
             }
         }
     }
@@ -384,11 +385,15 @@ class BaseCanvas extends Component{
             this._lat += this._accelector.y;
             this._lon += this._accelector.x;
         }
-        if(this._lon > 360){
-            this._lon -= 360;
-        }else if(this._lon < 0){
-            this._lon += 360;
+
+        if(this._options.minLon === 0 && this._options.maxLon === 360){
+            if(this._lon > 360){
+                this._lon -= 360;
+            }else if(this._lon < 0){
+                this._lon += 360;
+            }
         }
+
         this._lat = Math.max( this.options.minLat, Math.min( this.options.maxLat, this._lat ) );
         this._lon = Math.max( this.options.minLon, Math.min( this.options.maxLon, this._lon ) );
         this._phi = THREE.Math.degToRad( 90 - this._lat );

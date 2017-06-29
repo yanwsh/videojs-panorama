@@ -25,35 +25,6 @@ class ThreeDVideo extends BaseCanvas{
         this._cameraR = new THREE.PerspectiveCamera(this.options.initFov, aspectRatio / 2, 1, 2000);
         this._cameraR.position.set( 1000, 0, 0 );
         this._cameraR.target = new THREE.Vector3( 1000, 0, 0 );
-
-        let geometryL = new THREE.SphereBufferGeometry(500, 60, 40).toNonIndexed();
-        let geometryR = new THREE.SphereBufferGeometry(500, 60, 40).toNonIndexed();
-
-        let uvsL = geometryL.attributes.uv.array;
-        let normalsL = geometryL.attributes.normal.array;
-        for ( let i = 0; i < normalsL.length / 3; i ++ ) {
-            uvsL[ i * 2 + 1 ] = uvsL[ i * 2 + 1 ] / 2;
-        }
-
-        let uvsR = geometryR.attributes.uv.array;
-        let normalsR = geometryR.attributes.normal.array;
-        for ( let i = 0; i < normalsR.length / 3; i ++ ) {
-            uvsR[ i * 2 + 1 ] = uvsR[ i * 2 + 1 ] / 2 + 0.5;
-        }
-
-        geometryL.scale( - 1, 1, 1 );
-        geometryR.scale( - 1, 1, 1 );
-
-        this._meshL = new THREE.Mesh(geometryL,
-            new THREE.MeshBasicMaterial({ map: this._texture})
-        );
-
-        this._meshR = new THREE.Mesh(geometryR,
-            new THREE.MeshBasicMaterial({ map: this._texture})
-        );
-        this._meshR.position.set(1000, 0, 0);
-
-        this._scene.add(this._meshL);
     }
 
     handleResize(): void{

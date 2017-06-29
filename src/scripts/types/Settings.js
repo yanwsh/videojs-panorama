@@ -1,7 +1,7 @@
 // @flow
 import { Point, Coordinates } from './Point';
 
-export type VideoTypes = "equirectangular" | "fisheye" | "3dVideo" | "dual_fisheye";
+export type VideoTypes = "equirectangular" | "fisheye"  | "dual_fisheye" | "VR1803D" | "VR3603D";
 
 export type MarkerSettings = {
     location: Coordinates;
