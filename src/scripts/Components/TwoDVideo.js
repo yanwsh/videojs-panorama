@@ -3,7 +3,7 @@
 import type { Player, Settings } from '../types';
 import BaseCanvas from './BaseCanvas';
 import THREE from "three";
-import { getTouchesDistance, fovToProjection, mergeOptions } from '../utils'
+import { getTouchesDistance, fovToProjection } from '../utils'
 
 class TwoDVideo extends BaseCanvas{
     _camera: any;
