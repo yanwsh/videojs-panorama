@@ -69,8 +69,7 @@ class Marker extends Component{
                 x: (vector.x + 1) / 2 * width,
                 y: - (vector.y - 1) / 2 * canvas._height
             };
-            this.el().style.left =  `${point.x}px`;
-            this.el().style.top  =  `${point.y}px`;
+            this.el().style.transform = `translate(${point.x}px, ${point.y}px)`;
         }
     }
 

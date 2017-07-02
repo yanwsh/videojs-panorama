@@ -29,6 +29,8 @@ class MarkerGroup extends Component{
         this.options.markers.forEach((markSetting)=>{
             this.addMarker(markSetting);
         });
+
+        this.renderMarkers();
     }
 
     attachEvents(){

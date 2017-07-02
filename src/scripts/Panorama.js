@@ -54,7 +54,7 @@ export const defaults: Settings = {
     mobileVibrationValue: isIos()? 0.022 : 1,
 
     VREnable: runOnMobile,
-    VRGapDegree: 2.5,
+    VRGapDegree: 0.5,
     VRFullscreen: true,//auto fullscreen when in vr mode
 
     PanoramaThumbnail: false,
