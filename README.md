@@ -7,7 +7,7 @@ A [VideoJS][videojs] and [MeidaElement](https://github.com/mediaelement/mediaele
 # videojs-panorama v1.0.0 is coming soon
 #### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases/tag/v1.0.0-beta)
 
-### Please help me test this new version. Keep in mind, this is beta version, so don't use it in production site.
+### Please help me test this new version. Keep in mind, this is beta version, so don't use it on production site.
 
 ## New Features
 1. Support Media Element Player
