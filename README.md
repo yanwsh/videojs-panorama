@@ -7,7 +7,7 @@ A [VideoJS][videojs] and [MeidaElement](https://github.com/mediaelement/mediaele
 # videojs-panorama v1.0.0 is coming soon
 #### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases/tag/v1.0.0-beta)
 
-###Please help me test this new version. Keep in mind, this is beta version, so don't use it in production site.
+### Please help me test this new version. Keep in mind, this is beta version, so don't use it in production site.
 
 ## New Features
 1. Support Media Element Player
@@ -19,7 +19,7 @@ A [VideoJS][videojs] and [MeidaElement](https://github.com/mediaelement/mediaele
 7. 180 video support
 8. 360 Thumbnail support
 
-##Usage
+## Usage
 
 ```javascript
 var panorama = player.panorama({
@@ -83,7 +83,7 @@ var panorama = player.panorama({
             ],
         });
 ```
-####Full documentation comming soon! If you have any question, feel free to post it on issues board.
+#### Full documentation comming soon! If you have any question, feel free to post it on issues board.
 
 ## Table of Contents
 
