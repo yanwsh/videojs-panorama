@@ -34,6 +34,7 @@ class BaseCanvas extends Component{
     /**
      * Interaction
      */
+    _controlable: boolean;
     _VRMode: boolean;
     _mouseDown: boolean;
     _mouseDownPointer: Point;
@@ -68,6 +69,7 @@ class BaseCanvas extends Component{
         this._isUserInteracting = false;
         this._runOnMobile = mobileAndTabletcheck();
         this._VRMode = false;
+        this._controlable = true;
 
         this._mouseDownPointer = {
             x: 0,
@@ -363,24 +365,27 @@ class BaseCanvas extends Component{
     }
 
     render(){
-        if(!this._isUserInteracting){
-            let symbolLat = (this._lat > this.options.initLat)?  -1 : 1;
-            let symbolLon = (this._lon > this.options.initLon)?  -1 : 1;
-            if(this.options.backToInitLat){
-                this._lat = (
-                    this._lat > (this.options.initLat - Math.abs(this.options.returnLatSpeed)) &&
-                    this._lat < (this.options.initLat + Math.abs(this.options.returnLatSpeed))
-                )? this.options.initLat : this._lat + this.options.returnLatSpeed * symbolLat;
+        this.trigger("beforeRender");
+        if(this._controlable){
+            if(!this._isUserInteracting){
+                let symbolLat = (this._lat > this.options.initLat)?  -1 : 1;
+                let symbolLon = (this._lon > this.options.initLon)?  -1 : 1;
+                if(this.options.backToInitLat){
+                    this._lat = (
+                        this._lat > (this.options.initLat - Math.abs(this.options.returnLatSpeed)) &&
+                        this._lat < (this.options.initLat + Math.abs(this.options.returnLatSpeed))
+                    )? this.options.initLat : this._lat + this.options.returnLatSpeed * symbolLat;
+                }
+                if(this.options.backToInitLon){
+                    this._lon = (
+                        this._lon > (this.options.initLon - Math.abs(this.options.returnLonSpeed)) &&
+                        this._lon < (this.options.initLon + Math.abs(this.options.returnLonSpeed))
+                    )? this.options.initLon : this._lon + this.options.returnLonSpeed * symbolLon;
+                }
+            }else if(this._accelector.x !== 0 && this._accelector.y !== 0){
+                this._lat += this._accelector.y;
+                this._lon += this._accelector.x;
             }
-            if(this.options.backToInitLon){
-                this._lon = (
-                    this._lon > (this.options.initLon - Math.abs(this.options.returnLonSpeed)) &&
-                    this._lon < (this.options.initLon + Math.abs(this.options.returnLonSpeed))
-                )? this.options.initLon : this._lon + this.options.returnLonSpeed * symbolLon;
-            }
-        }else if(this._accelector.x !== 0 && this._accelector.y !== 0){
-            this._lat += this._accelector.y;
-            this._lon += this._accelector.x;
         }
 
         if(this._options.minLon === 0 && this._options.maxLon === 360){
@@ -405,6 +410,14 @@ class BaseCanvas extends Component{
 
     get VRMode(): boolean{
         return this._VRMode;
+    }
+
+    get controlable(): boolean{
+        return this._controlable;
+    }
+
+    set controlable(val: boolean): void{
+        this._controlable = val;
     }
 }
 

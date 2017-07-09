@@ -50,11 +50,17 @@ class Marker extends Component{
     enableMarker(){
         this._enable = true;
         this.addClass("vjs-marker--enable");
+        if(this.options.onShow){
+            this.options.onShow.call(null);
+        }
     }
 
     disableMarker(){
         this._enable = false;
         this.removeClass("vjs-marker--enable");
+        if(this.options.onHide){
+            this.options.onHide.call(null);
+        }
     }
 
     render(canvas: BaseCanvas, camera: THREE.PerspectiveCamera){

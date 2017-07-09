@@ -1,7 +1,7 @@
 // @flow
 
 import makeVideoPlayableInline from 'iphone-inline-video';
-import type {Settings, Player, VideoTypes, Coordinates} from './types/index';
+import type {Settings, Player, VideoTypes, Coordinates, AnimationSettings} from './types/index';
 import type BaseCanvas from './Components/BaseCanvas';
 import EventEmitter from 'wolfy87-eventemitter';
 import Equirectangular from './Components/Equirectangular';
@@ -13,6 +13,7 @@ import Notification from './Components/Notification';
 import Thumbnail from './Components/Thumbnail';
 import VRButton from './Components/VRButton';
 import MarkerContainer from './Components/MarkerContainer';
+import Animation from './Components/Animation';
 import { Detector, webGLErrorMessage, crossDomainWarning, transitionEvent, mergeOptions, mobileAndTabletcheck, isIos, isRealIphone, warning } from './utils';
 
 const runOnMobile = mobileAndTabletcheck();
@@ -97,7 +98,9 @@ export const defaults: Settings = {
         HideTime: 3000,
     },
 
-    Markers: false
+    Markers: false,
+
+    Animations: false
 };
 
 export const VR180Defaults: any = {
@@ -122,6 +125,7 @@ class Panorama extends EventEmitter{
     _player: Player;
     _videoCanvas: BaseCanvas;
     _thumbnailCanvas: BaseCanvas | null;
+    _animation: Animation;
 
     /**
      * check legacy option settings and produce warning message if user use legacy options, automatically set it to new options.
@@ -349,17 +353,34 @@ class Panorama extends EventEmitter{
                 this.player.addComponent("markerContainer", markerContainer);
             }
 
+            //initial animations
+            if(this.options.Animation && Array.isArray(this.options.Animation)){
+                this._animation = new Animation(this.player, {
+                    animation: this.options.Animation,
+                    canvas: this.videoCanvas
+                });
+            }
+
             //detect black screen
             if(window.console && window.console.error){
                 let originalErrorFunction = window.console.error;
+                let originalWarnFunction = window.console.warn;
                 window.console.error = (error)=>{
                     if(error.message.indexOf("insecure") !== -1){
                         this.popupNotification(crossDomainWarning());
                         this.dispose();
                     }
                 };
+                window.console.warn = (warn) =>{
+                    if(warn.indexOf("gl.getShaderInfoLog") !== -1){
+                        this.popupNotification(crossDomainWarning());
+                        this.dispose();
+                        window.console.warn = originalWarnFunction;
+                    }
+                };
                 setTimeout(()=>{
                     window.console.error = originalErrorFunction;
+                    window.console.warn = originalWarnFunction;
                 }, 500);
             }
         };
@@ -403,6 +424,18 @@ class Panorama extends EventEmitter{
                 });
             }, this.options.Notice.HideTime);
         }
+    }
+
+    addTimeline(animation: AnimationSettings) : void{
+        this._animation.addTimeline(animation);
+    }
+
+    enableAnimation(){
+        this._animation.attachEvents();
+    }
+
+    disableAnimation(){
+        this._animation.detachEvents();
     }
 
     getCoordinates(): Coordinates{

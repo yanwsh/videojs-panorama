@@ -26,9 +26,30 @@ export type MarkerSettings = {
     duration?: number;
 
     /**
-     * callback function when marker is disappear
+     * callback function when marker is shown
      */
-    complete?: Function;
+    onShow?: Function;
+    /**
+     * callback function when marker is hidden
+     */
+    onHide?: Function;
+}
+
+export type AnimationSettings = {
+    keyPoint: number;
+    from?: {
+        lon?: number;
+        lat?: number;
+        fov?: number;
+    };
+    to: {
+        lon?: number;
+        lat?: number;
+        fov?: number;
+    };
+    duration: number;
+    ease?: Function | string;
+    onComplete?: Function;
 }
 
 /**
@@ -136,7 +157,9 @@ export type Settings = {
         HideTime?: number;
     };
 
-    Markers?: MarkerSettings[] | boolean,
+    Markers?: MarkerSettings[] | boolean;
+
+    Animation?: AnimationSettings[] | boolean;
 
     ready?: Function;
 
