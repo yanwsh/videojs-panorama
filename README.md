@@ -1,8 +1,89 @@
 # videojs-panorama
 
-A [VideoJS][videojs] plugin to run a full 360 degree panorama video. VR is supported right now!
+A [VideoJS][videojs] and [MeidaElement](https://github.com/mediaelement/mediaelement) plugin to run a full 180, 360 degree, 3d 360 degree panorama, fisheye and 3d fisheye video. Fully support VR device.
 
 #### [DEMO HERE](http://yanwsh.github.io/videojs-panorama/)
+
+# videojs-panorama v1.0.0 is coming soon
+#### [DOWNLOAD HERE](https://github.com/yanwsh/videojs-panorama/releases/tag/v1.0.0-beta)
+
+###Please help me test this new version. Keep in mind, this is beta version, so don't use it in production site.
+
+## New Features
+1. Support Media Element Player
+2. Black screen detector
+3. Keyboard control. (Left, Right, Up and Down arrow)
+4. Hotspot support
+5. Animation support
+6. All in one (videojs 4, videojs 5 and media element player will detect automatically)
+7. 180 video support
+8. 360 Thumbnail support
+
+##Usage
+
+```javascript
+var panorama = player.panorama({
+            PanoramaThumbnail: true, //enable panorama thumbnail
+            KeyboardControl: true,
+            clickToToggle: true,
+            Notice: {
+                Enable: true,
+                Message: (isMobile())? "please drag and drop the video" : "please use your mouse drag and drop the video"
+            },
+            Markers: [
+                {
+                    location: {
+                        lat: 0,
+                        lon: 180
+                    },
+                    radius: 500,
+                    element: "This is text 1 with long text"
+                },
+                {
+                    location: {
+                        lat: 20,
+                        lon: 160
+                    },
+                    radius: 500,
+                    element: "This is text 2 with long text",
+                    onShow: function(){
+                        console.log("text 2 is shown");
+                    },
+                    onHide: function(){
+                        console.log("text 2 is hidden");
+                    }
+                }
+            ],
+            Animation: [
+                {
+                    keyPoint: 0,
+                    from: {
+                        lon: 180,
+                    },
+                    to:{
+                        lon: 540,
+                    },
+                    duration: 8000,
+                    ease: "linear",
+                    onComplete: function () {
+                        console.log("animation 1 is completed");
+                    }
+                },
+                {
+                    keyPoint: 0,
+                    from: {
+                        fov: 75,
+                    },
+                    to:{
+                        fov: 90,
+                    },
+                    duration: 5000,
+                    ease: "linear",
+                }
+            ],
+        });
+```
+####Full documentation comming soon! If you have any question, feel free to post it on issues board.
 
 ## Table of Contents
 
