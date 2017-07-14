@@ -3,6 +3,7 @@
 import BaseCanvas from './BaseCanvas';
 import Component from './Component';
 import MarkerGroup from './MarkerGroup';
+import { mergeOptions } from '../utils';
 import type { Player, MarkerSettings } from '../types';
 
 class MarkerContainer extends Component{
@@ -24,10 +25,17 @@ class MarkerContainer extends Component{
                 markers: this.options.markers,
                 camera: this._canvas._camera
             });
+
+            let markersSettings = this.options.markers.map((marker: MarkerSettings)=>{
+                let newMarker = mergeOptions({}, marker);
+                newMarker.onShow = undefined;
+                newMarker.onHide = undefined;
+                return newMarker;
+            });
             let rightMarkerGroup = new MarkerGroup(this.player, {
                 id: "right_group",
                 canvas: this._canvas,
-                markers: this.options.markers,
+                markers: markersSettings,
                 camera: this._canvas._camera
             });
             this.addChild("leftMarkerGroup", leftMarkerGroup);

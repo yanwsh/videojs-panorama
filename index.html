@@ -28,12 +28,17 @@
             top: 0;
             left: 0;
         }
+        .vjs-marker{
+            white-space: normal;
+            width: 100px;
+            font-size: 2em;
+        }
     </style>
 </head>
 <body>
 <div class="player_wrapper">
     <div class="player_container">
-        <video id="videojs-panorama-player" class="video-js vjs-default-skin"  crossorigin="anonymous" controls>
+        <video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="assets/poster-360.jpg" crossorigin="anonymous" controls>
             <source src="assets/shark.mp4" type='video/mp4'>
         </video>
     </div>
@@ -50,11 +55,7 @@
         return check;
     }
     (function(window, videojs) {
-        var player = window.player = videojs('videojs-panorama-player', {
-            poster: "assets/poster-360.jpg",
-            plugins: {
-            }
-        });
+        var player = window.player = videojs('videojs-panorama-player', {});
 
         var panorama = player.panorama({
             PanoramaThumbnail: true,
@@ -72,9 +73,7 @@
                         lon: 180
                     },
                     radius: 500,
-                    element: "Marker 1",
-                    keyPoint: 5000,
-                    duration: 10000
+                    element: "This is text 1 with long text"
                 },
                 {
                     location: {
@@ -82,9 +81,43 @@
                         lon: 160
                     },
                     radius: 500,
-                    element: "Marker 2",
+                    element: "This is text 2 with long text",
+                    onShow: function(){
+                        console.log("text 2 is shown");
+                    },
+                    onHide: function(){
+                        console.log("text 2 is hidden");
+                    }
                 }
-            ]
+            ],
+            Animation: [
+                {
+                    keyPoint: 0,
+                    from: {
+                        lon: 180,
+                    },
+                    to:{
+                        lon: 540,
+                    },
+                    duration: 8000,
+                    ease: "linear",
+                    onComplete: function () {
+                        console.log("animation 1 is completed");
+                    }
+                },
+                {
+                    keyPoint: 0,
+                    from: {
+                        fov: 75,
+                    },
+                    to:{
+                        fov: 90,
+                    },
+                    duration: 5000,
+                    ease: "linear",
+                }
+            ],
+            VRGapDegree: 0
         });
 
         window.player = player;
