@@ -235,7 +235,7 @@ class BaseCanvas extends Component{
                 this._accelector.x = 0;
                 this._accelector.y = 0;
             }else if(!this.options.clickAndDrag){
-                var rect = this.el().getBoundingClientRect();
+                let rect = this.el().getBoundingClientRect();
                 const x = clientX - this._width / 2 - rect.left;
                 const y = this._height / 2 - (clientY - rect.top);
                 let angle = 0;
