@@ -54,7 +54,7 @@ class MarkerContainer extends Component{
             let markerGroup = new MarkerGroup(this.player, {
                 id: "group",
                 canvas: this._canvas,
-                markers: this.options.Markers,
+                markers: this.options.markers,
                 camera: this._canvas._camera
             });
             this.addChild("markerGroup", markerGroup);
