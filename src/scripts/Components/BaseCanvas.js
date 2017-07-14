@@ -228,7 +228,7 @@ class BaseCanvas extends Component{
         const clientX = event.clientX || event.touches && event.touches[0].clientX;
         const clientY = event.clientY || event.touches && event.touches[0].clientY;
 
-        if(this.options.MouseEnable && typeof clientX !== "undefined" && typeof clientY !== "undefined") {
+        if(this.options.MouseEnable && this.controlable && typeof clientX !== "undefined" && typeof clientY !== "undefined") {
             if(this._mouseDown){
                 this._lon = ( this._mouseDownPointer.x - clientX ) * 0.2 + this._mouseDownLocation.Lon;
                 this._lat = ( clientY - this._mouseDownPointer.y ) * 0.2 + this._mouseDownLocation.Lat;
