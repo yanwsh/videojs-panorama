@@ -1,6 +1,6 @@
 # videojs-panorama
 
-A [VideoJS][videojs] and [MeidaElement](https://github.com/mediaelement/mediaelement) plugin to run a full 180, 360 degree, 3d 360 degree panorama, fisheye and 3d fisheye video. Fully support VR device.
+A [VideoJS][videojs] and [MediaElement](https://github.com/mediaelement/mediaelement) plugin to run a full 180, 360 degree, 3d 360 degree panorama, fisheye and 3d fisheye video. Fully support VR device.
 
 #### [DEMO HERE](http://yanwsh.github.io/videojs-panorama/)
 
