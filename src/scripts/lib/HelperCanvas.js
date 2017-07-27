@@ -1,10 +1,9 @@
 /**
  * Created by wensheng.yan on 5/23/16.
  */
-var element = document.createElement('canvas');
-element.className = "vjs-video-helper-canvas";
-
 var HelperCanvas = function(baseComponent){
+    var element = document.createElement('canvas');
+    element.className = "vjs-video-helper-canvas";
     return {
         constructor: function init(player, options){
             this.videoElement = options.video;
