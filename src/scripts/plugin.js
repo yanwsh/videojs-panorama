@@ -5,9 +5,8 @@
 
 import util from './lib/Util';
 import Detector from './lib/Detector';
-import makeVideoPlayableInline from 'iphone-inline-video';
 
-const runOnMobile = (util.mobileAndTabletcheck());
+const runOnMobile = (typeof window !== "undefined")? util.mobileAndTabletcheck() : false;
 
 // Default options for the plugin.
 const defaults = {
@@ -44,7 +43,7 @@ const defaults = {
     rotateZ: 0,
 
     autoMobileOrientation: false,
-    mobileVibrationValue: util.isIos()? 0.022 : 1,
+    mobileVibrationValue: (runOnMobile && util.isIos())? 0.022 : 1,
 
     VREnable: true,
     VRGapDegree: 2.5,
@@ -134,6 +133,7 @@ const onPlayerReady = (player, options, settings) => {
     if(runOnMobile){
         var videoElement = settings.getTech(player);
         if(util.isRealIphone()){
+            let makeVideoPlayableInline = require('iphone-inline-video');
             //ios 10 support play video inline
             videoElement.setAttribute("playsinline", "");
             makeVideoPlayableInline(videoElement, true);

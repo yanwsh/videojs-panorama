@@ -3,14 +3,21 @@
  * @author mr.doob / http://mrdoob.com/
  */
 
+//in case it's running on node.js
+let win = {};
+
+if (typeof window !== "undefined") {
+    win = window;
+}
+
 var Detector = {
 
-    canvas: !! window.CanvasRenderingContext2D,
+    canvas: !! win.CanvasRenderingContext2D,
     webgl: ( function () {
 
         try {
 
-            var canvas = document.createElement( 'canvas' ); return !! ( window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) );
+            var canvas = document.createElement( 'canvas' ); return !! ( win.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) );
 
         } catch ( e ) {
 
@@ -19,8 +26,8 @@ var Detector = {
         }
 
     } )(),
-    workers: !! window.Worker,
-    fileapi: window.File && window.FileReader && window.FileList && window.Blob,
+    workers: !! win.Worker,
+    fileapi: win.File && win.FileReader && win.FileList && win.Blob,
 
      Check_Version: function() {
          var rv = -1; // Return value assumes failure.
@@ -83,7 +90,7 @@ var Detector = {
 
         if ( ! this.webgl ) {
 
-            element.innerHTML = window.WebGLRenderingContext ? [
+            element.innerHTML = win.WebGLRenderingContext ? [
                 'Your graphics card does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">WebGL</a>.<br />',
                 'Find out how to get it <a href="http://get.webgl.org/" style="color:#000">here</a>.'
             ].join( '\n' ) : [
