@@ -108,6 +108,9 @@ var Canvas = function (baseComponent, THREE, settings = {}) {
 
         handleMouseWheel: function(event){
             parent.handleMouseWheel(event);
+            this.settings.maxLat = event.wheelDeltaY < 0 
+                ? Math.max(this.options_.maxLat, this.settings.maxLat + event.wheelDeltaY * 0.05) // zoom out
+                : Math.min(this.options_.maxLat * 0.1, this.settings.maxLat + event.wheelDeltaY * 0.05); // zoom in
             // WebKit
             if ( event.wheelDeltaY ) {
                 this.camera.fov -= event.wheelDeltaY * 0.05;
