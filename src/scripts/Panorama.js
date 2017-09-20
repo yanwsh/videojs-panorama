@@ -461,6 +461,10 @@ class Panorama extends EventEmitter{
     get options(): Settings{
         return this._options;
     }
+
+    static get VERSION(): string {
+        return '__VERSION__';
+    }
 }
 
 export default Panorama;

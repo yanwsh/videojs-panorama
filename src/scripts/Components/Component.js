@@ -110,7 +110,6 @@ class Component extends EventEmitter{
             couldBeTap = false;
         };
 
-        // TODO: Listen to the original target. http://youtu.be/DujfpXOKUp8?t=13m8s
         this.on('touchleave', noTap);
         this.on('touchcancel', noTap);
 

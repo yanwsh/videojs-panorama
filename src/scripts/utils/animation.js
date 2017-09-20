@@ -1,7 +1,7 @@
 // @flow
 
 function whichTransitionEvent(){
-    let el = document.createElement('div');
+    let el: HTMLElement = document.createElement('div');
     let transitions = {
         'transition':'transitionend',
         'OTransition':'oTransitionEnd',
@@ -10,8 +10,8 @@ function whichTransitionEvent(){
     };
 
     for(let t in transitions){
-        // $FlowFixMe
-        if( el.style[t] !== undefined ){
+        const nodeStyle: Object = el.style;
+        if( nodeStyle[t] !== undefined ){
             return transitions[t];
         }
     }

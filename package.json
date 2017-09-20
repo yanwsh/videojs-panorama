@@ -57,6 +57,11 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
+  "peerDependencies": {
+    "video.js": ">=4",
+    "three": ">=0.81",
+    "wolfy87-eventemitter": ">=5"
+  },
   "scripts": {
     "flow": "flow"
   },

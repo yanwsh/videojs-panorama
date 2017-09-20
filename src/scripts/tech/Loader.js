@@ -1,18 +1,20 @@
 // @flow
 
-import type { Player } from '../types';
+import BasePlayer from './BasePlayer';
 import Videojs4 from './Videojs4';
 import Videojs5 from './Videojs5';
 import MediaElement from './MediaElementPlayer';
 import { getVideojsVersion, warning } from '../utils';
 
-const VIDEOPLAYER = {
+const VIDEOPLAYER: {
+    [name: string]: typeof BasePlayer
+} = {
     'videojs_v4': Videojs4 ,
     'videojs_v5' : Videojs5,
     'MediaElementPlayer': MediaElement
 };
 
-function checkType(playerType: string): Class<Player> | null{
+function checkType(playerType: string): typeof BasePlayer | null{
     if(typeof playerType !== "undefined"){
         if(VIDEOPLAYER[playerType]){
             return VIDEOPLAYER[playerType];
@@ -22,7 +24,7 @@ function checkType(playerType: string): Class<Player> | null{
     return null;
 }
 
-function chooseTech(): Class<Player> | null {
+function chooseTech(): typeof BasePlayer | null {
     if(typeof window.videojs !== "undefined"){
         let version = window.videojs.VERSION;
         let major = getVideojsVersion(version);
@@ -40,7 +42,7 @@ function chooseTech(): Class<Player> | null {
     return null;
 }
 
-function Loader(playerType: string): Class<Player> | null{
+function Loader(playerType: string): typeof BasePlayer | null{
     let preferType = checkType(playerType);
     if(!preferType){
         preferType = chooseTech();

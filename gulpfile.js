@@ -29,15 +29,13 @@ var nodeResolve = require('rollup-plugin-node-resolve');
 var commonJS = require('rollup-plugin-commonjs');
 
 var config = {
-    distPath: './dist',
-    versions: [4, 5]
+    distPath: './dist'
 };
 
 gulp.task('build', function (done) {
     runSequence(
         'clean',
         'build-script',
-        'build-script-es6',
         'build-styles',
         function (error) {
             if(error){
@@ -62,35 +60,7 @@ function buildProdJs(destPath) {
     return process();
 }
 
-gulp.task('build-script', function () {
-    var buildProcesses = config.versions.map(function (version) {
-        var fileName = 'plugin_v' + version + ".js";
-        var entryFile = path.join('src/scripts', fileName);
-        var destPath = config.distPath;
-
-        return browserify({
-            entries: entryFile,
-            debug: true
-        })
-        .transform(versionify, {
-            placeholder: '__VERSION__'
-        })
-        .transform(babelify, {
-            presets: ["es2015"],
-            plugins: ["transform-object-assign"],
-            sourceMaps: true
-        })
-        .bundle()
-        .pipe(source(fileName))
-        .pipe(rename('videojs-panorama.v' + version + '.js'))
-        .pipe(gulp.dest(destPath))
-        .pipe(buildProdJs(destPath));
-    });
-
-    return mergeStream.apply(this, buildProcesses);
-});
-
-gulp.task('build-script-test', function(){
+gulp.task('build-script', function(){
     let fileName = 'index.js';
     let entryFile = path.join('src/scripts', fileName);
     let destPath = config.distPath;
@@ -100,8 +70,8 @@ gulp.task('build-script-test', function(){
         debug: true
     })
         .transform(versionify, {
-        placeholder: '__VERSION__'
-    })
+            placeholder: '__VERSION__'
+        })
         .transform(babelify, {
             presets: ["stage-3", "es2015", "flow"],
             plugins: ["transform-object-assign"],
@@ -114,7 +84,7 @@ gulp.task('build-script-test', function(){
         .pipe(buildProdJs(destPath));
 });
 
-gulp.task('browser-sync-test', ['build-script-test', 'build-styles'], function() {
+gulp.task('browser-sync', ['build-script', 'build-styles'], function() {
     browserSync.init({
         server: {
             baseDir: "./"
@@ -124,67 +94,9 @@ gulp.task('browser-sync-test', ['build-script-test', 'build-styles'], function()
     });
 });
 
-gulp.task('watch-test', ['browser-sync-test'], function () {
+gulp.task('watch', ['browser-sync'], function () {
     gulp.watch('src/scripts/**/*.js', ['build-script-test']);
     gulp.watch('src/styles/**/*.scss', ['build-styles']);
-});
-
-gulp.task('build-script-es6', function(done){
-    var fileName = 'plugin_es6.js';
-    var entryFile = path.join('src/scripts', fileName);
-    var destPath = config.distPath;
-
-    var promise = rollupBabelLibBundler({
-        name: 'videojs-panorama',
-        dest: destPath,
-        entry: entryFile,
-        format: ['es6', 'cjs'],
-        postfix: {es6: '.es6', cjs: '.common'},
-        plugins: [
-            babel({
-                presets: ["es2015-rollup"],
-                plugins: ["transform-object-assign"],
-                babelrc: false
-            }),
-            json(),
-            nodeResolve({
-                main: true,
-                jsnext: true,
-                extensions: ['.js', '.json'],
-                preferBuiltins: false,
-                skip: ['video.js', 'three']
-            }),
-            commonJS()
-        ]
-    });
-
-    promise.then(function(){
-        setTimeout(function () {
-            var outputFiles = ['videojs-panorama.es6.js', 'videojs-panorama.common.js'];
-            outputFiles.forEach(function (file) {
-                var outputFile = path.join(destPath, file);
-                var buffer = fs.readFileSync(outputFile);
-                var bufferStream = new stream.PassThrough();
-                var wstream = fs.createWriteStream(outputFile);
-
-                bufferStream.end(buffer);
-
-                bufferStream.pipe(
-                    versionify(outputFile,{
-                        placeholder: '__VERSION__',
-                        version: require('./package.json').version
-                    })
-                ).pipe(
-                    wstream
-                );
-            });
-
-            done();
-        }, 500);
-    }).catch(function(error){
-        console.log(error);
-        done();
-    });
 });
 
 function buildProdCss(destPath) {

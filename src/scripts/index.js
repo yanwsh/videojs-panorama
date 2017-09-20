@@ -1,11 +1,13 @@
 // @flow
 
-import type {Player, Settings} from './types';
+import type {Settings} from './types';
+import BasePlayer from './tech/BasePlayer';
 import Loader from './tech/Loader';
 import Panorama from './Panorama';
 
-let playerClass: Class<Player> | null = Loader(window.VIDEO_PANORAMA);
+let playerClass: typeof BasePlayer | null = Loader(window.VIDEO_PANORAMA);
 
+//todo: load from react?
 if(playerClass){
     playerClass.registerPlugin();
 }
@@ -16,7 +18,6 @@ else{
 const plugin = (playerDom: string | HTMLVideoElement, options: Settings) => {
     let videoEm = (typeof playerDom === "string")? document.querySelector(playerDom): playerDom;
     if(playerClass){
-        // $FlowFixMe
         let player = new playerClass(videoEm, options);
         let panorama = new Panorama(player, options);
         return panorama;

@@ -48,9 +48,10 @@ export function ieOrEdgeVersion(){
         let ua = navigator.userAgent,
             re = new RegExp("MSIE ([0-9]{1,}[\\.0-9]{0,})");
 
-        if (re.exec(ua) !== null) {
-            // $FlowFixMe: suppressing this error, RegExp don't support static property
-            rv = parseFloat(RegExp.$1);
+        let result = re.exec(ua);
+        if (result !== null) {
+
+            rv = parseFloat(result[1]);
         }
     }
     else if (navigator.appName === "Netscape") {
@@ -60,9 +61,9 @@ export function ieOrEdgeVersion(){
         else{
             let ua = navigator.userAgent;
             let re = new RegExp("Edge\/([0-9]{1,}[\\.0-9]{0,})");
+            let result = re.exec(ua);
             if (re.exec(ua) !== null) {
-                // $FlowFixMe
-                rv = parseFloat(RegExp.$1);
+                rv = parseFloat(result[1]);
             }
         }
     }
