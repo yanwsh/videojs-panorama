@@ -16,7 +16,7 @@ class Notification extends Component{
             el.className = "vjs-video-notice-label vjs-video-notice-show";
             el.innerText = message;
         } else {
-            el = message;
+            el = message.cloneNode(true);
             el.classList.add("vjs-video-notice-show");
         }
 

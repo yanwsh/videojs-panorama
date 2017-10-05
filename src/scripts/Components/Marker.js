@@ -25,7 +25,7 @@ class Marker extends Component{
             el = document.createElement('div');
             el.innerText = elem;
         }else {
-            el = elem;
+            el = elem.cloneNode(true);
         }
         el.id = options.id || "";
         el.className = "vjs-marker";
