@@ -1219,6 +1219,9 @@ var PopupNotification = function PopupNotification(player) {
 
     if (options.autoHideNotice > 0) {
         setTimeout(function () {
+            if (!notice.el_) {
+                return;
+            }
             notice.addClass("vjs-video-notice-fadeOut");
             var transitionEvent = util.whichTransitionEvent();
             var hide = function hide() {
