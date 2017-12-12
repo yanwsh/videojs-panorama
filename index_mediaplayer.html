@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>videojs-panorama Demo</title>
@@ -7,21 +8,25 @@
     <link href="/bower_components/mediaelement/build/mediaelementplayer.css" rel="stylesheet">
     <link href="/dist/videojs-panorama.css" rel="stylesheet">
     <style>
-        body{
+        body {
             margin: 0;
         }
-        body.vjs-full-window .player_wrapper{
+
+        body.vjs-full-window .player_wrapper {
             position: static;
         }
-        .player_wrapper{
+
+        .player_wrapper {
             position: relative;
             max-width: 960px;
             width: 100%;
         }
-        .player_container{
+
+        .player_container {
             padding-top: 56.25%;
         }
-        .mejs__container{
+
+        .mejs__container {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -30,43 +35,45 @@
         }
     </style>
 </head>
+
 <body>
-<div class="player_wrapper">
-    <div class="player_container">
-        <video id="player1"
-               style="max-width: 100%" crossorigin="anonymous" controls>
+    <div class="player_wrapper">
+        <div class="player_container">
+            <video id="player1" style="max-width: 100%" crossorigin="anonymous" controls>
             <source src="assets/shark.mp4" type='video/mp4'>
         </video>
+        </div>
     </div>
-</div>
 
-<script src="/bower_components/mediaelement/build/jquery.js"></script>
-<script src="/bower_components/mediaelement/build/mediaelement-and-player.js"></script>
-<script src="/bower_components/three.js/three.js"></script>
+    <script src="/bower_components/mediaelement/build/jquery.js"></script>
+    <script src="/bower_components/mediaelement/build/mediaelement-and-player.js"></script>
+    <script src="/bower_components/three.js/three.js"></script>
 
-<script src="/dist/videojs-panorama.js"></script>
-<script>
-    $("#player1").mediaelementplayer({
-        pluginPath: "/bower_components/mediaelement/build/",
-        stretching: 'responsive',
-        videoWidth: '100%',
-        videoHeight: '100%',
-        poster: "assets/poster-360.jpg",
-        features: ["playpause", "current", "progress", "duration", "tracks", "volume", "fullscreen", "poster","Panorama"],
-        Panorama: {
-            PanoramaThumbnail: true,
-            KeyboardControl: true,
-            clickToToggle: true,
-            VREnable: true,
-            Notice: {
-                Enable: true,
-                Message: "please drag and drop the video"
+    <script src="/dist/videojs-panorama.js"></script>
+    <script>
+        $("#player1").mediaelementplayer({
+            pluginPath: "/bower_components/mediaelement/build/",
+            stretching: 'responsive',
+            videoWidth: '100%',
+            videoHeight: '100%',
+            poster: "assets/poster-360.jpg",
+            features: ["playpause", "current", "progress", "duration", "tracks", "volume", "fullscreen", "poster", "Panorama"],
+            Panorama: {
+                PanoramaThumbnail: true,
+                KeyboardControl: true,
+                KeyboardControlRepeat: true,
+                clickToToggle: true,
+                VREnable: true,
+                Notice: {
+                    Enable: true,
+                    Message: "please drag and drop the video"
+                }
+            },
+            success: function(mediaElement, originalNode) {
+                // do things
             }
-        },
-        success: function(mediaElement, originalNode) {
-            // do things
-        }
-    });
-</script>
+        });
+    </script>
 </body>
+
 </html>

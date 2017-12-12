@@ -60,6 +60,7 @@ export const defaults: Settings = {
 
     PanoramaThumbnail: false,
     KeyboardControl: false,
+    KeyboardControlRepeat: true,
     KeyboardMovingSpeed: {
         x: 1,
         y: 1

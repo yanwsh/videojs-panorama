@@ -119,6 +119,7 @@ export type Settings = {
 
     PanoramaThumbnail?: boolean;
     KeyboardControl?: boolean;
+    KeyboardControlRepeat?: boolean;
     KeyboardMovingSpeed?: Point;
 
     Sphere?: {
