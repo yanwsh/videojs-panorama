@@ -316,7 +316,6 @@ class BaseCanvas extends Component{
         }
     }
     handleKeyDown(event: any){
-       console.log(this.options.KeyboardControlRepeat);
         if(!this.options.KeyboardControlRepeat){
           if(this._down) return;
         }
