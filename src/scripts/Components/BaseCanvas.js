@@ -40,6 +40,7 @@ class BaseCanvas extends Component{
     _mouseDownPointer: Point;
     _mouseDownLocation: Location;
     _accelector: Point;
+    _down: boolean;
 
     _isUserInteracting: boolean;
     _isUserPinch: boolean;
@@ -65,6 +66,7 @@ class BaseCanvas extends Component{
         this._renderer.setSize(this._width, this._height);
 
         //init interaction
+        this._down = false;
         this._mouseDown = false;
         this._isUserInteracting = false;
         this._runOnMobile = mobileAndTabletcheck();
@@ -313,8 +315,11 @@ class BaseCanvas extends Component{
             }
         }
     }
-
     handleKeyDown(event: any){
+        if(!this.options.KeyboardControlRepeat){
+          if(this._down) return;
+        }
+        this._down = true;
         this._isUserInteracting = true;
         switch(event.keyCode){
             case 38: /*up*/
@@ -337,6 +342,7 @@ class BaseCanvas extends Component{
     }
 
     handleKeyUp(event: any){
+        this._down = false;
         this._isUserInteracting = false;
     }
 
