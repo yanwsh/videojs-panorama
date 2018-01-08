@@ -14,7 +14,7 @@ const VIDEOPLAYER: {
     'MediaElementPlayer': MediaElement
 };
 
-function checkType(playerType: string): typeof BasePlayer | null{
+function checkType(playerType?: string): typeof BasePlayer | null{
     if(typeof playerType !== "undefined"){
         if(VIDEOPLAYER[playerType]){
             return VIDEOPLAYER[playerType];
@@ -42,7 +42,7 @@ function chooseTech(): typeof BasePlayer | null {
     return null;
 }
 
-function Loader(playerType: string): typeof BasePlayer | null{
+function Loader(playerType?: string): typeof BasePlayer | null{
     let preferType = checkType(playerType);
     if(!preferType){
         preferType = chooseTech();

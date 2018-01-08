@@ -7,10 +7,12 @@ import { isIos } from '../utils';
 class Videojs extends BasePlayer{
     constructor(playerInstance: any){
         super(playerInstance);
-        //ios device don't support fullscreen, we have to monkey patch the original fullscreen function.
-        if(isIos()){
-            this._fullscreenOnIOS();
-        }
+        this.on("ready", ()=>{
+            //ios device don't support fullscreen, we have to monkey patch the original fullscreen function.
+            if(isIos()){
+                this._fullscreenOnIOS();
+            }
+        });
         //resize video if fullscreen change, this is used for ios device
         this.on("fullscreenchange",  () => {
             let canvas: Component = this.getComponent("VideoCanvas");

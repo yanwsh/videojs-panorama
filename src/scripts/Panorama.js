@@ -23,7 +23,7 @@ const videoTypes = ["equirectangular", "fisheye", "dual_fisheye", "VR1803D", "VR
 export const defaults: Settings = {
     videoType: "equirectangular",
     MouseEnable: true,
-    clickAndDrag: false,
+    clickAndDrag: true,
     movingSpeed: {
         x: 0.0005,
         y: 0.0005
@@ -93,7 +93,7 @@ export const defaults: Settings = {
     },
 
     Notice: {
-        Enable: true,
+        Enable: !runOnMobile,
         Message: "Please use your mouse drag and drop the video.",
         HideTime: 3000,
     },
@@ -276,29 +276,27 @@ class Panorama extends EventEmitter{
             });
         }
 
-        //enable inline play on mobile
-        if(runOnMobile){
-            let videoElement = this.player.getVideoEl();
-            if(isRealIphone()){
-                //ios 10 support play video inline
-                videoElement.setAttribute("playsinline", "");
-                makeVideoPlayableInline(videoElement, true);
-            }
-            this.player.addClass("vjs-panorama-mobile-inline-video");
-            //by default videojs hide control bar on mobile device.
-            this.player.removeClass("vjs-using-native-controls");
-        }
-
-        //add vr icon to player
-        if(this.options.VREnable){
-            let controlbar = this.player.controlBar();
-            let index = controlbar.childNodes.length;
-            let vrButton = new VRButton(player, this.options);
-            vrButton.disable();
-            this.player.addComponent("VRButton", vrButton, this.player.controlBar(), index - 1);
-        }
-
         this.player.ready(()=>{
+            //enable inline play on mobile
+            if(runOnMobile){
+                let videoElement = this.player.getVideoEl();
+                if(isRealIphone()){
+                    //ios 10 support play video inline
+                    videoElement.setAttribute("playsinline", "");
+                    makeVideoPlayableInline(videoElement, true);
+                }
+                this.player.addClass("vjs-panorama-mobile-inline-video");
+                //by default videojs hide control bar on mobile device.
+                this.player.removeClass("vjs-using-native-controls");
+            }
+            //add vr icon to player
+            if(this.options.VREnable){
+                let controlbar = this.player.controlBar();
+                let index = controlbar.childNodes.length;
+                let vrButton = new VRButton(player, this.options);
+                vrButton.disable();
+                this.player.addComponent("VRButton", vrButton, this.player.controlBar(), index - 1);
+            }
             //add canvas to player
             this._videoCanvas = new VideoClass(player, this.options, player.getVideoEl());
             this.videoCanvas.hide();

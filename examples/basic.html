@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>videojs-panorama Basic Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/bower_components/videojs_5/dist/video-js.css" rel="stylesheet">
+    <link href="/dist/videojs-panorama.css" rel="stylesheet">
+    <style>
+        html, body{
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<video id="videojs-panorama-player" class="video-js vjs-default-skin" poster="../assets/poster-360.jpg" crossorigin="anonymous" controls>
+    <source src="../assets/shark.mp4" type='video/mp4'>
+</video>
+
+<script src="/bower_components/three.js/three.js"></script>
+<script src="/bower_components/videojs_5/dist/video.js"></script>
+<script src="/dist/videojs-panorama.js"></script>
+
+<script>
+    var width = window.innerWidth > 960 ? 960 : window.innerWidth;
+    videojs('videojs-panorama-player', {
+        width: width,
+        height: width * 0.5625,
+        plugins: {
+            panorama: {}
+        }
+    });
+</script>
+</body>
+</html>
