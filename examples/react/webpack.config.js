@@ -1,20 +1,23 @@
 'use strict';
 
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     entry: {
         app: ['./src/index.js']
     },
     output: {
-        path: path.resolve(__dirname, '../dist'),
+        path: path.resolve(__dirname, 'dist'),
         filename: '[name].bundle.js'
     },
     devtool: "source-map",
     resolve: {
         modules: ['node_modules'],
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        alias: {
+            'videojs-panorama': path.resolve(__dirname, "../../dist/videojs-panorama.js")
+        }
     },
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
@@ -25,10 +28,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                exclude: [/node_modules/],
-                query: {
-                    presets: ["es2015", "stage-2"]
-                }
+                exclude: [/node_modules/]
             }
         ]
     }

@@ -1,5 +1,5 @@
 {
-  "presets": ["flow"],
+  "presets": ["stage-3", "es2015", "flow"],
   "plugins": ["transform-object-assign"],
   "sourceMaps": true
 }

@@ -57,18 +57,11 @@
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    font-size: 1.3em;
     font-size: 1vw;
     padding: 0.5em 1em;
     background: rgba(0, 0, 0, 0.8);
     color: #FFF;
-    -webkit-border-radius: 0.5em;
-    -moz-border-radius: 0.5em;
     border-radius: 0.5em;
-    -webkit-transition: opacity 0.3s linear;
-    -moz-transition: opacity 0.3s linear;
-    -ms-transition: opacity 0.3s linear;
-    -o-transition: opacity 0.3s linear;
     transition: opacity 0.3s linear;
     pointer-events: none;
 
@@ -88,11 +81,6 @@
     width: 400px;
     margin: 5em auto 0px;
     background: rgb(255, 255, 255);
-
-    -webkit-transition: opacity 0.3s linear;
-    -moz-transition: opacity 0.3s linear;
-    -ms-transition: opacity 0.3s linear;
-    -o-transition: opacity 0.3s linear;
     transition: opacity 0.3s linear;
 
     &.vjs-video-notice-fadeOut{

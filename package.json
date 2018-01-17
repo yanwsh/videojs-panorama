@@ -52,7 +52,7 @@
     "lazypipe": "^1.0.1",
     "merge-stream": "^1.0.0",
     "rollup-babel-lib-bundler": "^3.1.0",
-    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-babel": "^3.0.3",
     "run-sequence": "^1.2.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"

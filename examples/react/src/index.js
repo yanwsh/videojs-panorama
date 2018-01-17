@@ -9,4 +9,3 @@ render(
     <Root />,
     document.getElementById('root')
 );
-

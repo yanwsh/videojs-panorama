@@ -4,6 +4,7 @@
 'use strict';
 
 var fs          = require('fs');
+var path        = require('path');
 var stream      = require('stream');
 var babelify    = require('babelify');
 var browserify  = require('browserify');
@@ -15,7 +16,6 @@ var cssnano     = require('gulp-cssnano');
 var rename      = require('gulp-rename');
 var uglify      = require('gulp-uglify');
 var runSequence = require('run-sequence');
-var path        = require('path');
 var mergeStream = require('merge-stream');
 var buffer      = require('vinyl-buffer');
 var source      = require('vinyl-source-stream');
@@ -123,9 +123,14 @@ gulp.task('build-styles', function () {
 gulp.task('browser-sync', ['build'], function() {
     browserSync.init({
         server: {
-            baseDir: "./"
+            baseDir: "./examples",
+            routes: {
+                "/bower_components": "bower_components",
+                "/assets": "assets",
+                "/dist": "dist"
+            }
         },
-        open: 'ui',
+        open: 'local',
         online: true,
     });
 });
@@ -133,6 +138,36 @@ gulp.task('browser-sync', ['build'], function() {
 gulp.task('watch', ['browser-sync'], function () {
     gulp.watch('src/scripts/**/*.js', ['build-script']);
     gulp.watch('src/styles/**/*.scss', ['build-styles']);
+});
+
+gulp.task('build:example', () => {
+    const exampleDirs = fs.readdirSync(path.resolve(__dirname, './examples')).filter((file) => {
+        return fs.statSync(path.join(__dirname, file)).isDirectory()
+    });
+
+    const cmdArgs = [
+        { cmd: 'npm', args: [ 'install', '--progress=false' ] }
+    ];
+
+    for(const dir of exampleDirs){
+        for (const cmdArg of cmdArgs) {
+            const opts = {
+                cwd: path.join(__dirname, dir),
+                stdio: 'inherit'
+            };
+
+            let result = {};
+            if (process.platform === 'win32') {
+                result = spawnSync(cmdArg.cmd + '.cmd', cmdArg.args, opts)
+            } else {
+                result = spawnSync(cmdArg.cmd, cmdArg.args, opts)
+            }
+            if (result.status !== 0) {
+                console.log(result);
+                throw new Error('Building examples exited with non-zero')
+            }
+        }
+    }
 });
 
 gulp.task('default', ['watch']);
