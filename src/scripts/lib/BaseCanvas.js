@@ -47,7 +47,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
                 var context = this.helperCanvas.el();
                 this.texture = new THREE.Texture(context);
             }else{
-                this.texture = new THREE.Texture(video);
+                this.texture = new THREE.VideoTexture(video);
             }
 
             video.style.visibility = "hidden";
