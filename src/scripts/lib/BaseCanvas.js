@@ -182,10 +182,7 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
             }
         },
 
-        handleMobileOrientation: function (event) {
-            if(typeof event.rotationRate === "undefined") return;
-            var x = event.rotationRate.alpha;
-            var y = event.rotationRate.beta;
+        handleMobileOrientation: function (event, x, y) {
             var portrait = (typeof event.portrait !== "undefined")? event.portrait : window.matchMedia("(orientation: portrait)").matches;
             var landscape = (typeof event.landscape !== "undefined")? event.landscape : window.matchMedia("(orientation: landscape)").matches;
             var orientation = event.orientation || window.orientation;
@@ -202,6 +199,20 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
                 this.lon = (orientationDegree == -90)? this.lon + x * this.settings.mobileVibrationValue : this.lon - x * this.settings.mobileVibrationValue;
                 this.lat = (orientationDegree == -90)? this.lat + y * this.settings.mobileVibrationValue : this.lat - y * this.settings.mobileVibrationValue;
             }
+        },
+
+        handleMobileOrientationDegrees: function (event) {
+            if(typeof event.rotationRate === "undefined") return;
+            var x = event.rotationRate.alpha * Math.PI / 180;
+            var y = event.rotationRate.beta * Math.PI / 180;
+            this.handleMobileOrientation(event, x, y);
+        },
+
+        handleMobileOrientationRadians: function (event) {
+            if(typeof event.rotationRate === "undefined") return;
+            var x = event.rotationRate.alpha;
+            var y = event.rotationRate.beta;
+            this.handleMobileOrientation(event, x, y);
         },
 
         handleMouseWheel: function(event){
@@ -277,8 +288,14 @@ var BaseCanvas = function (baseComponent, THREE, settings = {}) {
 
         playOnMobile: function () {
             this.isPlayOnMobile = true;
-            if(this.settings.autoMobileOrientation)
-                window.addEventListener('devicemotion', this.handleMobileOrientation.bind(this));
+            if(this.settings.autoMobileOrientation) {
+                if (Util.getChromeVersion() >= 66) {
+                    // Chrome is using degrees instead of radians
+                    window.addEventListener('devicemotion', this.handleMobileOrientationDegrees.bind(this));
+                } else {
+                    window.addEventListener('devicemotion', this.handleMobileOrientationRadians.bind(this));
+                }
+            }
         },
 
         el: function(){

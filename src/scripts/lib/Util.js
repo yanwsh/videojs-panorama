@@ -127,6 +127,11 @@ function getTouchesDistance(touches){
         (touches[0].clientY-touches[1].clientY) * (touches[0].clientY-touches[1].clientY));
 }
 
+function getChromeVersion() {
+  var match = navigator.userAgent.match(/.*Chrome\/([0-9]+)/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
 export default {
     whichTransitionEvent: whichTransitionEvent,
     mobileAndTabletcheck: mobileAndTabletcheck,
@@ -135,5 +140,6 @@ export default {
     fovToProjection: fovToProjection,
     extend: extend,
     deepCopy: deepCopy,
-    getTouchesDistance: getTouchesDistance
+    getTouchesDistance: getTouchesDistance,
+    getChromeVersion: getChromeVersion
 };
