@@ -105,6 +105,15 @@ function fullscreenOnIOS(player, clickFn) {
     });
 }
 
+// return the current view settings so we can reconstruct things 
+// on rebuilding the player
+const getViewSettings = (canvas) => {
+    return {
+        lat: canvas.lat,
+        lon: canvas.lon,
+        fov: canvas.camera.fov
+    };
+}
 /**
  * Function to invoke when the player is ready.
  *
@@ -161,6 +170,11 @@ const onPlayerReady = (player, options, settings) => {
         canvas.handleResize();
     });
     if(options.callback) options.callback();
+
+    // expose a helper object so we can interact with the plugin.
+    player.panoramahelper =  {
+        getViewSettings: () => getViewSettings(canvas)
+    };
 };
 
 const PopupNotification = (player, options = {
