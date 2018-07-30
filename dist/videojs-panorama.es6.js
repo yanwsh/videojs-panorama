@@ -261,6 +261,11 @@ function getTouchesDistance(touches) {
     return Math.sqrt((touches[0].clientX - touches[1].clientX) * (touches[0].clientX - touches[1].clientX) + (touches[0].clientY - touches[1].clientY) * (touches[0].clientY - touches[1].clientY));
 }
 
+function getChromeVersion() {
+    var match = navigator.userAgent.match(/.*Chrome\/([0-9]+)/);
+    return match ? parseInt(match[1], 10) : null;
+}
+
 var util = {
     whichTransitionEvent: whichTransitionEvent,
     mobileAndTabletcheck: mobileAndTabletcheck,
@@ -269,7 +274,8 @@ var util = {
     fovToProjection: fovToProjection,
     extend: extend,
     deepCopy: deepCopy,
-    getTouchesDistance: getTouchesDistance
+    getTouchesDistance: getTouchesDistance,
+    getChromeVersion: getChromeVersion
 };
 
 /**
@@ -451,10 +457,7 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
             }
         },
 
-        handleMobileOrientation: function handleMobileOrientation(event) {
-            if (typeof event.rotationRate === "undefined") return;
-            var x = event.rotationRate.alpha;
-            var y = event.rotationRate.beta;
+        handleMobileOrientation: function handleMobileOrientation(event, x, y) {
             var portrait = typeof event.portrait !== "undefined" ? event.portrait : window.matchMedia("(orientation: portrait)").matches;
             var landscape = typeof event.landscape !== "undefined" ? event.landscape : window.matchMedia("(orientation: landscape)").matches;
             var orientation = event.orientation || window.orientation;
@@ -471,6 +474,20 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
                 this.lon = orientationDegree == -90 ? this.lon + x * this.settings.mobileVibrationValue : this.lon - x * this.settings.mobileVibrationValue;
                 this.lat = orientationDegree == -90 ? this.lat + y * this.settings.mobileVibrationValue : this.lat - y * this.settings.mobileVibrationValue;
             }
+        },
+
+        handleMobileOrientationDegrees: function handleMobileOrientationDegrees(event) {
+            if (typeof event.rotationRate === "undefined") return;
+            var x = event.rotationRate.alpha * Math.PI / 180;
+            var y = event.rotationRate.beta * Math.PI / 180;
+            this.handleMobileOrientation(event, x, y);
+        },
+
+        handleMobileOrientationRadians: function handleMobileOrientationRadians(event) {
+            if (typeof event.rotationRate === "undefined") return;
+            var x = event.rotationRate.alpha;
+            var y = event.rotationRate.beta;
+            this.handleMobileOrientation(event, x, y);
         },
 
         handleMouseWheel: function handleMouseWheel(event) {
@@ -540,7 +557,14 @@ var BaseCanvas = function BaseCanvas(baseComponent, THREE) {
 
         playOnMobile: function playOnMobile() {
             this.isPlayOnMobile = true;
-            if (this.settings.autoMobileOrientation) window.addEventListener('devicemotion', this.handleMobileOrientation.bind(this));
+            if (this.settings.autoMobileOrientation) {
+                if (util.getChromeVersion() >= 66) {
+                    // Chrome is using degrees instead of radians
+                    window.addEventListener('devicemotion', this.handleMobileOrientationDegrees.bind(this));
+                } else {
+                    window.addEventListener('devicemotion', this.handleMobileOrientationRadians.bind(this));
+                }
+            }
         },
 
         el: function el() {
